@@ -36,9 +36,9 @@ def load_data():
             - tags (DataFrame): Contiene le informazioni sui tag associati ai film (userId, movieId, tag, timestamp).
             - ratings (DataFrame): Contiene le valutazioni degli utenti per i film (userId, movieId, rating, timestamp).
     """
-    movies = pd.read_csv("/Users/Bia/Desktop/archive/movies.csv")
-    tags = pd.read_csv("/Users/Bia/Desktop/archive/tags.csv")
-    ratings = pd.read_csv("/Users/Bia/Desktop/archive/ratings.csv")
+    movies = pd.read_csv("../../dataset/archive/movies.csv")
+    tags = pd.read_csv("../../dataset/archive/tags.csv")
+    ratings = pd.read_csv("../../dataset/archive/ratings.csv")
 
     return movies, tags, ratings
 
@@ -280,7 +280,7 @@ def categorize_movies_by_votes(ratings, movies):
     movies_with_votes['category'] = movies_with_votes['vote_count'].apply(
         lambda x: 'Popular' if 30 <= x <= 100  # Se il numero di voti è tra 30 e 100, il film è "Popular"
         else 'Niche' if x < 30  # Se il numero di voti è inferiore a 30, il film è "Niche"
-        else 'Indifferent'  # Se il numero di voti è maggiore di 100, il film è "Indifferent"
+        else 'Blockbuster'  # Se il numero di voti è maggiore di 100, il film è "Blockbuster", ovvero campione di incassi
     )
 
     return movies_with_votes  # Restituisce il DataFrame con i film e la loro categoria
@@ -495,13 +495,13 @@ def select_popularity_preference(ratings, movies):
     # Mostra un'intestazione personalizzata per la selezione delle preferenze di popolarità
     st.markdown('<div class="subheader">Do you prefer popular movies or niche films?</div>', unsafe_allow_html=True)
 
-    # Creazione di un radio button per permettere all'utente di scegliere tra film popolari, di nicchia o indifferenti
+    # Creazione di un radio button per permettere all'utente di scegliere tra film popolari, di nicchia o blockbuster
     popularity_preference = st.radio(
-        "Preferisci film popolari, di nicchia o indifferenti?",  # Testo della radio button
-        ["Popular", "Niche", "Indifferent"]  # Opzioni disponibili per la scelta
+        "Preferisci film popolari, di nicchia o campione di incassi?",  # Testo della radio button
+        ["Popular", "Niche", "Blockbuster"]  # Opzioni disponibili per la scelta
     )
 
-    # Filtra i film in base alla preferenza selezionata (popolare, di nicchia, o indifferente)
+    # Filtra i film in base alla preferenza selezionata (popolare, di nicchia, o blockbuster)
     filtered_movies = categorized_movies[categorized_movies['category'] == popularity_preference]
 
     # Visualizza la preferenza selezionata e i film corrispondenti
