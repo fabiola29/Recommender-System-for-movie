@@ -1,5 +1,5 @@
 import streamlit as st
-from utils import load_css, save_and_navigate_to_results, load_data, select_genres, select_director, select_actors, select_nationality, select_popularity_preference, select_decade, select_duration, select_tags
+from utils import load_css, load_data, select_genres, display_director_selection, display_actor_selection, display_nationality_selection, display_popularity_preference, display_movies_by_decade, display_runtime_selection, save_and_navigate_to_results
 from results import results
 from other_suggestions import other_suggestions
 
@@ -33,30 +33,27 @@ def main():
     selected_genres = select_genres(movies)
 
     # Step 2: Seleziona regista preferito
-    selected_director = select_director(movies)
+    selected_director = display_director_selection(movies)
 
     # Step 3: Seleziona attori preferiti
-    selected_actors = select_actors(movies)
+    selected_actors = display_actor_selection(movies)
 
     # Step 4: Seleziona nazionalità
-    selected_nationality = select_nationality(movies)
+    selected_nationality = display_nationality_selection(movies)
 
     # Step 5: Seleziona preferenza di popolarità
-    filtered_movies = select_popularity_preference(ratings, movies)
+    filtered_movies = display_popularity_preference(ratings, movies)
 
     # Step 6: Seleziona anno di uscita
-    selected_decade = select_decade(movies)
+    selected_decade = display_movies_by_decade(movies)
 
     # Step 7: Seleziona durata del film
-    duration = select_duration(movies)
+    duration = display_runtime_selection(movies)
 
-    # Step 8: Seleziona tag del film
-    selected_tags = select_tags(tags)
-
-    # Step 9: Salva i criteri e vai alla pagina dei risultati
+    # Step 8: Salva i criteri e vai alla pagina dei risultati
     if st.button("Research"):
         save_and_navigate_to_results(selected_genres, selected_director, selected_actors, selected_nationality,
-                                     filtered_movies, selected_decade, duration, selected_tags)
+                                     filtered_movies, selected_decade, duration)
 
 
 if __name__ == "__main__":
