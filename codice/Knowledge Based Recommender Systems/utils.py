@@ -1,7 +1,10 @@
-import streamlit as st
 import pandas as pd
 import re
-from SPARQLWrapper import SPARQLWrapper, JSON
+import streamlit as st
+from rdflib import Graph
+from urllib.parse import urlparse
+import recommendation
+import results
 
 def load_css():
     """
@@ -36,6 +39,8 @@ def load_data():
             - tags (DataFrame): Contiene le informazioni sui tag associati ai film (userId, movieId, tag, timestamp).
             - ratings (DataFrame): Contiene le valutazioni degli utenti per i film (userId, movieId, rating, timestamp).
     """
+
+
     movies = pd.read_csv("../../dataset/archive/movies.csv")
     tags = pd.read_csv("../../dataset/archive/tags.csv")
     ratings = pd.read_csv("../../dataset/archive/ratings.csv")
@@ -59,270 +64,17 @@ def normalize_title(movie_title):
 
     return cleaned_title
 
-
-def fetch_director_from_dbpedia(title):
+def is_valid_uri(uri):
     """
-    Funzione per ottenere il regista di un film da DBpedia utilizzando una query SPARQL.
-
-    Args:
-        title (str): Il titolo del film per il quale si desidera ottenere il regista.
-
-    Returns:
-        str: Il nome del regista del film, se trovato.
+    Funzione per verificare se una URI è valida.
     """
+    try:
+        result = urlparse(uri)
+        return all([result.scheme, result.netloc])  # Controlla se la URI ha uno schema e un netloc validi
+    except Exception as e:
+        return False
 
-    # Pulisce e normalizza il titolo del film per una ricerca precisa
-    movie_title_clean = normalize_title(title)
-
-    print(f"Searching for director of: {movie_title_clean}")  # Debug: mostra il titolo del film in ricerca
-
-    # Imposta il servizio SPARQL di DBpedia
-    sparql = SPARQLWrapper("https://dbpedia.org/sparql")
-    sparql.setReturnFormat(JSON)  # Imposta il formato di ritorno dei risultati come JSON
-
-    # Query SPARQL per ottenere il regista del film
-    query = f"""
-     SELECT ?director
-     WHERE {{
-         ?film rdf:type dbo:Film .
-         ?film foaf:name "{movie_title_clean}"@en .
-         ?film dbo:director ?directorResource .
-         ?directorResource foaf:name ?director .
-     }}
-     """
-
-    # Imposta la query SPARQL
-    sparql.setQuery(query)
-
-    # Esegue la query e converte i risultati in formato JSON
-    results = sparql.query().convert()
-
-    print(f"Query result: {results}")  # Debug: mostra i risultati della query
-
-    director = None  # Variabile per memorizzare il regista trovato
-    if results['results']['bindings']:
-        # Se ci sono risultati, estrai il regista
-        for result in results['results']['bindings']:
-            director = result['director']['value']
-            print(f"Director found: {director}")  # Debug: mostra il regista trovato
-    else:
-        print(f"No director found for: {movie_title_clean}")  # Debug: mostra che non è stato trovato un regista
-
-    return director  # Restituisce il nome del regista, se trovato
-
-def fetch_actors_from_dbpedia(title):
-    """
-    Funzione per ottenere gli attori di un film da DBpedia utilizzando una query SPARQL.
-
-    Args:
-        title (str): Il titolo del film per il quale si desiderano ottenere gli attori.
-
-    Returns:
-        list: Una lista contenente gli attori del film, se trovati.
-    """
-
-    # Pulisce e normalizza il titolo del film per una ricerca precisa
-    movie_title_clean = normalize_title(title)
-
-    print(f"Searching for actors of: {movie_title_clean}")  # Debug: mostra il titolo del film in ricerca
-
-    # Imposta il servizio SPARQL di DBpedia
-    sparql = SPARQLWrapper("https://dbpedia.org/sparql")
-    sparql.setReturnFormat(JSON)  # Imposta il formato di ritorno dei risultati come JSON
-
-    # Query SPARQL per ottenere gli attori del film
-    query = f"""
-    SELECT ?actor
-    WHERE {{
-        ?film foaf:name "{movie_title_clean}"@en .
-        ?film dbo:starring ?actorResource .
-        ?actorResource foaf:name ?actor .
-    }}
-    """
-
-    # Imposta la query SPARQL
-    sparql.setQuery(query)
-
-    # Esegue la query e converte i risultati in formato JSON
-    results = sparql.query().convert()
-
-    print(f"Query result: {results}")  # Debug: mostra i risultati della query
-
-    actors = []  # Lista per memorizzare gli attori trovati
-    if results['results']['bindings']:
-        # Se ci sono risultati, estrai gli attori per ogni film
-        for result in results['results']['bindings']:
-            actor = result['actor']['value']
-            actors.append(actor)  # Aggiungi l'attore alla lista
-            print(f"Actor found: {actor}")  # Debug: mostra l'attore trovato
-    else:
-        print(f"No actors found for: {movie_title_clean}")  # Debug: mostra che non sono stati trovati attori
-
-    return actors  # Restituisce la lista degli attori trovati
-
-def fetch_nationality_from_dbpedia(title):
-    """
-    Funzione per ottenere la nazionalità di un film da DBpedia utilizzando una query SPARQL.
-
-    Args:
-        title (str): Il titolo del film di cui si desidera ottenere la nazionalità.
-
-    Returns:
-        list: Una lista contenente la nazionalità del film, se trovata.
-    """
-
-    # Pulisce e normalizza il titolo del film per una ricerca accurata
-    movie_title_clean = normalize_title(title)
-    print(f"Searching for nationality of: {movie_title_clean}")  # Debug: mostra il titolo del film in ricerca
-
-    # Imposta il servizio SPARQL di DBpedia
-    sparql = SPARQLWrapper("https://dbpedia.org/sparql")
-    sparql.setReturnFormat(JSON)  # Imposta il formato di ritorno dei risultati come JSON
-
-    # Query SPARQL per ottenere la nazionalità del film
-    query = f"""
-    SELECT  ?country
-    WHERE {{
-        ?film foaf:name "{movie_title_clean}"@en .
-        ?film dbo:country ?countryResource .
-        ?countryResource foaf:name ?country .
-    }}
-    """
-
-    # Imposta la query SPARQL
-    sparql.setQuery(query)
-
-    # Esegue la query e converte i risultati in formato JSON
-    results = sparql.query().convert()
-
-    print(f"Query result: {results}")  # Debug: mostra i risultati della query
-
-    nationalities = []  # Lista per memorizzare le nazionalità trovate
-    if results['results']['bindings']:
-        # Se ci sono risultati, estrai la nazionalità per ogni film
-        for result in results['results']['bindings']:
-            country = result['country']['value']
-            nationalities.append(country)  # Aggiungi la nazionalità alla lista
-            print(f"Nationality found: {country}")  # Debug: mostra la nazionalità trovata
-    else:
-        print(f"No nationality found for: {movie_title_clean}")  # Debug: mostra che non è stata trovata una nazionalità
-
-    return nationalities  # Restituisce la lista delle nazionalità trovate
-
-def fetch_runtime_from_dbpedia(title):
-    """
-    Funzione per ottenere la durata del film da DBpedia utilizzando una query SPARQL.
-
-    Args:
-        title (str): Il titolo del film di cui si desidera ottenere la durata.
-
-    Returns:
-        list: Una lista contenente la durata del film in formato stringa, se trovata.
-    """
-
-    # Pulisce e normalizza il titolo del film per una ricerca accurata
-    movie_title_clean = normalize_title(title)
-    print(f"Searching for runtime of: {movie_title_clean}")  # Debug: mostra il titolo del film in ricerca
-
-    # Imposta il servizio SPARQL di DBpedia
-    sparql = SPARQLWrapper("https://dbpedia.org/sparql")
-    sparql.setReturnFormat(JSON)  # Imposta il formato di ritorno dei risultati come JSON
-
-    # Query SPARQL per ottenere la durata del film
-    query = f"""
-    SELECT  ?runtime
-    WHERE {{
-        ?film foaf:name "{movie_title_clean}"@en .
-        ?film dbo:runtime ?runtime .
-    }}
-    """
-
-    # Imposta la query SPARQL
-    sparql.setQuery(query)
-
-    # Esegue la query e converte i risultati in formato JSON
-    results = sparql.query().convert()
-
-    print(f"Query result: {results}")  # Debug: mostra i risultati della query
-
-    runtimes = []  # Lista per memorizzare i risultati delle durate trovate
-    if results['results']['bindings']:
-        # Se ci sono risultati, estrai la durata per ogni film
-        for result in results['results']['bindings']:
-            runtime = result['runtime']['value']
-            runtimes.append(runtime)  # Aggiungi la durata alla lista
-            print(f"Runtime found: {runtime}")  # Debug: mostra la durata trovata
-    else:
-        print(f"No runtime found for: {movie_title_clean}")  # Debug: mostra che non è stata trovata durata
-
-    return runtimes  # Restituisce la lista delle durate trovate
-
-def categorize_movies_by_votes(ratings, movies):
-    """
-    Funzione per categorizzare i film in base al numero di voti ricevuti.
-
-    Args:
-        ratings (DataFrame): DataFrame contenente le valutazioni dei film, con 'movieId' e 'rating'.
-        movies (DataFrame): DataFrame contenente i dettagli dei film, con 'movieId' e 'title'.
-
-    Returns:
-        DataFrame: Un DataFrame contenente i film con i rispettivi conteggi di voti e la categoria.
-    """
-
-    # Conta il numero di valutazioni per ciascun film (raggruppa per 'movieId' e conta le righe per ogni film)
-    vote_counts = ratings.groupby('movieId')['rating'].count().reset_index()
-    vote_counts.rename(columns={'rating': 'vote_count'}, inplace=True)  # Rinomina la colonna in 'vote_count'
-
-    # Unisci il conteggio dei voti con i dettagli dei film nel DataFrame 'movies'
-    movies_with_votes = pd.merge(movies, vote_counts, on='movieId', how='left')
-
-    # Categorizza i film in base al numero di voti ricevuti
-    movies_with_votes['category'] = movies_with_votes['vote_count'].apply(
-        lambda x: 'Popular' if 30 <= x <= 100  # Se il numero di voti è tra 30 e 100, il film è "Popular"
-        else 'Niche' if x < 30  # Se il numero di voti è inferiore a 30, il film è "Niche"
-        else 'Blockbuster'  # Se il numero di voti è maggiore di 100, il film è "Blockbuster", ovvero campione di incassi
-    )
-
-    return movies_with_votes  # Restituisce il DataFrame con i film e la loro categoria
-
-
-def save_criteria(selected_genres, selected_director, selected_actors, selected_nationality, filtered_movies, selected_decade, duration, selected_tags):
-    """
-    Funzione per salvare i criteri selezionati dall'utente e passare alla pagina dei risultati.
-
-    Args:
-        selected_genres (list): Lista di generi selezionati.
-        selected_director (list): Lista di registi selezionati.
-        selected_actors (list): Lista di attori selezionati.
-        selected_nationality (str): Nazionalità selezionata.
-        filtered_movies (DataFrame): Film filtrati in base alla preferenza di popolarità.
-        selected_decade (str): Decade selezionata.
-        duration (str): Durata selezionata.
-        selected_tags (list): Lista di tag selezionati.
-
-    """
-    # Verifica che tutti i campi obbligatori siano selezionati
-    if not selected_genres or not selected_director or not selected_actors or not selected_nationality or not selected_decade or not duration:
-        # Se manca almeno un campo obbligatorio, mostra un avviso
-        st.warning(" ⚠️ Please select all required fields before proceeding.")
-    else:
-        # Salva i criteri selezionati nello stato della sessione
-        st.session_state.criteria = {
-            "genres": selected_genres,  # Generi selezionati
-            "director": selected_director,  # Registi selezionati
-            "actor": selected_actors,  # Attori selezionati
-            "nationality": selected_nationality,  # Nazionalità selezionata
-            "popularity_preference": filtered_movies,  # Film filtrati in base alla popolarità
-            "year": selected_decade,  # Decade selezionata
-            "duration": duration,  # Durata selezionata
-            "tags": selected_tags,  # Tag selezionati
-        }
-
-        # Cambia la pagina per mostrare i risultati
-        st.session_state.page = "results"
-
-
-def select_genres(movies):
+def select_genres(movies, default=None):
     """
     Funzione che permette all'utente di selezionare uno o più generi cinematografici preferiti.
 
@@ -340,464 +92,581 @@ def select_genres(movies):
     unique_genres = sorted(set(genre for genres in movies['genres'].dropna() for genre in genres.split("|")))
 
     # Mostra la multiselectbox per la selezione dei generi preferiti
-    selected_genres = st.multiselect("Choose your preferred genres ( 1 or more)",
-                                     unique_genres)  # Multiselect per i generi
+    selected_genres = st.multiselect(" 🎞️ Choose your preferred genres ( 1 or more)",
+                                    unique_genres,
+                                    default=default)  # Usa il valore di default se disponibile
 
     return selected_genres  # Restituisce la lista di generi selezionati
 
-
-def select_director(movies):
+def load_movies_and_directors_from_ttl(file_path, movies_dataset):
     """
-    Funzione che permette all'utente di selezionare uno o più registi tra quelli presenti nei film.
+    Carica il file RDF/Turtle e recupera i film e i loro registi,
+    filtrando solo quelli presenti nel dataset `movies`.
 
     Args:
-        movies (DataFrame): DataFrame contenente i film e i relativi dettagli.
+        file_path (str): Percorso del file Turtle contenente i dati dei film.
+        movies_dataset (pd.DataFrame): Dataset dei film da confrontare.
 
     Returns:
-        list: Una lista di registi selezionati dall'utente.
+        dict: Dizionario {titolo_film: [registi]} con solo i film presenti nel dataset.
+    """
+    g = Graph()
+    g.parse(file_path, format="turtle")
+
+    movies_dict = {}
+
+    query = """
+        SELECT DISTINCT ?filmName ?director WHERE {
+            ?film rdfs:label ?filmName .
+            ?film dbo:director ?director .
+            FILTER (lang(?filmName) = "en")
+        }
     """
 
-    # Mostra un'intestazione per la selezione dei registi preferiti
-    st.markdown('<div class="subheader">Do you have favorite director?</div>', unsafe_allow_html=True)
+    results = g.query(query)
 
-    # Estrai i titoli dei primi 20 film dal dataset
-    movie_titles = movies['title'].head(20).tolist()
+    # Normalizza i titoli dei film per il confronto (rimuovendo l'anno tra parentesi)
+    dataset_movie_titles = set(movies_dataset['title'].apply(lambda x: normalize_title(x)).str.lower().tolist())
 
-    print(f"Extracted {len(movie_titles)} movie titles.")  # Debug: mostra quanti titoli sono stati estratti
+    for row in results:
+        if row[0] and row[1]:  # Evita valori nulli
+            # Normalizza il titolo del film (rimuovendo l'anno tra parentesi)
+            film_name = normalize_title(str(row[0]))  # Chiamata alla funzione normalize_title
 
-    # Dizionario per memorizzare i registi dei film
-    directors = {}
+            # Verifica che l'URI del regista sia valido
+            director_uri = str(row[1])
+            if not is_valid_uri(director_uri):  # Se l'URI non è valido, salta l'iterazione
+                continue
 
-    # Recupera i registi di ciascun film tramite DBpedia
-    for title in movie_titles:
-        director = fetch_director_from_dbpedia(title)  # Funzione per ottenere il regista da DBpedia
-        if director:
-            directors[title] = director  # Aggiunge il regista al dizionario
-        else:
-            print(f"Skipping {title} as no director was found.")  # Messaggio di errore se non trovato il regista
-            continue  # Salta il film se non è stato trovato un regista
+            director = str(row[1]).rsplit("/", 1)[-1].replace("_", " ")
 
-    print(f"Directors dictionary: {directors}")  # Debug: mostra il dizionario dei registi
+            # Rimuovi spazi extra e metti tutto in minuscolo per un confronto robusto
+            film_name_cleaned = film_name.strip().lower()
 
-    # Estrai i registi unici per popolare la selectbox
-    unique_directors = sorted(set(directors.values()))  # Rimuove duplicati e ordina i registi
+            # Filtra solo i film presenti nel dataset
+            if film_name_cleaned in dataset_movie_titles:
+                if film_name in movies_dict:
+                    movies_dict[film_name].append(director)
+                else:
+                    movies_dict[film_name] = [director]
 
-    print(f"Unique directors: {unique_directors}")  # Debug: mostra i registi unici trovati
-    print(f"Total unique directors: {len(unique_directors)}")  # Debug: numero totale di registi unici
+    return movies_dict
 
-    # Mostra la multiselectbox per la selezione di uno o più registi
-    selected_director = st.multiselect("Choose a director ( 1 or more)", unique_directors)  # Multiselect per i registi
-
-    return selected_director  # Restituisce la lista di registi selezionati
-
-
-def select_actors(movies):
+def display_director_selection(movies, default=None):
     """
-    Funzione che permette all'utente di selezionare uno o più attori tra quelli presenti nei film.
-
-    Args:
-        movies (DataFrame): DataFrame contenente i film e i relativi dettagli.
-
-    Returns:
-        list: Una lista di attori selezionati dall'utente.
+    Interfaccia utente per selezionare un regista e visualizzare i film che ha diretto.
     """
+    st.markdown('<div class="subheader"> Which director do you prefer?</div>', unsafe_allow_html=True)
 
-    # Mostra un'intestazione per la selezione degli attori preferiti
-    st.markdown('<div class="subheader">Do you have favorite actors?</div>', unsafe_allow_html=True)
-
-    # Dizionario per memorizzare gli attori dei film
-    actors = {}
-
-    # Estrai i titoli dei primi 20 film dal dataset
-    movie_titles = movies['title'].head(20).tolist()
-
-    # Recupera gli attori di ciascun film tramite DBpedia
-    for title in movie_titles:
-        actor_list = fetch_actors_from_dbpedia(title)  # Funzione per ottenere gli attori da DBpedia
-        if actor_list:
-            actors[title] = actor_list  # Aggiunge gli attori al dizionario
-        else:
-            print(f"Skipping {title} as no actors were found.")  # Messaggio di errore se non trovati attori
-            continue  # Salta il film se non sono stati trovati attori
-
-    print(f"Actors dictionary: {actors}")  # Debug: mostra il dizionario degli attori
-
-    # Estrai gli attori unici per popolare la selectbox
-    all_actors = [actor for actor_list in actors.values() for actor in actor_list]
-    unique_actors = sorted(set(all_actors))  # Rimuove duplicati e ordina gli attori
-    print(f"Unique actors: {unique_actors}")  # Debug: mostra gli attori unici trovati
-    print(f"Total unique actors: {len(unique_actors)}")  # Debug: numero totale di attori unici
-
-    # Mostra la selectbox per la selezione di uno o più attori
-    selected_actors = st.multiselect("Choose an actor ( 1 or more)", unique_actors)  # Multiselect per gli attori
-
-    return selected_actors  # Restituisce la lista di attori selezionati
-
-def select_nationality(movies):
-    """
-    Funzione che permette all'utente di selezionare una nazionalità per i film.
-
-    Args:
-        movies (DataFrame): DataFrame contenente i film e i relativi dettagli.
-
-    Returns:
-        str: La nazionalità selezionata dall'utente.
-    """
-
-    # Mostra un'intestazione per la selezione della nazionalità
-    st.markdown('<div class="subheader">Nationality</div>', unsafe_allow_html=True)
-
-    # Dizionario per memorizzare le nazionalità dei film
-    nationality = {}
-
-    # Estrai i titoli dei primi 20 film dal dataset
-    movie_titles = movies['title'].head(20).tolist()
-
-    # Recupera la nazionalità di ciascun film tramite DBpedia
-    for title in movie_titles:
-        nationality_list = fetch_nationality_from_dbpedia(title)  # Funzione per ottenere la nazionalità
-        if nationality_list:
-            nationality[title] = nationality_list  # Aggiunge la nazionalità al dizionario
-        else:
-            print(f"Skipping {title} as no nationality were found.")  # Messaggio di errore se non trovata nazionalità
-            continue  # Salta il film se non è stata trovata la nazionalità
-
-    print(f"Nationality dictionary: {nationality}")  # Debug: mostra il dizionario delle nazionalità
-
-    # Estrai le nazionalità uniche per popolare la selectbox
-    all_nationalities = [n.strip() for nationality_list in nationality.values() for n in nationality_list]
-    unique_nationalities = sorted(set([n for n in all_nationalities if n]))  # Rimuove spazi vuoti e duplicati
-    print(f"Unique nationalities: {unique_nationalities}")  # Debug: mostra le nazionalità uniche trovate
-    print(f"Total unique nationalities: {len(unique_nationalities)}")  # Debug: numero totale di nazionalità uniche
-
-    # Mostra la selectbox per selezionare una nazionalità
-    selected_nationality = st.selectbox("Choose a nationality", unique_nationalities)  # Selectbox per la scelta
-
-    return selected_nationality  # Restituisce la nazionalità selezionata
+    # **Carica i film e registi dal file RDF, filtrati per dataset**
+    movies_dict = load_movies_and_directors_from_ttl("movies_ontology.ttl", movies)
 
 
-def select_popularity_preference(ratings, movies):
-    """
-    Funzione che permette all'utente di selezionare una preferenza in base alla popolarità del film
-    (film popolari, di nicchia o indifferenti) e restituisce i film corrispondenti a tale preferenza.
+    # **Crea una lista di registi unici dal dizionario**
+    directors = sorted(set(director for directors in movies_dict.values() for director in directors))
 
-    Args:
-        ratings (DataFrame): DataFrame contenente le valutazioni dei film.
-        movies (DataFrame): DataFrame contenente i film e i loro dettagli.
+    # **Aggiungi "Choose an option" come opzione predefinita**
+    directors.insert(0, "Choose an option")
 
-    Returns:
-        DataFrame: I film filtrati in base alla preferenza di popolarità selezionata dall'utente.
-    """
+    if directors:
+        # **Selezione del regista**
+        selected_director = st.selectbox("🎬 Choose a director:", directors, index=directors.index(default) if default in directors else 0)
 
-    # Classifica i film in base alle valutazioni (popolari, di nicchia, ecc.)
-    categorized_movies = categorize_movies_by_votes(ratings, movies)
-
-    # Mostra un'intestazione personalizzata per la selezione delle preferenze di popolarità
-    st.markdown('<div class="subheader">Do you prefer popular movies or niche films?</div>', unsafe_allow_html=True)
-
-    # Creazione di un radio button per permettere all'utente di scegliere tra film popolari, di nicchia o blockbuster
-    popularity_preference = st.radio(
-        "Preferisci film popolari, di nicchia o campione di incassi?",  # Testo della radio button
-        ["Popular", "Niche", "Blockbuster"]  # Opzioni disponibili per la scelta
-    )
-
-    # Filtra i film in base alla preferenza selezionata (popolare, di nicchia, o blockbuster)
-    filtered_movies = categorized_movies[categorized_movies['category'] == popularity_preference]
-
-    # Visualizza la preferenza selezionata e i film corrispondenti
-    st.write("Preferenza selezionata:", popularity_preference)
-    st.write("Film nella categoria selezionata:", filtered_movies)
-
-    # Restituisce i film filtrati in base alla selezione dell'utente
-    return filtered_movies
-
-def fetch_release_year_from_dbpedia(title):
-    """
-    Funzione per ottenere l'anno di uscita di un film da DBpedia utilizzando una query SPARQL.
-
-    Questa funzione esegue una query SPARQL su DBpedia per ottenere l'anno di uscita di un film specificato dal titolo.
-    La funzione normalizza il titolo del film per migliorare la corrispondenza e utilizza l'API SPARQL di DBpedia per
-    cercare l'anno di rilascio.
-
-    Args:
-        title (str): Il titolo del film per il quale si desidera ottenere l'anno di uscita.
-
-    Returns:
-        list: Una lista contenente l'anno di uscita del film se trovato, altrimenti una lista vuota.
-    """
-    movie_title_clean = normalize_title(title)
-    print(f"Searching for release year of: {movie_title_clean}")  # Debug
-
-    sparql = SPARQLWrapper("https://dbpedia.org/sparql")
-    sparql.setReturnFormat(JSON)
-
-    # Query SPARQL per ottenere l'anno di uscita del film
-    query = f"""
-    SELECT  ?year
-    WHERE {{
-        ?film foaf:name "{movie_title_clean}"@en .
-        ?film dbo:releaseDate ?releaseDate .
-        BIND(year(?releaseDate) AS ?year)
-    }}
-    """
-
-    sparql.setQuery(query)
-    results = sparql.query().convert()
-
-    print(f"Query result: {results}")  # Debug
-
-    years = []
-    if results['results']['bindings']:
-        for result in results['results']['bindings']:
-            year = result['year']['value']
-            years.append(year)
-            print(f"Release year found: {year}")  # Debug
+        # **Se l'utente non seleziona nulla (ovvero "Choose an option"), restituiamo None**
+        if selected_director == "Choose an option":
+            selected_director = None
     else:
-        print(f"No release year found for: {movie_title_clean}")  # Debug
+        st.error("⚠️ No directors found in the dataset.")
 
-    return years
+    return selected_director
 
-def select_decade(movies):
+
+def load_movies_and_actor_from_ttl(file_path, movies_dataset):
     """
-    Funzione per permettere all'utente di selezionare una decada in base agli anni di rilascio dei film.
+    Carica il file RDF/Turtle e recupera i film e i loro registi,
+    filtrando solo quelli presenti nel dataset `movies`.
 
     Args:
-        movies (DataFrame): DataFrame contenente i film e i relativi dettagli.
+        file_path (str): Percorso del file Turtle contenente i dati dei film.
+        movies_dataset (pd.DataFrame): Dataset dei film da confrontare.
 
     Returns:
-        str: La decada selezionata dall'utente.
+        dict: Dizionario {titolo_film: [registi]} con solo i film presenti nel dataset.
+    """
+    g = Graph()
+    g.parse(file_path, format="turtle")
+
+    movies_act = {}
+
+    query = """
+        SELECT DISTINCT ?filmName ?starring WHERE {
+            ?film rdfs:label ?filmName .
+            ?film dbo:starring ?starring .
+            FILTER (lang(?filmName) = "en")
+        }
     """
 
-    # Mostra un'intestazione per la selezione dell'anno di rilascio
-    st.markdown('<div class="subheader">Release Year</div>', unsafe_allow_html=True)
+    results = g.query(query)
 
-    # Dizionario per memorizzare gli anni di rilascio dei film
-    years = {}
+    # Normalizza i titoli dei film per il confronto (rimuovendo l'anno tra parentesi)
+    dataset_movie_titles = set(movies_dataset['title'].apply(lambda x: normalize_title(x)).str.lower().tolist())
 
-    # Estrai i titoli dei primi 20 film dal dataset
-    movie_titles = movies['title'].head(20).tolist()
+    for row in results:
+        if row[0] and row[1]:  # Evita valori nulli
+            # Normalizza il titolo del film (rimuovendo l'anno tra parentesi)
+            film_name = normalize_title(str(row[0]))  # Chiamata alla funzione normalize_title
 
-    # Recupera l'anno di rilascio di ogni film tramite DBpedia
-    for title in movie_titles:
-        years_list = fetch_release_year_from_dbpedia(title)  # Funzione per ottenere l'anno di rilascio
-        if years_list:
-            years[title] = years_list  # Aggiunge l'anno di rilascio al dizionario
-        else:
-            print(f"Skipping {title} as no nationality were found.")  # Messaggio di errore se non c'è anno
-            continue  # Salta il film se non è stato trovato l'anno
+            # Verifica che l'URI del regista sia valido
+            actor_uri = str(row[1])
+            if not is_valid_uri(actor_uri):  # Se l'URI non è valido, salta l'iterazione
+                continue
 
-    print(f"Year dictionary: {years}")  # Debug: mostra il dizionario con gli anni di rilascio
+            actor = str(row[1]).rsplit("/", 1)[-1].replace("_", " ")
 
-    # Estrai gli anni unici e rimuovi eventuali spazi vuoti
-    all_years = [n.strip() for years_list in years.values() for n in years_list]
-    unique_years = sorted(set([n for n in all_years if n]))  # Ordina gli anni e rimuove duplicati
-    print(f"Unique year: {unique_years}")  # Debug: mostra gli anni unici
-    print(f"Total unique year: {len(unique_years)}")  # Debug: mostra il numero totale di anni unici
+            # Rimuovi spazi extra e metti tutto in minuscolo per un confronto robusto
+            film_name_cleaned = film_name.strip().lower()
 
-    # Raggruppa gli anni in decadi (es. '50s, '60s, etc.)
-    group_years_by_decade(years)
+            # Filtra solo i film presenti nel dataset
+            if film_name_cleaned in dataset_movie_titles:
+                if film_name in movies_act:
+                    movies_act[film_name].append(actor)
+                else:
+                    movies_act[film_name] = [actor]
 
-    # Raggruppa gli anni unici in base alla decada
-    grouped_years = group_years_by_decade(unique_years)
+    return movies_act
 
-    # Mostra una selectbox con le decadi disponibili
-    decades = list(grouped_years.keys())  # Estrai le chiavi (decadi) dal dizionario
-    selected_decade = st.selectbox("Choose a decade", decades)  # Mostra la selectbox per la scelta della decada
-
-    return selected_decade  # Restituisce la decada selezionata dall'utente
-
-def group_years_by_decade(years):
+def display_actor_selection(movies, default=None):
     """
-    Funzione per raggruppare gli anni per decada.
+    Interfaccia utente per selezionare un regista e visualizzare i film che ha diretto.
+    """
+    st.markdown('<div class="subheader"> Which actor do you prefer?</div>', unsafe_allow_html=True)
+
+    # **Carica i film e registi dal file RDF, filtrati per dataset**
+    movies_act = load_movies_and_actor_from_ttl("movies_ontology.ttl", movies)
+
+    # **Crea una lista di attori unici dal dizionario**
+    directors = sorted(set(director for directors in movies_act.values() for director in directors))
+
+    if directors:
+        # **Selezione gli attori**
+        selected_actor = st.multiselect(" 🎭 Choose a actor (1 or more):", directors, default=default)
+
+    else:
+        st.error("⚠️ No directors found in the dataset.")
+
+    return selected_actor
+
+
+def load_movies_and_nationality_from_ttl(file_path, movies_dataset):
+    """
+    Carica il file RDF/Turtle e recupera i film, i loro attori e la loro nazionalità,
+    filtrando solo quelli presenti nel dataset `movies`.
 
     Args:
-        years (list): Lista di anni da raggruppare.
+        file_path (str): Percorso del file Turtle contenente i dati dei film.
+        movies_dataset (pd.DataFrame): Dataset dei film da confrontare.
 
     Returns:
-        dict: Un dizionario con le decadi come chiavi e le liste di anni associati a ciascuna decada.
+        dict: Dizionario {titolo_film: {"actors": [attori], "country": [nazione]}}
+        con solo i film presenti nel dataset.
+    """
+    g = Graph()
+    g.parse(file_path, format="turtle")
+
+    movies_nationality = {}
+
+    query = """
+        SELECT DISTINCT ?filmName ?country WHERE {
+            ?film rdfs:label ?filmName .
+            ?film dbo:country ?country .
+            FILTER (lang(?filmName) = "en")
+        }
     """
 
-    # Dizionario per memorizzare gli anni raggruppati per decada
-    grouped_years = {}
+    results = g.query(query)
 
-    # Itera su ogni anno nella lista
-    for year in years:
-        try:
-            # Converte l'anno in intero
-            year = int(year)
+    # Normalizza i titoli dei film per il confronto (rimuovendo l'anno tra parentesi)
+    dataset_movie_titles = set(movies_dataset['title'].apply(lambda x: normalize_title(x)).str.lower().tolist())
 
-            # Calcola la decada (ad esempio 1950, 1960, 1970, ...)
-            decade = (year // 10) * 10
-            decade_str = f"{decade}'s"  # Rappresenta la decada come stringa (es. '60s)
+    for row in results:
+        if row[0]:  # Evita valori nulli
+            # Normalizza il titolo del film (rimuovendo l'anno tra parentesi)
+            film_name = normalize_title(str(row[0]))
 
-            # Aggiungi l'anno alla lista corrispondente alla sua decada
-            if decade_str not in grouped_years:
-                grouped_years[decade_str] = []  # Se la decada non esiste, la crea
-            grouped_years[decade_str].append(year)  # Aggiungi l'anno alla decada
+            # Estrai la nazionalità (paese)
+            country = str(row[1]) if row[1] else None
 
-        except ValueError:
-            # Se non è possibile convertire l'anno, lo ignora (in caso di valori non validi)
-            continue
+            # Rimuovi spazi extra e metti tutto in minuscolo per un confronto robusto
+            film_name_cleaned = film_name.strip().lower()
 
-            # Restituisce il dizionario con gli anni raggruppati per decada
-    return grouped_years
+            # Gestisci URL dei paesi e rimuovi duplicati
+            if country:
+                # Se il paese è un URL, rimuovilo o sostituiscilo con il nome corretto
+                if country.startswith("http://dbpedia.org/resource/"):
+                    # Estrarre il nome del paese dalla URL (rimuovendo il prefisso)
+                    country = country.split("/")[-1].replace("_", " ").title()
 
-def select_duration(movies):
+                # Se il paese è "N/A", escludilo
+                if country == "N/A":
+                    country = None
+
+            # Verifica che il film sia presente nel dataset
+            if film_name_cleaned in dataset_movie_titles:
+                if film_name not in movies_nationality:
+                    movies_nationality[film_name] = {"country": set()}  # Usa un set per evitare duplicati
+
+                # Aggiungi la nazionalità solo se non è "N/A" e non è già presente nel set
+                if country:
+                    movies_nationality[film_name]["country"].add(country)  # Aggiunge solo se non esiste già
+
+    return movies_nationality
+
+
+def display_nationality_selection(movies, default=None):
     """
-    Funzione per permettere all'utente di selezionare la durata preferita di un film.
-
-    Args:
-        movies (DataFrame): DataFrame contenente la lista dei film.
-
-    Returns:
-        str: Categoria di durata selezionata dall'utente.
+    Interfaccia utente per selezionare una nazionalità e visualizzare i film associati.
     """
+    st.markdown('<div class="subheader"> Which country do you prefer?</div>', unsafe_allow_html=True)
 
-    # Mostra un'intestazione personalizzata per la selezione della durata
-    st.markdown('<div class="subheader">Preferred Movie Duration</div>', unsafe_allow_html=True)
+    # Carica i film e le nazionalità dal file RDF, filtrati per dataset
+    movies_nationality = load_movies_and_nationality_from_ttl("movies_ontology.ttl", movies)
 
-    # Dizionario per memorizzare la durata dei film
-    movie_durations = {}
+    # Crea una lista unica di tutte le nazionalità per i film presenti nel dataset
+    all_countries = set()
+    for movie in movies_nationality.values():
+        all_countries.update(movie["country"])
 
-    # Estrai i titoli dei primi 20 film dal dataset
-    movie_titles = movies['title'].head(20).tolist()
+    # Aggiungi l’etichetta predefinita come primo elemento
+    label = "Choose a country"  # Etichetta per indicare che l’utente deve scegliere
+    all_countries = sorted(all_countries)
+    all_countries.insert(0, label)
 
-    # Recupera la durata di ogni film tramite DBpedia
-    for title in movie_titles:
-        runtimes = fetch_runtime_from_dbpedia(title)  # Funzione per ottenere la durata
-        if runtimes:
-            movie_durations[title] = runtimes  # Aggiunge il runtime al dizionario
-        else:
-            print(f"Skipping {title} as no runtime was found.")  # Debug: nessuna durata trovata
-
-    print(f"Movie durations: {movie_durations}")  # Debug: mostra le durate recuperate
-
-    # Liste per classificare i film in base alla durata
-    short_movies = []  # Film < 90 minuti
-    medium_movies = []  # Film tra 90 e 150 minuti
-    long_movies = []  # Film > 150 minuti
-
-    # Analizza la durata di ogni film e lo classifica
-    for title, runtimes in movie_durations.items():
-        for runtime in runtimes:
-            try:
-                # Converte il runtime da secondi a minuti
-                runtime_minutes = float(runtime) / 60
-                print(f"{title} - Runtime in minutes: {runtime_minutes}")  # Debug: mostra la durata convertita
-
-                # Classifica il film in base alla durata
-                if runtime_minutes < 90:
-                    short_movies.append(title)
-                elif 90 <= runtime_minutes <= 150:
-                    medium_movies.append(title)
-                elif runtime_minutes > 150:
-                    long_movies.append(title)
-            except ValueError as e:
-                print(f"Error converting runtime for {title}: {e}")  # Debug: errore di conversione
-
-    # Creazione di un'opzione a radio button per la selezione della durata preferita
-    duration = st.radio(
-        "Choose duration:",
-        ["Short (< 90 min)", "Medium (90-150 min)", "Long (> 150 min)"]
+    # Configura il selectbox per la selezione della nazionalità
+    selected_country = st.selectbox(
+        "🌍 Choose a country:",
+        all_countries,
+        index=all_countries.index(default) if default in all_countries else 0
     )
 
-    return duration
+    # Se l’utente non cambia la selezione predefinita, restituisci una stringa vuota
+    if selected_country == label:
+        return ""
 
-def map_tags_to_categories(tags):
+    return selected_country
+
+
+
+def load_movies_and_runtime_from_ttl(file_path, movies_dataset):
     """
-    Funzione per mappare i tag ai generi di film.
-
-    Questa funzione prende una lista di tag associati ai film e li categorizza in base a parole chiave specifiche
-    per vari generi cinematografici. Ogni tag viene confrontato con un set di parole chiave per determinare
-    in quale categoria di film appartiene.
+    Carica il file RDF/Turtle e recupera i film e la loro durata,
+    filtrando solo quelli presenti nel dataset `movies`.
 
     Args:
-        tags (pd.DataFrame): Un DataFrame contenente i tag associati ai film. Si presume che il DataFrame
-                              abbia una colonna chiamata 'tag' contenente le stringhe dei tag.
+        file_path (str): Percorso del file Turtle contenente i dati dei film.
+        movies_dataset (pd.DataFrame): Dataset dei film da confrontare.
 
     Returns:
-        dict: Un dizionario con categorie di film come chiavi (es. "Action Movies", "Comedy Movies")
-              e una lista dei tag che appartengono a ciascuna categoria come valori.
+        dict: Dizionario {titolo_film: {"runtime": durata}} con solo i film presenti nel dataset.
     """
-    # Parole chiave per le categorie
-    action_keywords = ["action", "adventure", "thriller", "fight", "battle"]
-    comedy_keywords = ["comedy", "romantic", "funny", "humor"]
-    drama_keywords = ["drama", "romance", "emotional", "serious"]
-    sci_fi_keywords = ["sci-fi", "fantasy", "space", "alien", "future"]
-    horror_keywords = ["horror", "thriller", "scream", "scary", "fear"]
+    g = Graph()
+    g.parse(file_path, format="turtle")
 
-    # Dizionario per mappare i tag alle categorie
-    tag_categories = {
-        "Action Movies": [],
-        "Comedy Movies": [],
-        "Drama Movies": [],
-        "Sci-Fi Movies": [],
-        "Horror Movies": []
+    movies_runtime = {}
+
+    query = """
+        SELECT DISTINCT ?filmName ?runtime WHERE {
+            ?film rdfs:label ?filmName .
+            ?film dbo:runtime ?runtime .
+            FILTER (lang(?filmName) = "en")
+        }
+    """
+
+    results = g.query(query)
+
+    # Normalizza i titoli dei film per il confronto (rimuovendo l'anno tra parentesi)
+    dataset_movie_titles = set(movies_dataset['title'].apply(lambda x: normalize_title(x)).str.lower().tolist())
+
+    for row in results:
+        if row[0] and row[1]:  # Verifica che ci siano valori validi
+            # Normalizza il titolo del film (rimuovendo l'anno tra parentesi)
+            film_name = normalize_title(str(row[0]))
+
+            # Verifica che la durata sia un numero valido
+            try:
+                runtime = float(row[1]) if row[1] else None
+            except ValueError:
+                runtime = None  # Se non è un numero valido, imposta la durata a None
+
+            # Rimuovi spazi extra e metti tutto in minuscolo per un confronto robusto
+            film_name_cleaned = film_name.strip().lower()
+
+            # Filtra solo i film presenti nel dataset
+            if film_name_cleaned in dataset_movie_titles and runtime is not None:
+                movies_runtime[film_name] = {"runtime": runtime}
+
+    return movies_runtime
+
+def display_runtime_selection(default=None):
+    """
+    Interfaccia utente per selezionare una o più durate dei film.
+    """
+    st.markdown('<div class="subheader"> Choose one or more movie runtime categories:</div>', unsafe_allow_html=True)
+
+    # Se default non è passato, inizializzalo come lista vuota
+    default = default or []
+
+    # Lista delle categorie di durata
+    runtime_film = ["Short", "Medium", "Long"]
+
+    # Descrizioni ausiliarie per ogni opzione
+    runtime_descriptions = {
+        "Short": " (less than 1.5 hours)",
+        "Medium": " (between 1.5 and 2.5 hours)",
+        "Long": " (more than 2.5 hours)"
     }
 
-    # Raggruppa i tag in base alla parola chiave
-    for tag in tags['tag']:
-        if any(keyword in tag.lower() for keyword in action_keywords):
-            tag_categories["Action Movies"].append(tag)
-        elif any(keyword in tag.lower() for keyword in comedy_keywords):
-            tag_categories["Comedy Movies"].append(tag)
-        elif any(keyword in tag.lower() for keyword in drama_keywords):
-            tag_categories["Drama Movies"].append(tag)
-        elif any(keyword in tag.lower() for keyword in sci_fi_keywords):
-            tag_categories["Sci-Fi Movies"].append(tag)
-        elif any(keyword in tag.lower() for keyword in horror_keywords):
-            tag_categories["Horror Movies"].append(tag)
+    # Creazione delle checkbox per ogni opzione
+    selected_runtimes = [
+        runtime
+        for runtime in runtime_film
+        if st.checkbox(f"{runtime}{runtime_descriptions.get(runtime, '')}", value=runtime in default)
+    ]
 
-    return tag_categories
+    return selected_runtimes
 
-def select_tags(tags):
+
+
+def load_movies_and_release_year_from_ttl(file_path, movies_dataset):
     """
-    Funzione che permette all'utente di selezionare una categoria di genere cinematografico
-    sulla base dei tag disponibili.
+    Carica il file RDF/Turtle e recupera i film e il loro anno di rilascio,
+    filtrando solo quelli presenti nel dataset movies.
 
     Args:
-        tags (list): Lista di tag associati ai film.
+        file_path (str): Percorso del file Turtle contenente i dati dei film.
+        movies_dataset (pd.DataFrame): Dataset dei film da confrontare.
 
     Returns:
-        str: La categoria di genere selezionata dall'utente.
+        dict: Dizionario {titolo_film: {"released": anno}} con solo i film presenti nel dataset.
+    """
+    g = Graph()
+    g.parse(file_path, format="turtle")
+
+    movies_release = {}
+
+    query = """
+        SELECT DISTINCT ?filmName ?released WHERE {
+            ?film rdfs:label ?filmName .
+            ?film dbp:released  ?released .
+            FILTER (lang(?filmName) = "en")
+        }
     """
 
-    # Mappa i tag forniti alle relative categorie di genere
-    tag_categories = map_tags_to_categories(tags)
+    results = g.query(query)
 
-    # Mostra un'intestazione personalizzata con markdown e HTML per fornire un contesto all'utente
-    st.markdown('<div class="subheader"> What aspects would you like to find in the film? </div>',
-                unsafe_allow_html=True)
+    dataset_movie_titles = set(movies_dataset['title'].apply(lambda x: normalize_title(x)).tolist())
 
-    # Crea una select box in Streamlit per permettere all'utente di selezionare una categoria di genere
-    selected_tags = st.selectbox(
-        "Select a genre category:",  # Testo della select box
-        options=list(tag_categories.keys())  # Opzioni disponibili (categorie di genere mappate dai tag)
+    for row in results:
+        if row[0] and row[1]:  # Verifica che ci siano valori validi
+            film_name = normalize_title(str(row[0]))  # Normalizza il titolo
+            released = str(row[1])[:4]  # Prendi solo l'anno (i primi 4 caratteri)
+
+            # Verifica che il film sia presente nel dataset
+            if film_name in dataset_movie_titles and released:
+                movies_release[film_name] = {"released": released}
+
+    return movies_release
+
+
+def group_movies_by_decade(movies_release):
+    """
+    Raggruppa i film per decennio (40s, 50s, 70s, 80s, 90s, etc.)
+
+    Args:
+        movies_release (dict): Dizionario con film e anni di rilascio.
+
+    Returns:
+        dict: Dizionario con i decenni come chiavi e i film associati come valori.
+    """
+    decades = {
+        "1900s": [],
+        "1910s": [],
+        "1920s": [],
+        "1930s": [],
+        "1940s": [],
+        "1950s": [],
+        "1960s": [],
+        "1970s": [],
+        "1980s": [],
+        "1990s": [],
+        "2000s": [],
+        "2010s": [],
+        "2020s": [],
+    }
+
+    for film, details in movies_release.items():
+        year = int(details["released"])
+
+        # Assegna il film al decennio corretto
+        if 1900 <= year < 1910:
+            decades["1900s"].append(film)
+        elif 1910 <= year < 1920:
+            decades["1910s"].append(film)
+        elif 1920 <= year < 1930:
+            decades["1920s"].append(film)
+        elif 1930 <= year < 1940:
+            decades["1930s"].append(film)
+        elif 1940 <= year < 1950:
+            decades["1940s"].append(film)
+        elif 1950 <= year < 1960:
+            decades["1950s"].append(film)
+        elif 1960 <= year < 1970:
+            decades["1960s"].append(film)
+        elif 1970 <= year < 1980:
+            decades["1970s"].append(film)
+        elif 1980 <= year < 1990:
+            decades["1980s"].append(film)
+        elif 1990 <= year < 2000:
+            decades["1990s"].append(film)
+        elif 2000 <= year < 2010:
+            decades["2000s"].append(film)
+        elif 2010 <= year < 2020:
+            decades["2010s"].append(film)
+        elif 2020 <= year < 2030:
+            decades["2020s"].append(film)
+
+    return decades
+
+
+def display_movies_by_decade(movies_dataset, default=None):
+    """
+    Interfaccia utente per selezionare un decennio e visualizzare i film associati.
+    """
+
+    st.markdown('<div class="subheader"> Choose year of production : </div>', unsafe_allow_html=True)
+
+    # Carica i film e gli anni di rilascio dal file RDF, filtrati per il dataset
+    movies_release = load_movies_and_release_year_from_ttl("movies_ontology.ttl", movies_dataset)
+
+    if not movies_release:
+        st.error("⚠️ No movies found in the RDF dataset or in the provided file.")
+        return ""
+
+    # Raggruppa i film per decennio
+    grouped_movies = group_movies_by_decade(movies_release)
+
+    # Crea una lista di decenni
+    decades_list = list(grouped_movies.keys())
+
+    # Aggiungi l’opzione predefinita “Choose a decade” come primo elemento
+    label = "Choose a decade"  # Etichetta per indicare che l’utente deve scegliere
+    decades_list.insert(0, label)
+
+    # Configura il selectbox per la selezione del decennio
+    selected_decade = st.selectbox(
+        "📅 Choose a decade:",
+        decades_list,
+        index=decades_list.index(default) if default in decades_list else 0
     )
 
-    # Restituisce la categoria selezionata dall'utente
-    return selected_tags
+    # Se l’utente non cambia la selezione predefinita, restituisci una stringa vuota
+    if selected_decade == label:
+        return ""
 
-def save_and_navigate_to_results(selected_genres, selected_director, selected_actors, selected_nationality, filtered_movies, selected_decade, duration, selected_tags):
+    return selected_decade
+
+
+# def categorize_movies_by_votes(ratings, movies):
+#     """
+#     Funzione per categorizzare i film in base al numero di voti ricevuti.
+#
+#     Args:
+#         ratings (DataFrame): DataFrame contenente le valutazioni dei film, con 'movieId' e 'rating'.
+#         movies (DataFrame): DataFrame contenente i dettagli dei film, con 'movieId' e 'title'.
+#
+#     Returns:
+#         DataFrame: Un DataFrame contenente i film con i rispettivi conteggi di voti e la categoria.
+#     """
+#
+#     # Conta il numero di valutazioni per ciascun film (raggruppa per 'movieId' e conta le righe per ogni film)
+#     vote_counts = ratings.groupby('movieId')['rating'].count().reset_index()
+#     vote_counts.rename(columns={'rating': 'vote_count'}, inplace=True)  # Rinomina la colonna in 'vote_count'
+#
+#     # Unisci il conteggio dei voti con i dettagli dei film nel DataFrame 'movies'
+#     movies_with_votes = pd.merge(movies, vote_counts, on='movieId', how='left')
+#
+#     # Categorizza i film in base al numero di voti ricevuti
+#     movies_with_votes['category'] = movies_with_votes['vote_count'].apply(
+#         lambda x: 'Popular' if 30 <= x <= 100  # Se il numero di voti è tra 30 e 100, il film è "Popular"
+#         else 'Niche' if x < 30  # Se il numero di voti è inferiore a 30, il film è "Niche"
+#         else 'Blockbuster'  # Se il numero di voti è maggiore di 100, il film è "Blockbuster", ovvero campione di incassi
+#     )
+#
+#     return movies_with_votes  # Restituisce il DataFrame con i film e la loro categoria
+#
+
+
+def display_popularity_preference(default=None):
+    """
+    Funzione che permette all'utente di selezionare una o più preferenze in base alla popolarità del film
+    (film popolari, di nicchia o blockbuster).
+    """
+    st.markdown('<div class="subheader">Do you prefer popular movies or niche films?</div>', unsafe_allow_html=True)
+
+    # Se default non è passato, inizializzalo come lista vuota
+    default = default or []
+
+    # Imposta lo stato iniziale di ogni checkbox in base a default
+    is_popular = st.checkbox("Popular", value="Popular" in default)
+    is_niche = st.checkbox("Niche", value="Niche" in default)
+    is_blockbuster = st.checkbox("Blockbuster", value="Blockbuster" in default)
+
+    # Costruisce un elenco di preferenze basate sulle selezioni effettuate dall'utente
+    preferences = []
+    if is_popular:
+        preferences.append("Popular")
+    if is_niche:
+        preferences.append("Niche")
+    if is_blockbuster:
+        preferences.append("Blockbuster")
+
+    return preferences
+
+
+
+def save_and_navigate_to_results(selected_genres, selected_director, selected_actors, selected_nationality, selected_popularity, selected_decade, duration,
+                                 ):
+    """
+       Salva le scelte dell'utente nella sessione di Streamlit e naviga alla pagina dei risultati.
+
+       :param selected_genres: Lista dei generi selezionati
+       :param selected_director: Lista dei registi selezionati
+       :param selected_actors: Lista degli attori selezionati
+       :param selected_nationality: Nazionalità selezionata
+       :param filtered_movies: Lista di film filtrati
+       :param selected_decade: Decade selezionata
+       :param duration: Durata selezionata
+       :param budget: Budget selezionato (opzionale)
+       :param language: Lingua del film selezionata (opzionale)
+       """
+
     # Salva le scelte nei criteri di sessione
     st.session_state.selected_genres = selected_genres
     st.session_state.selected_director = selected_director
     st.session_state.selected_actors = selected_actors
     st.session_state.selected_nationality = selected_nationality
-    st.session_state.filtered_movies = filtered_movies
+    st.session_state.filtered_movies = selected_popularity
     st.session_state.selected_decade = selected_decade
     st.session_state.duration = duration
-    st.session_state.selected_tags = selected_tags
 
-    # Stampa i criteri salvati per il debug
-    st.write("Selected Genres:", st.session_state.selected_genres)
-    st.write("Selected Director:", st.session_state.selected_director)
-    st.write("Selected Actors:", st.session_state.selected_actors)
-    st.write("Selected Nationality:", st.session_state.selected_nationality)
-    st.write("Filtered Movies:", st.session_state.filtered_movies)
-    st.write("Selected Decade:", st.session_state.selected_decade)
-    st.write("Duration:", st.session_state.duration)
-    st.write("Selected Tags:", st.session_state.selected_tags)
+    if selected_director:
+        selected_director = selected_director.replace(" ", "_")
 
-    # Passa alla pagina dei risultati
-    st.session_state.page = "results"
+    if selected_actors:
+        selected_actors = [actor.replace(" ", "_").lower() for actor in selected_actors]
+    else:
+        selected_actors = []
+
+
+    number_of_results = 5
+    # recommendation.retrieve_results(number_of_results, selected_genres, selected_director, selected_actors, selected_nationality, selected_popularity, duration, selected_decade)
+
