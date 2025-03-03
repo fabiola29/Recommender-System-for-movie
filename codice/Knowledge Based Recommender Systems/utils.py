@@ -699,13 +699,7 @@ def save_and_navigate_to_results(selected_genres, selected_director, selected_ac
     st.session_state.selected_decade = selected_decade
     st.session_state.duration = duration
 
-    if selected_director:
-        selected_director = selected_director.replace(" ", "_")
 
-    if selected_actors:
-        selected_actors = [actor.replace(" ", "_").lower() for actor in selected_actors]
-    else:
-        selected_actors = []
 
 
     number_of_results = 5
