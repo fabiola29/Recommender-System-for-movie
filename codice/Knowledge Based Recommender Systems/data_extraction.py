@@ -63,6 +63,18 @@ def sanitize_sparql_title(title):
     return f'"""{title}"""'  # Usa triple virgolette per evitare problemi di sintassi
 
 
+def filter_genres(genre_str):
+    genres = genre_str.split('|')  # Divide i generi separati da "|"
+    filtered_genres = []
+
+    for genre in genres:
+        genre = genre.strip()
+        # Escludi generi che contengono anni tra parentesi
+        if not re.search(r'\(\d{4}\)', genre) and genre.lower() != "the":
+            filtered_genres.append(genre)
+
+    return filtered_genres
+
 # Funzione per eseguire la query SPARQL su DBpedia
 def get_movie_data(title, retries=3):
     sparql_title = sanitize_sparql_title(title)  # Sanifica il titolo per la query
@@ -153,6 +165,7 @@ with open(input_file, mode="r", encoding="utf-8") as infile:
         title, year = extract_title_and_year(row.strip())
         genres = row.strip()
 
+
         if is_title_in_graph(title):
             print(f"Il film '{title}' è già presente nell'ontologia, salto.")
             continue
@@ -212,12 +225,27 @@ with open(input_file, mode="r", encoding="utf-8") as infile:
         # AGGIUNTA (pre-esistente): controlla se splitted[2], splitted[3], ecc. è un anno (4 cifre) o dei generi.
         for col in range(2, len(splitted)):
             val = splitted[col].strip()
-            if re.match(r'^\\d{4}$', val):
-                g.add((movie_uri, rdflib.URIRef("http://dbpedia.org/property/released"),
-                       rdflib.Literal(val)))
+
+            # Controllo se è un valore che sembra contenere un genere valido
+            if "|" in val:
+                genres = val.split("|")
+                for genre in genres:
+                    # Pulisci ogni genere separato
+                    genre_cleaned = genre.strip()
+
+                    # Ad esempio, verifica che il genere non sia un anno o una stringa non valida
+                    if not re.search(r"\(\d{4}\)", genre_cleaned) and genre_cleaned not in ["The"]:
+                        g.add((movie_uri, rdflib.URIRef("http://dbpedia.org/ontology/genre"),
+                               rdflib.Literal(genre_cleaned)))
+            elif re.match(r'^\\d{4}$', val):
+                # Se è un anno
+                g.add((movie_uri, rdflib.URIRef("http://dbpedia.org/property/released"), rdflib.Literal(val)))
             else:
-                g.add((movie_uri, rdflib.URIRef("http://dbpedia.org/ontology/genre"),
-                       rdflib.Literal(val)))
+                # Se è un singolo genere o un valore non separato
+                genre_cleaned = val.strip()
+                if not re.search(r"\(\d{4}\)", genre_cleaned) and genre_cleaned not in ["The"]:
+                    g.add(
+                        (movie_uri, rdflib.URIRef("http://dbpedia.org/ontology/genre"), rdflib.Literal(genre_cleaned)))
 
         if idx % 10 == 0:
             save_graph()

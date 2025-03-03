@@ -240,7 +240,7 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
     else:
         year_filter = ""
 
-# TODO CHOOSE AN OPTION RISOLVI
+
     constraints = [
         genre_filters,
         f"CONTAINS(LCASE(?director), '{director.lower()}')" if director else "",

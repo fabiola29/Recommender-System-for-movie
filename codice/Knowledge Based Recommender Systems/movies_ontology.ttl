@@ -19,126 +19,55 @@ dbr:Ace_Ventura%3A_When_Nature_Calls a dbo:Film ;
     dbp:released 1995 ;
     dbp:views 88 .
 
-dbr:Addiction dbo:genre "Drama|Horror",
-        "The (1995)\"" ;
-    dbp:views 2 .
-
-dbr:Amateur dbo:genre "Crime|Drama|Thriller" ;
-    dbp:released 1994 ;
-    dbp:views 1 .
-
-dbr:Amazing_Panda_Adventure dbo:genre "Adventure|Children",
-        "The (1995)\"" ;
-    dbp:views 3 .
-
-dbr:American_President dbo:genre "Comedy|Drama|Romance",
-        "The (1995)\"" ;
+dbr:American_President dbo:genre "Comedy",
+        "Drama",
+        "Romance" ;
     dbp:views 70 .
 
-dbr:Angels_and_Insects dbo:genre "Drama|Romance" ;
+dbr:Angels_and_Insects dbo:genre "Drama",
+        "Romance" ;
     dbp:released 1995 ;
     dbp:views 7 .
 
-dbr:Anne_Frank_Remembered a dbo:Film ;
-    rdfs:label "Anne Frank Remembered"@en ;
-    dbo:abstract "Anne Frank Remembered is a 1995 British documentary film produced and directed by Jon Blair about the life and posthumously published diary of the German-Jewish diarist, Anne Frank, who spent most of her life in the Netherlands. The film was produced in association with the Anne Frank House, Disney Channel, and the BBC, and features narration by Kenneth Branagh and extracts from Frank's diary read by Glenn Close. It originally aired on television in April 1995 before it was screened theatrically by Sony Pictures Classics in February 1996. Miep Gies, the woman who had helped shelter the family, and who had saved the diary after the group was betrayed, collaborated with Blair and is interviewed about her memories of hiding the Frank family. Blair also uses interviews with Hannah Pick-Goslar (\"Hanneli\") and Jaqueline van Maarsen, two of Anne Frank's friends, and notably uses archive interviews of Otto Frank to retell Anne's story. The film also records the first meeting between Miep Gies and Werner Peter Pfeffer, the son of Fritz Pfeffer (\"Albert Dussel\" in the Diary), who died two months after filming. In a moving scene, filmed as it happened, a tearful Pfeffer offers \"Vielen Dank\" (\"many thanks\") to Gies for her efforts to save his father. Blair filmed in the real locations of Frank's life; including the neighbourhood Anne grew up in, the \"Achterhuis\" of Prinsengracht 263 (where she and her family lived in hiding) in Amsterdam, and the Westerbork and Auschwitz Concentration Camps. Blair commented that Auschwitz had been filmed a number of times, for many reasons; however, he wanted to suggest something of the \"ghosts\" of the people who had passed through there, and so he determined that the only way to do this would be to film at night. He was also able to obtain a train similar to those used during World War II to recreate the scenes of people being transported to Auschwitz. As the film was made in association with Anne Frank House, it was able to include the only known film footage taken of Anne Frank. The short film was made in 1941 of a wedding in the Amsterdam suburb where the Frank family lived. The camera cuts for just seven seconds to a balcony, where Anne Frank stands watching the bride and groom on the footpath below. The film won an Academy Award for Best Documentary Feature in 1996. The award was jointly collected by Jon Blair and Miep Gies, who received a standing ovation during the award ceremony. On Rotten Tomatoes, the film holds an approval rating of 97% based on 29 reviews, and an average rating of 8/10."@en ;
-    dbo:country "United Kingdom" ;
-    dbo:director "http://dbpedia.org/resource/Jon_Blair" ;
-    dbo:genre "Documentary" ;
-    dbo:runtime 7020 ;
-    dbo:starring "http://dbpedia.org/resource/Glenn_Close" ;
-    dbp:released 1995 ;
-    dbp:views 5 .
-
-dbr:Antonia%27s_Line_%28Antonia%29 dbo:genre "Comedy|Drama" ;
+dbr:Antonia%27s_Line_%28Antonia%29 dbo:genre "Comedy",
+        "Drama" ;
     dbp:released 1995 ;
     dbp:views 8 .
 
-dbr:Apollo_13 dbo:genre "Adventure|Drama|IMAX" ;
-    dbp:released 1995 ;
-    dbp:views 201 .
-
-dbr:Assassins dbo:genre "Action|Crime|Thriller" ;
+dbr:Assassins dbo:genre "Action",
+        "Crime",
+        "Thriller" ;
     dbp:released 1995 ;
     dbp:views 16 .
 
-dbr:Awfully_Big_Adventure dbo:genre "An (1995)\"",
+dbr:Babe dbo:genre "Children",
         "Drama" ;
-    dbp:views 1 .
-
-dbr:Babe dbo:genre "Children|Drama" ;
     dbp:released 1995 ;
     dbp:views 128 .
-
-dbr:Bad_Boys dbo:genre "Action|Comedy|Crime|Drama|Thriller" ;
-    dbp:released 1995 ;
-    dbp:views 51 .
 
 dbr:Balto a dbo:Film ;
     rdfs:label "Balto"@en ;
     dbo:abstract "Balto (1919 – March 14, 1933) was a Siberian Husky and sled dog belonging to musher and breeder Leonhard Seppala. He achieved fame when he reportedly led a team of sled dogs driven by Gunnar Kaasen on the final leg of the 1925 serum run to Nome, in which diphtheria antitoxin was transported from Anchorage, Alaska, to Nenana, Alaska, by train and then to Nome by dog sled to combat an outbreak of the disease. Balto lived in ease at Cleveland Zoo until his death on March 14, 1933, at the age of 14. Following his death, his body was mounted and displayed in the Cleveland Museum of Natural History, where it remains today."@en ;
     dbo:country "N/A" ;
     dbo:director "N/A" ;
-    dbo:genre "Adventure|Animation|Children" ;
+    dbo:genre "Adventure",
+        "Animation",
+        "Children" ;
     dbp:released 1995 ;
     dbp:views 8 .
 
-dbr:Basketball_Diaries dbo:genre "Drama",
-        "The (1995)\"" ;
-    dbp:views 15 .
-
-dbr:Batman_Forever a dbo:Film ;
-    rdfs:label "Batman Forever"@en ;
-    dbo:abstract "Batman Forever (on-screen title is simply Forever) is a 1995 American superhero film directed by Joel Schumacher and produced by Tim Burton, based on the DC Comics character Batman by Bob Kane and Bill Finger. The third installment of Warner Bros.' initial Batman film series, it is a sequel to Batman Returns starring Val Kilmer, replacing Michael Keaton as Bruce Wayne / Batman, alongside Tommy Lee Jones, Jim Carrey, Nicole Kidman, Chris O'Donnell, Michael Gough, and Pat Hingle. The plot focuses on Batman trying to stop Two-Face and the Riddler in their scheme to extract information from all the minds in Gotham City while adopting an orphaned acrobat named Dick Grayson—who becomes his sidekick, Robin—and developing feelings for psychologist Dr. Chase Meridian. Schumacher mostly eschewed the dark, dystopian atmosphere of Burton's films by drawing inspiration from the Batman comic books of the Dick Sprang era, as well as the 1960s television series. After Keaton chose not to reprise his role, William Baldwin and Ethan Hawke were considered as a replacement before Val Kilmer joined the cast. Batman Forever was released on June 16, 1995, to mixed reviews from critics, who praised the visuals and some of the performances, but criticized the CGI, costume designs, and tonal departure from previous films. The film was a box office success, grossing over $336 million worldwide and becoming the sixth-highest-grossing film worldwide of 1995. It was followed by Batman & Robin in 1997, with Schumacher returning as the director, Chris O'Donnell returning as Robin, and George Clooney replacing Kilmer as Batman."@en ;
-    dbo:country "United States" ;
-    dbo:director "http://dbpedia.org/resource/Joel_Schumacher" ;
-    dbo:genre "Action|Adventure|Comedy|Crime" ;
-    dbo:runtime 7320 ;
-    dbo:starring "http://dbpedia.org/resource/Chris_O'Donnell",
-        "http://dbpedia.org/resource/Jim_Carrey",
-        "http://dbpedia.org/resource/Michael_Gough",
-        "http://dbpedia.org/resource/Nicole_Kidman",
-        "http://dbpedia.org/resource/Pat_Hingle",
-        "http://dbpedia.org/resource/Tommy_Lee_Jones",
-        "http://dbpedia.org/resource/Val_Kilmer" ;
-    dbp:released 1995 ;
-    dbp:views 137 .
-
-dbr:Beautiful_Girls dbo:genre "Comedy|Drama|Romance" ;
-    dbp:released 1996 ;
-    dbp:views 10 .
-
-dbr:Beauty_of_the_Day_%28Belle_de_jour%29 dbo:genre "Drama" ;
-    dbp:released 1967 ;
-    dbp:views 12 .
-
-dbr:Bed_of_Roses dbo:genre "Drama|Romance" ;
+dbr:Bed_of_Roses dbo:genre "Drama",
+        "Romance" ;
     dbp:released 1996 ;
     dbp:views 8 .
 
-dbr:Before_and_After dbo:genre "Drama|Mystery" ;
-    dbp:released 1996 ;
-    dbp:views 3 .
-
-dbr:Beyond_Rangoon a dbo:Film ;
-    rdfs:label "Beyond Rangoon"@en ;
-    dbo:abstract "Beyond Rangoon is a 1995 drama film directed by John Boorman about Laura Bowman (played by Patricia Arquette), an American tourist who vacations in the country of Burma (now known as Myanmar) in 1988, the year in which the 8888 Uprising takes place. The film was mostly filmed in Malaysia, and, though a work of fiction, was inspired by real people and real events. Bowman joins, albeit initially unintentionally, political rallies with university students protesting for democracy, and travels with the student leader U Aung Ko throughout Burma. There, they see the brutality of the military dictatorship of the Ne Win Regime and attempt to escape to Thailand. The film was an official selection at the 1995 Cannes Film Festival. The film may have had an impact beyond movie screens, however. Only weeks into its European run, the Burmese military junta freed Nobel Peace Prize winner Aung San Suu Kyi (depicted in the film) after several years under strict house arrest. The celebrated democracy leader thanked the filmmakers in her first interview with the BBC. Suu Kyi was re-arrested a few years later, but Beyond Rangoon had already helped raise world attention on a previously \"invisible\" tragedy: the massacres of 1988 and the cruelty of her country's military rulers."@en ;
-    dbo:country "United States" ;
-    dbo:director "http://dbpedia.org/resource/John_Boorman" ;
-    dbo:genre "Adventure|Drama|War" ;
-    dbo:runtime 5940 ;
-    dbo:starring "http://dbpedia.org/resource/Frances_McDormand",
-        "http://dbpedia.org/resource/Patricia_Arquette",
-        "http://dbpedia.org/resource/Spalding_Gray" ;
-    dbp:released 1995 ;
-    dbp:views 6 .
-
-dbr:Big_Bully dbo:genre "Comedy|Drama" ;
+dbr:Big_Bully dbo:genre "Comedy",
+        "Drama" ;
     dbp:released 1996 ;
     dbp:views 5 .
 
-dbr:Big_Green dbo:genre "Children|Comedy",
-        "The (1995)\"" ;
+dbr:Big_Green dbo:genre "Children",
+        "Comedy" ;
     dbp:views 3 .
 
 dbr:Bio-Dome a dbo:Film ;
@@ -156,163 +85,50 @@ dbr:Bio-Dome a dbo:Film ;
     dbp:released 1996 ;
     dbp:views 31 .
 
-dbr:Birdcage dbo:genre "Comedy",
-        "The (1996)\"" ;
-    dbp:views 86 .
-
 dbr:Black_Sheep dbo:genre "Comedy" ;
     dbp:released 1996 ;
     dbp:views 16 .
 
-dbr:Blue_in_the_Face a dbo:Film ;
-    rdfs:label "Blue in the Face"@en ;
-    dbo:abstract "Blue in the Face is a 1995 American comedy film directed by Wayne Wang and Paul Auster. It stars Harvey Keitel leading an ensemble cast, including Giancarlo Esposito, Roseanne Barr, Michael J. Fox, Lily Tomlin, Victor Argo, Mira Sorvino, Lou Reed, Keith David, Jim Jarmusch, Jared Harris, RuPaul, and Madonna. Blue in the Face was filmed over a five-day period as a follow-up to Wang's 1995 film Smoke. During production of Smoke, Keitel and the others ad-libbed scenes in-character between takes and a sequel was made using this improvised material. Lily Tomlin was nominated for an American Comedy Award as \"Funniest Supporting Actress in a Motion Picture\" for her performance in this picture. Blue in the Face features songs by singer Selena. Her bilingual duet with David Byrne, \"God's Child (Baila Conmigo)\", appears on the film's soundtrack."@en ;
-    dbo:country "United States" ;
-    dbo:director "http://dbpedia.org/resource/Paul_Auster" ;
-    dbo:genre "Comedy|Drama" ;
-    dbo:runtime 5340 ;
-    dbo:starring "http://dbpedia.org/resource/Giancarlo_Esposito",
-        "http://dbpedia.org/resource/Harvey_Keitel",
-        "http://dbpedia.org/resource/Jim_Jarmusch",
-        "http://dbpedia.org/resource/Lily_Tomlin",
-        "http://dbpedia.org/resource/Lou_Reed",
-        "http://dbpedia.org/resource/Malik_Yoba",
-        "http://dbpedia.org/resource/Mel_Gorham",
-        "http://dbpedia.org/resource/Michael_J._Fox",
-        "http://dbpedia.org/resource/Mira_Sorvino",
-        "http://dbpedia.org/resource/Roseanne_Barr",
-        "http://dbpedia.org/resource/Victor_Argo" ;
-    dbp:released 1995 ;
-    dbp:views 3 .
-
-dbr:Boomerang dbo:genre "Comedy|Romance" ;
-    dbp:released 1992 ;
-    dbp:views 16 .
-
-dbr:Bottle_Rocket a dbo:Film ;
-    rdfs:label "Bottle Rocket"@en ;
-    dbo:abstract "Bottle Rocket is a 1996 American crime comedy film directed by Wes Anderson in his feature film directorial debut. The film is written by Anderson and Owen Wilson and is based on Anderson's 1994 short film of the same name. Bottle Rocket is also the acting debut for brothers Owen and Luke Wilson, who co-starred with Robert Musgrave, their older brother Andrew Wilson, Lumi Cavazos, and James Caan. Principal photography took place in various locations throughout Texas. The film had a limited release in theaters on February 21, 1996. Though not a commercial success, the film received acclaim from critics and launched the film careers of Anderson and the Wilson brothers. Director Martin Scorsese later named Bottle Rocket one of his top-ten favorite films of the 1990s."@en ;
-    dbo:country "United States" ;
-    dbo:director "http://dbpedia.org/resource/Wes_Anderson" ;
-    dbo:genre "Adventure|Comedy|Crime|Romance" ;
-    dbo:runtime 5460 ;
-    dbo:starring "http://dbpedia.org/resource/James_Caan",
-        "http://dbpedia.org/resource/Luke_Wilson",
-        "http://dbpedia.org/resource/Owen_Wilson" ;
-    dbp:released 1996 ;
-    dbp:views 23 .
-
-dbr:Boys_of_St._Vincent dbo:genre "Drama",
-        "The (1992)\"" ;
-    dbp:views 2 .
-
-dbr:Braveheart a dbo:Film ;
-    rdfs:label "Braveheart"@en ;
-    dbo:abstract "Braveheart is a 1995 American historical drama film directed and produced by, and starring Mel Gibson. Gibson portrays Sir William Wallace, a late-13th century Scottish warrior who led the Scots in the First War of Scottish Independence against King Edward I of England. The film also stars Sophie Marceau, Patrick McGoohan and Catherine McCormack. The story is inspired by Blind Harry's 15th century epic poem The Actes and Deidis of the Illustre and Vallyeant Campioun Schir William Wallace and was adapted for the screen by Randall Wallace. Development on the film initially started at Metro-Goldwyn-Mayer (MGM) when producer Alan Ladd Jr. picked up the project from Wallace, but when MGM was going through new management, Ladd left the studio and took the project with him. Despite initially declining, Gibson eventually decided to direct the film, as well as star as Wallace. Braveheart was filmed in Scotland and Ireland from June to October 1994 with a budget around $65–70 million. The film, which was produced by Gibson's Icon Productions and The Ladd Company, was distributed by Paramount Pictures in North America and by 20th Century Fox internationally. Released on May 24, 1995, Braveheart was praised for its action, drama, and romance, though it was criticized for its numerous historical deviations. Nonetheless, the movie was successful both critically and commercially. A legacy sequel, Robert the Bruce, was released on June 28, 2019, with Angus Macfadyen reprising his role."@en ;
-    dbo:country "United States" ;
-    dbo:director "http://dbpedia.org/resource/Mel_Gibson" ;
-    dbo:genre "Action|Drama|War" ;
-    dbo:runtime 10680 ;
-    dbo:starring "http://dbpedia.org/resource/Brendan_Gleeson",
-        "http://dbpedia.org/resource/Catherine_McCormack",
-        "http://dbpedia.org/resource/Mel_Gibson",
-        "http://dbpedia.org/resource/Patrick_McGoohan",
-        "http://dbpedia.org/resource/Sophie_Marceau" ;
-    dbp:released 1995 ;
-    dbp:views 237 .
-
-dbr:Bridges_of_Madison_County dbo:genre "Drama|Romance",
-        "The (1995)\"" ;
-    dbp:views 23 .
-
-dbr:Broken_Arrow dbo:genre "Action|Adventure|Thriller" ;
-    dbp:released 1996 ;
-    dbp:views 84 .
-
-dbr:Brothers_McMullen dbo:genre "Comedy",
-        "The (1995)\"" ;
-    dbp:views 12 .
-
-dbr:Canadian_Bacon a dbo:Film ;
-    rdfs:label "Canadian Bacon"@en ;
-    dbo:abstract "Canadian Bacon is a 1995 comedy film written, produced, and directed by Michael Moore which satirizes Canada–United States relations along the Canada–United States border. The film stars an ensemble cast featuring Alan Alda, John Candy (in his final film role), Bill Nunn, Kevin J. O'Connor, Rhea Perlman, Kevin Pollak, G. D. Spradlin, and Rip Torn. The film was screened in the Un Certain Regard section at the 1995 Cannes Film Festival, and was the final film released starring John Candy, though it was shot before the earlier-released Wagons East. It is also Moore's only non-documentary film to date."@en ;
-    dbo:country "Canada" ;
-    dbo:director "http://dbpedia.org/resource/Michael_Moore" ;
-    dbo:genre "Comedy|War" ;
-    dbo:runtime 5400 ;
-    dbo:starring "http://dbpedia.org/resource/Alan_Alda",
-        "http://dbpedia.org/resource/Bill_Nunn",
-        "http://dbpedia.org/resource/G.D._Spradlin",
-        "http://dbpedia.org/resource/John_Candy",
-        "http://dbpedia.org/resource/Kevin_J._O'Connor_(actor)",
-        "http://dbpedia.org/resource/Kevin_Pollak",
-        "http://dbpedia.org/resource/Rhea_Perlman",
-        "http://dbpedia.org/resource/Rip_Torn" ;
-    dbp:released 1995 ;
-    dbp:views 11 .
-
-dbr:Casino dbo:genre "Crime|Drama" ;
+dbr:Casino dbo:genre "Crime",
+        "Drama" ;
     dbp:released 1995 ;
     dbp:views 82 .
 
-dbr:Casper dbo:genre "Adventure|Children" ;
-    dbp:released 1995 ;
-    dbp:views 62 .
-
-dbr:Catwalk dbo:genre "Documentary" ;
-    dbp:released 1996 ;
-    dbp:views 1 .
-
-dbr:Chungking_Express_%28Chung_Hing_sam_lam%29 dbo:genre "Drama|Mystery|Romance" ;
-    dbp:released 1994 ;
-    dbp:views 4 .
-
-dbr:City_Hall dbo:genre "Drama|Thriller" ;
-    dbp:released 1996 ;
-    dbp:views 14 .
-
-dbr:City_of_Lost_Children dbo:genre "Adventure|Drama|Fantasy|Mystery|Sci-Fi",
-        "La) (1995)\"",
+dbr:City_of_Lost_Children dbo:genre "Adventure",
+        "Drama",
+        "Fantasy",
+        "Mystery",
+        "Sci-Fi",
         "The (Cité des enfants perdus" ;
     dbp:views 38 .
-
-dbr:Clockers dbo:genre "Crime|Drama|Mystery" ;
-    dbp:released 1995 ;
-    dbp:views 14 .
 
 dbr:Clueless a dbo:Film ;
     rdfs:label "Clueless"@en ;
     dbo:abstract "Clueless is a 1995 American coming-of-age teen comedy film written and directed by Amy Heckerling. It stars Alicia Silverstone with supporting roles by Stacey Dash, Brittany Murphy and Paul Rudd. It was produced by Scott Rudin and Robert Lawrence. It is loosely based on Jane Austen's 1815 novel Emma, with a modern-day setting of Beverly Hills. The plot centers on a beautiful, popular, and rich high school student who befriends a new student and decides to give her a makeover while playing a matchmaker for her teachers and examining her own existence. Clueless was filmed in California over a 40-day schedule. The film's director studied Beverly Hills high school students to understand how teenagers in the 1990s talked, and learned some appropriate slang terms from them. The film grossed $56.1 million in the United States. It has received positive reviews from critics and is considered to be one of the best teen films of all time. Clueless has developed a cult following and has a continuing legacy. The film was followed by a spin-off television sitcom and series of books."@en ;
     dbo:country "United States" ;
     dbo:director "http://dbpedia.org/resource/Amy_Heckerling" ;
-    dbo:genre "Comedy|Romance" ;
+    dbo:genre "Comedy",
+        "Romance" ;
     dbo:runtime 5820 ;
     dbo:starring "http://dbpedia.org/resource/Alicia_Silverstone" ;
     dbp:released 1995 ;
     dbp:views 104 .
 
-dbr:Congo dbo:genre "Action|Adventure|Mystery|Sci-Fi" ;
-    dbp:released 1995 ;
-    dbp:views 57 .
-
-dbr:Copycat dbo:genre "Crime|Drama|Horror|Mystery|Thriller" ;
+dbr:Copycat dbo:genre "Crime",
+        "Drama",
+        "Horror",
+        "Mystery",
+        "Thriller" ;
     dbp:released 1995 ;
     dbp:views 36 .
 
-dbr:Crimson_Tide dbo:genre "Drama|Thriller|War" ;
-    dbp:released 1995 ;
-    dbp:views 103 .
-
-dbr:Crossing_Guard dbo:genre "Action|Crime|Drama|Thriller",
-        "The (1995)\"" ;
+dbr:Crossing_Guard dbo:genre "Action",
+        "Crime",
+        "Drama",
+        "Thriller" ;
     dbp:views 3 .
 
-dbr:Crumb dbo:genre "Documentary" ;
-    dbp:released 1994 ;
-    dbp:views 17 .
-
-dbr:Cry dbo:genre "Drama",
-        "the Beloved Country (1995)\"" ;
+dbr:Cry dbo:genre "Drama" ;
     dbp:views 2 .
 
 dbr:Cutthroat_Island a dbo:Film ;
@@ -320,7 +136,9 @@ dbr:Cutthroat_Island a dbo:Film ;
     dbo:abstract "Cutthroat Island is a 1995 adventure swashbuckler film directed by Renny Harlin and written by Robert King and Marc Norman from a story by Michael Frost Beckner, James Gorman, Bruce A. Evans and Raynold Gideon. It stars Geena Davis, Matthew Modine and Frank Langella. It is a co-production between the United States, France, Germany and Italy. It had a notoriously troubled and chaotic production involving multiple rewrites and recasts. It received generally negative reviews from critics, who praised its high production values, action sequences, shooting locations and musical score, but criticized its script, acting, and unrealistic stunts. It was one of the biggest box office bombs in history, with losses of $147 million when adjusted for inflation. It is listed in the Guinness World Records as the biggest box-office bomb of all time, and significantly reduced the bankability and Hollywood production of pirate-themed films until 2003's Pirates of the Caribbean: The Curse of the Black Pearl. Its failure caused the closing of Carolco Pictures."@en ;
     dbo:country "" ;
     dbo:director "http://dbpedia.org/resource/Renny_Harlin" ;
-    dbo:genre "Action|Adventure|Romance" ;
+    dbo:genre "Action",
+        "Adventure",
+        "Romance" ;
     dbo:runtime 7440 ;
     dbo:starring "http://dbpedia.org/resource/Frank_Langella",
         "http://dbpedia.org/resource/Geena_Davis",
@@ -343,7 +161,8 @@ dbr:Dangerous_Minds a dbo:Film ;
     dbp:released 1995 ;
     dbp:views 38 .
 
-dbr:Dead_Man_Walking dbo:genre "Crime|Drama" ;
+dbr:Dead_Man_Walking dbo:genre "Crime",
+        "Drama" ;
     dbp:released 1995 ;
     dbp:views 67 .
 
@@ -352,7 +171,9 @@ dbr:Dead_Presidents a dbo:Film ;
     dbo:abstract "Dead Presidents is a 1995 American crime film co-written, produced and directed by the Hughes Brothers. The film chronicles the life of Anthony Curtis (Larenz Tate), focusing on his teenage years as a high school graduate and his experiences during the Vietnam War as a Recon Marine. As he returns to his hometown in The Bronx, Curtis finds himself struggling to support himself and his family, eventually turning to a life of crime. Dead Presidents is based partly on the real-life experiences of Haywood T. Kirkland (aka Ari S. Merretazon), whose true story was detailed in the book Bloods: An Oral History of the Vietnam War by Black Veterans by Wallace Terry. Certain characters from the film are based on real acquaintances of Kirkland, who served time in prison after committing robbery in facepaint. The film also is loosely based on several incidents involving the Black Liberation Army, notably the Brink's armored truck robbery."@en ;
     dbo:country "United States" ;
     dbo:director "http://dbpedia.org/resource/Hughes_brothers" ;
-    dbo:genre "Action|Crime|Drama" ;
+    dbo:genre "Action",
+        "Crime",
+        "Drama" ;
     dbo:runtime 7140 ;
     dbo:starring "http://dbpedia.org/resource/Bokeem_Woodbine",
         "http://dbpedia.org/resource/Chris_Tucker",
@@ -363,49 +184,26 @@ dbr:Dead_Presidents a dbo:Film ;
     dbp:released 1995 ;
     dbp:views 7 .
 
-dbr:Desperado dbo:genre "Action|Romance|Western" ;
-    dbp:released 1995 ;
-    dbp:views 66 .
-
-dbr:Devil_in_a_Blue_Dress dbo:genre "Crime|Film-Noir|Mystery|Thriller" ;
-    dbp:released 1995 ;
-    dbp:views 14 .
-
-dbr:Die_Hard%3A_With_a_Vengeance dbo:genre "Action|Crime|Thriller" ;
-    dbp:released 1995 ;
-    dbp:views 144 .
-
 dbr:Don%27t_Be_a_Menace_to_South_Central_While_Drinking_Your_Juice_in_the_Hood a dbo:Film ;
     rdfs:label "Don't Be a Menace to South Central While Drinking Your Juice in the Hood"@en ;
     dbo:abstract "Don't Be a Menace to South Central While Drinking Your Juice in the Hood (or simply Don't Be a Menace) is a 1996 American comedy film directed by Paris Barclay in his feature film directorial debut, and produced by Keenen Ivory Wayans. It stars the brothers Shawn and Marlon Wayans, who were also both writers with Phil Beauman. The film was released in the United States on January 12, 1996. Similar to I'm Gonna Git You Sucka, the film spoofs a number of African-American, coming-of-age, hood films such as Juice, Jungle Fever, South Central, Do the Right Thing, New Jack City, Dead Presidents, Friday, and most prominently Boyz n the Hood and Menace II Society. The film's title borrows phrases from some of those films, and cameos from the targets, in some cases appearing in similar roles or scenes as the films being parodied."@en ;
     dbo:country "United States" ;
     dbo:director "http://dbpedia.org/resource/Paris_Barclay" ;
-    dbo:genre "Comedy|Crime" ;
+    dbo:genre "Comedy",
+        "Crime" ;
     dbo:runtime 5340 ;
     dbo:starring "http://dbpedia.org/resource/Marlon_Wayans",
         "http://dbpedia.org/resource/Shawn_Wayans" ;
     dbp:released 1996 ;
     dbp:views 7 .
 
-dbr:Doom_Generation dbo:genre "Comedy|Crime|Drama",
-        "The (1995)\"" ;
-    dbp:views 3 .
-
-dbr:Down_Periscope a dbo:Film ;
-    rdfs:label "Down Periscope"@en ;
-    dbo:abstract "Down Periscope is a 1996 American military comedy submarine film from 20th Century Fox, produced by Robert Lawrence and directed by David S. Ward, and starring Kelsey Grammer, Lauren Holly, and Rob Schneider. Co-starring Bruce Dern, Harry Dean Stanton, William H. Macy, and Rip Torn, the film focuses on Lieutenant Commander Thomas Dodge, a capable (if somewhat unorthodox) U.S. Navy officer who fights to save his career after being saddled with a group of misfit seamen who have been brought together as the crew of his first command, USS Stingray, a rusty, obsolete World War II-era diesel submarine that is the focus of a special naval war game, supervised by a bitter rival who is fighting to bury his career by any means necessary."@en ;
-    dbo:country "United States" ;
-    dbo:director "N/A" ;
-    dbo:genre "Comedy" ;
-    dbp:released 1996 ;
-    dbp:views 31 .
-
 dbr:Dracula%3A_Dead_and_Loving_It a dbo:Film ;
     rdfs:label "Dracula: Dead and Loving It"@en ;
     dbo:abstract "Dracula: Dead and Loving It is a 1995 gothic comedy horror film directed by Mel Brooks and starring Leslie Nielsen. It is a spoof of Bram Stoker's novel Dracula and of some of the story's well-known adaptations. Brooks co-authored the screenplay with Steve Haberman and Rudy De Luca. He also appears as Dr. Van Helsing. The film's other stars include Steven Weber, Amy Yasbeck, Peter MacNicol, Harvey Korman, and Anne Bancroft. The film follows the classic Dracula (1931), starring Bela Lugosi, in its deviations from the novel. Its visual style and production values are reminiscent of the Hammer Horror films. It spoofs, among other films, The Fearless Vampire Killers (1967) and Bram Stoker's Dracula (1992). As being a critical and commercial failure, it is currently the latest film directed by Mel Brooks."@en ;
     dbo:country "France" ;
     dbo:director "http://dbpedia.org/resource/Mel_Brooks" ;
-    dbo:genre "Comedy|Horror" ;
+    dbo:genre "Comedy",
+        "Horror" ;
     dbo:runtime 5400 ;
     dbo:starring "http://dbpedia.org/resource/Amy_Yasbeck",
         "http://dbpedia.org/resource/Harvey_Korman",
@@ -422,7 +220,8 @@ dbr:Dunston_Checks_In a dbo:Film ;
     dbo:abstract "Dunston Checks In is a 1996 Canadian-American children's comedy film directed by Ken Kwapis. The film stars Eric Lloyd, Graham Sack, Jason Alexander, Faye Dunaway, Rupert Everett, Paul Reubens, Glenn Shadix, and Sam the Orangutan as Dunston. The film received negative reviews and was a box office bomb, only grossing $10 million against a budget of $16 million."@en ;
     dbo:country "United States" ;
     dbo:director "http://dbpedia.org/resource/Ken_Kwapis" ;
-    dbo:genre "Children|Comedy" ;
+    dbo:genre "Children",
+        "Comedy" ;
     dbo:runtime 5400 ;
     dbo:starring "http://dbpedia.org/resource/Eric_Lloyd",
         "http://dbpedia.org/resource/Faye_Dunaway",
@@ -433,7 +232,8 @@ dbr:Dunston_Checks_In a dbo:Film ;
     dbp:released 1996 ;
     dbp:views 7 .
 
-dbr:Eye_for_an_Eye dbo:genre "Drama|Thriller" ;
+dbr:Eye_for_an_Eye dbo:genre "Drama",
+        "Thriller" ;
     dbp:released 1996 ;
     dbp:views 6 .
 
@@ -459,24 +259,6 @@ dbr:Father_of_the_Bride_Part_II a dbo:Film ;
     dbp:released 1995 ;
     dbp:views 49 .
 
-dbr:First_Knight a dbo:Film ;
-    rdfs:label "First Knight"@en ;
-    dbo:abstract "First Knight is a 1995 medieval film based on Arthurian legend, directed by Jerry Zucker. It stars Sean Connery as King Arthur, Richard Gere as Lancelot, Julia Ormond as Guinevere and Ben Cross as Malagant. The film follows the rogue Lancelot's romance with Lady Guinevere of Leonesse, who is to marry King Arthur of Camelot, while the land is threatened by the renegade knight Malagant. The film is noteworthy within Arthurian cinema for its absence of magical elements, its drawing on the material of Chrétien de Troyes for plot elements and the substantial age difference between Arthur and Guinevere."@en ;
-    dbo:country "" ;
-    dbo:director "http://dbpedia.org/resource/Jerry_Zucker" ;
-    dbo:genre "Action|Drama|Romance" ;
-    dbo:runtime 8040 ;
-    dbo:starring "http://dbpedia.org/resource/Ben_Cross",
-        "http://dbpedia.org/resource/Julia_Ormond",
-        "http://dbpedia.org/resource/Richard_Gere",
-        "http://dbpedia.org/resource/Sean_Connery" ;
-    dbp:released 1995 ;
-    dbp:views 54 .
-
-dbr:Flirting_With_Disaster dbo:genre "Comedy" ;
-    dbp:released 1996 ;
-    dbp:views 12 .
-
 dbr:Four_Rooms a dbo:Film ;
     rdfs:label "Four Rooms"@en ;
     dbo:abstract "Four Rooms is a 1995 American anthology black comedy film co-written and co-directed by Allison Anders, Alexandre Rockwell, Robert Rodriguez, and Quentin Tarantino, loosely based on the adult short fiction writings of Roald Dahl. The story is set in the fictional Hotel Mon Signor in Los Angeles on New Year's Eve. Tim Roth plays Ted, the bellhop and main character in the frame story, whose first night on the job consists of four very different encounters with various hotel guests. The film received mixed reviews from critics who praised the segments directed by Rodriguez and Tarantino, but heavily criticized the segments by Anders and Rockwell."@en ;
@@ -499,23 +281,8 @@ dbr:Four_Rooms a dbo:Film ;
     dbp:released 1995 ;
     dbp:views 20 .
 
-dbr:Free_Willy_2%3A_The_Adventure_Home a dbo:Film ;
-    rdfs:label "Free Willy 2: The Adventure Home"@en ;
-    dbo:abstract "Free Willy 2: The Adventure Home is a 1995 American family adventure drama film and the sequel to the 1993 film Free Willy as well as the second installment in the Free Willy film series distributed by Warner Bros. under their Warner Bros. Family Entertainment label. It is directed by Dwight Little from a screenplay by Karen Janszen, Corey Blechman and John Mattson. Jason James Richter, Jayne Atkinson, August Schellenberg, Mykelti Williamson and Michael Madsen reprise their roles from the first film. New cast members include Jon Tenney and Elizabeth Peña. Unlike the previous film where Keiko played Willy, a robotic double created by Edge Innovations was used to play the eponymous whale while the Free Willy Keiko Foundation devised a plan to bring Keiko to the Oregon Coast Aquarium where he would be rehabilitated from poor health. Filming commenced in Astoria, Oregon and the San Juan Islands between April and August 1994 with additional filming taking place in California. The film opened to mixed reviews from critics. Despite underperforming at the box office, a third film Free Willy 3: The Rescue was subsequently released in 1997."@en ;
-    dbo:country "United States" ;
-    dbo:director "http://dbpedia.org/resource/Dwight_Little" ;
-    dbo:genre "Adventure|Children|Drama" ;
-    dbo:runtime 5880 ;
-    dbo:starring "http://dbpedia.org/resource/August_Schellenberg",
-        "http://dbpedia.org/resource/Elizabeth_Peña",
-        "http://dbpedia.org/resource/Jason_James_Richter",
-        "http://dbpedia.org/resource/Jayne_Atkinson",
-        "http://dbpedia.org/resource/Jon_Tenney",
-        "http://dbpedia.org/resource/Michael_Madsen" ;
-    dbp:released 1995 ;
-    dbp:views 10 .
-
-dbr:French_Twist_%28Gazon_maudit%29 dbo:genre "Comedy|Romance" ;
+dbr:French_Twist_%28Gazon_maudit%29 dbo:genre "Comedy",
+        "Romance" ;
     dbp:released 1995 ;
     dbp:views 5 .
 
@@ -523,7 +290,10 @@ dbr:Friday dbo:genre "Comedy" ;
     dbp:released 1995 ;
     dbp:views 20 .
 
-dbr:From_Dusk_Till_Dawn dbo:genre "Action|Comedy|Horror|Thriller" ;
+dbr:From_Dusk_Till_Dawn dbo:genre "Action",
+        "Comedy",
+        "Horror",
+        "Thriller" ;
     dbp:released 1996 ;
     dbp:views 55 .
 
@@ -531,7 +301,9 @@ dbr:Georgia dbo:genre "Drama" ;
     dbp:released 1995 ;
     dbp:views 1 .
 
-dbr:Get_Shorty dbo:genre "Comedy|Crime|Thriller" ;
+dbr:Get_Shorty dbo:genre "Comedy",
+        "Crime",
+        "Thriller" ;
     dbp:released 1995 ;
     dbp:views 89 .
 
@@ -540,7 +312,9 @@ dbr:GoldenEye a dbo:Film ;
     dbo:abstract "GoldenEye is a 1995 spy film, the seventeenth in the James Bond series produced by Eon Productions, and the first to star Pierce Brosnan as the fictional MI6 agent James Bond. Directed by Martin Campbell, it was the first in the series not to utilize any story elements from the works of novelist Ian Fleming. It was also the first James Bond film not produced by Albert R. Broccoli, following his stepping down from Eon Productions and replacement by his daughter, Barbara Broccoli (along with Michael G. Wilson, although Albert was still involved as a consultant producer; it was his final film project before his death in 1996). The story was conceived and written by Michael France, with later collaboration by other writers. In the film, Bond fights to prevent a rogue ex-MI6 agent (Sean Bean) from using a satellite weapon against London to cause a global financial meltdown. The film was released after a six-year hiatus in the series caused by legal disputes, during which Timothy Dalton’s contract for the role of James Bond expired and he was replaced by Brosnan. M was also recast, with actress Judi Dench becoming the first woman to portray the character, replacing Robert Brown. The role of Miss Moneypenny was also recast, with Caroline Bliss being replaced by Samantha Bond; Desmond Llewelyn was the only actor to reprise his role, as Q. It was the first Bond film made after the dissolution of the Soviet Union and the end of the Cold War, which provided a background for the plot. Principal photography for GoldenEye took place in the UK, Russia, Monte Carlo and Puerto Rico; it was the inaugural film production to be shot at Leavesden Studios. The first Bond film to use computer-generated imagery (CGI), GoldenEye was also the final film of special effects supervisor Derek Meddings's career, and was dedicated to his memory. The film accumulated a worldwide gross of over US$350 million, considerably better than Dalton's films, without taking inflation into account. It received positive reviews, with critics viewing Brosnan as a definite improvement over his predecessor. It also received award nominations for \"Best Special Visual Effects\" and \"Best Sound\" from the British Academy of Film and Television Arts."@en ;
     dbo:country "United States" ;
     dbo:director "http://dbpedia.org/resource/Martin_Campbell" ;
-    dbo:genre "Action|Adventure|Thriller" ;
+    dbo:genre "Action",
+        "Adventure",
+        "Thriller" ;
     dbo:runtime 7800 ;
     dbo:starring "http://dbpedia.org/resource/Famke_Janssen",
         "http://dbpedia.org/resource/Izabella_Scorupco",
@@ -555,7 +329,8 @@ dbr:Grumpier_Old_Men a dbo:Film ;
     dbo:abstract "Grumpier Old Men is a 1995 American romantic comedy film, and a sequel to the film Grumpy Old Men. It stars Jack Lemmon, Walter Matthau, Ann-Margret, Sophia Loren, Burgess Meredith (in his final film role), Daryl Hannah, Kevin Pollak, Katie Sagona and Ann Morgan Guilbert. Grumpier Old Men was directed by Howard Deutch, with the screenplay written by Mark Steven Johnson and the original music score composed by Alan Silvestri. Meredith developed Alzheimer's disease and had to be coached through his role in the film. He died in 1997."@en ;
     dbo:country "United States" ;
     dbo:director "http://dbpedia.org/resource/Howard_Deutch" ;
-    dbo:genre "Comedy|Romance" ;
+    dbo:genre "Comedy",
+        "Romance" ;
     dbo:runtime 6060 ;
     dbo:starring "http://dbpedia.org/resource/Ann-Margret",
         "http://dbpedia.org/resource/Daryl_Hannah",
@@ -566,41 +341,11 @@ dbr:Grumpier_Old_Men a dbo:Film ;
     dbp:released 1995 ;
     dbp:views 52 .
 
-dbr:Hackers dbo:genre "Action|Adventure|Crime|Thriller" ;
-    dbp:released 1995 ;
-    dbp:views 35 .
-
-dbr:Happy_Gilmore a dbo:Film ;
-    rdfs:label "Happy Gilmore"@en ;
-    dbo:abstract "Happy Gilmore is a 1996 American sports comedy film directed by Dennis Dugan and produced by Robert Simonds. It stars Adam Sandler as the title character, an unsuccessful ice hockey player who discovers a newfound talent for golf. The screenplay was written by Sandler and his writing partner Tim Herlihy, in their second feature collaboration after the previous year's Billy Madison; the film also marks the first of multiple collaborations between Sandler and Dugan. The film was released in theaters on February 16, 1996, by Universal Pictures. Despite receiving mixed reviews from critics, Happy Gilmore was a commercial success, earning $39 million on a $12 million budget. The film won an MTV Movie Award for \"Best Fight\" for Adam Sandler versus Bob Barker."@en ;
-    dbo:country "United States" ;
-    dbo:director "http://dbpedia.org/resource/Dennis_Dugan" ;
-    dbo:genre "Comedy" ;
-    dbo:runtime 5520 ;
-    dbo:starring "http://dbpedia.org/resource/Adam_Sandler",
-        "http://dbpedia.org/resource/Carl_Weathers",
-        "http://dbpedia.org/resource/Christopher_McDonald",
-        "http://dbpedia.org/resource/Julie_Bowen" ;
-    dbp:released 1996 ;
-    dbp:views 99 .
-
-dbr:Hate_%28Haine dbo:genre "Crime|Drama",
-        "La) (1995)\"" ;
-    dbp:views 10 .
-
-dbr:Heat dbo:genre "Action|Crime|Thriller" ;
+dbr:Heat dbo:genre "Action",
+        "Crime",
+        "Thriller" ;
     dbp:released 1995 ;
     dbp:views 102 .
-
-dbr:Heidi_Fleiss%3A_Hollywood_Madam a dbo:Film ;
-    rdfs:label "Heidi Fleiss: Hollywood Madam"@en ;
-    dbo:abstract "Heidi Fleiss: Hollywood Madam (1996) is a feature-length documentary film by Nick Broomfield. It concerns Heidi Fleiss, then a madam involved in a prostitution ring. In the film, Broomfield attempts to discover if Fleiss truly is a \"horrible person\" and what made her that way. The film documents the power struggle among Fleiss, her former mentor Elizabeth Adams (known as Madam Alex), and Fleiss' former lover Iván Nagy, himself allegedly involved in prostitution. The film also chronicles the destructive relationship between Fleiss and Nagy, a sort of mutual aggressiveness that both seem to find appealing. The documentary was co-funded by the BBC, HBO, CBC and WDR."@en ;
-    dbo:country "N/A" ;
-    dbo:director "http://dbpedia.org/resource/Nick_Broomfield" ;
-    dbo:genre "Documentary" ;
-    dbo:runtime 6420 ;
-    dbp:released 1995 ;
-    dbp:views 2 .
 
 dbr:Home_for_the_Holidays dbo:genre "Drama" ;
     dbp:released 1995 ;
@@ -611,7 +356,8 @@ dbr:How_to_Make_an_American_Quilt a dbo:Film ;
     dbo:abstract "How to Make an American Quilt is a 1995 American drama film based on the 1991 novel of the same name by Whitney Otto. Directed by Jocelyn Moorhouse, the film features Winona Ryder, Anne Bancroft, Ellen Burstyn, Kate Nelligan and Alfre Woodard. It also marked Jared Leto's film debut. Amblin Entertainment optioned Otto's novel in 1991, and were able to persuade Steven Spielberg to finance the screenplay's development. How to Make an American Quilt garnered mixed reviews from critics. It was a box-office success, grossing $41 million against a $10 million budget. The film received a nomination for the Screen Actors Guild Award for Outstanding Performance by a Cast in a Motion Picture."@en ;
     dbo:country "United States" ;
     dbo:director "http://dbpedia.org/resource/Jocelyn_Moorhouse" ;
-    dbo:genre "Drama|Romance" ;
+    dbo:genre "Drama",
+        "Romance" ;
     dbo:runtime 7020 ;
     dbo:starring "http://dbpedia.org/resource/Alfre_Woodard",
         "http://dbpedia.org/resource/Anne_Bancroft",
@@ -631,55 +377,24 @@ dbr:How_to_Make_an_American_Quilt a dbo:Film ;
     dbp:released 1995 ;
     dbp:views 15 .
 
-dbr:If_Lucy_Fell a dbo:Film ;
-    rdfs:label "If Lucy Fell"@en ;
-    dbo:abstract "If Lucy Fell is a 1996 American romantic comedy film written and directed by Eric Schaeffer, who also co-stars in the film alongside Sarah Jessica Parker, Ben Stiller and Elle Macpherson. It was released on DVD January 30, 2001."@en ;
-    dbo:country "United States" ;
-    dbo:director "http://dbpedia.org/resource/Eric_Schaeffer" ;
-    dbo:genre "Comedy|Romance" ;
-    dbo:runtime 5520 ;
-    dbo:starring "http://dbpedia.org/resource/Ben_Stiller",
-        "http://dbpedia.org/resource/Elle_Macpherson",
-        "http://dbpedia.org/resource/Eric_Schaeffer",
-        "http://dbpedia.org/resource/James_Rebhorn",
-        "http://dbpedia.org/resource/Sarah_Jessica_Parker" ;
-    dbp:released 1996 ;
-    dbp:views 2 .
-
-dbr:In_the_Bleak_Midwinter dbo:genre "Comedy|Drama" ;
-    dbp:released 1995 ;
-    dbp:views 1 .
-
-dbr:Indian_in_the_Cupboard dbo:genre "Adventure|Children|Fantasy",
-        "The (1995)\"" ;
+dbr:Indian_in_the_Cupboard dbo:genre "Adventure",
+        "Children",
+        "Fantasy" ;
     dbp:views 34 .
 
-dbr:It_Takes_Two dbo:genre "Children|Comedy" ;
+dbr:It_Takes_Two dbo:genre "Children",
+        "Comedy" ;
     dbp:released 1995 ;
     dbp:views 4 .
-
-dbr:Jade dbo:genre "Thriller" ;
-    dbp:released 1995 ;
-    dbp:views 6 .
-
-dbr:Jeffrey dbo:genre "Comedy|Drama" ;
-    dbp:released 1995 ;
-    dbp:views 6 .
-
-dbr:Johnny_Mnemonic dbo:genre "Action|Sci-Fi|Thriller" ;
-    dbp:released 1995 ;
-    dbp:views 53 .
-
-dbr:Judge_Dredd dbo:genre "Action|Crime|Sci-Fi" ;
-    dbp:released 1995 ;
-    dbp:views 62 .
 
 dbr:Jumanji a dbo:Film ;
     rdfs:label "Jumanji"@en ;
     dbo:abstract "Jumanji is a 1995 American fantasy adventure film directed by Joe Johnston from a screenplay by Jonathan Hensleigh, Greg Taylor, and Jim Strain. Loosely based on Chris Van Allsburg's picture book of the same name, the film is the first installment of the Jumanji franchise. It stars Robin Williams, Kirsten Dunst, David Alan Grier, Bonnie Hunt, Jonathan Hyde, and Bebe Neuwirth. The story centers on a supernatural board game that releases jungle-based hazards upon its players with every turn they take. As a boy in 1969, Alan Parrish became trapped inside the game itself while playing with his friend, Sarah Whittle. Twenty-six years later, siblings Judy and Peter Shepherd find the game, begin playing and then unwittingly release the now-adult Alan. After tracking down Sarah, the quartet resolves to finish the game in order to reverse all of the destruction it has caused. The film was released on December 15, 1995, to mixed reviews, but was a box office success, grossing $263 million worldwide on a budget of approximately $65 million. It was the 10th highest-grossing film of 1995. The film spawned an animated television series, which aired from 1996 to 1999, and was followed by a related film, Zathura: A Space Adventure (2005), and two indirect sequels, Jumanji: Welcome to the Jungle (2017) and Jumanji: The Next Level (2019), with Columbia Pictures taking over distribution for all subsequent films."@en ;
     dbo:country "United States" ;
     dbo:director "http://dbpedia.org/resource/Joe_Johnston" ;
-    dbo:genre "Adventure|Children|Fantasy" ;
+    dbo:genre "Adventure",
+        "Children",
+        "Fantasy" ;
     dbo:runtime 6240 ;
     dbo:starring "http://dbpedia.org/resource/Bebe_Neuwirth",
         "http://dbpedia.org/resource/Bonnie_Hunt",
@@ -690,32 +405,22 @@ dbr:Jumanji a dbo:Film ;
     dbp:released 1995 ;
     dbp:views 110 .
 
-dbr:Jupiter%27s_Wife dbo:genre "Documentary" ;
-    dbp:released 1994 ;
-    dbp:views 1 .
-
-dbr:Juror dbo:genre "Drama|Thriller",
-        "The (1996)\"" ;
+dbr:Juror dbo:genre "Drama",
+        "Thriller" ;
     dbp:views 17 .
 
-dbr:Jury_Duty dbo:genre "Comedy" ;
-    dbp:released 1995 ;
-    dbp:views 10 .
-
-dbr:Kicking_and_Screaming dbo:genre "Comedy|Drama" ;
+dbr:Kicking_and_Screaming dbo:genre "Comedy",
+        "Drama" ;
     dbp:released 1995 ;
     dbp:views 7 .
-
-dbr:Kids dbo:genre "Drama" ;
-    dbp:released 1995 ;
-    dbp:views 20 .
 
 dbr:Lamerica a dbo:Film ;
     rdfs:label "Lamerica"@en ;
     dbo:abstract "Lamerica is a 1994 Italian drama film directed by Gianni Amelio. It entered the competition at the 51st Venice International Film Festival, in which Amelio won the Golden Osella for Best Director. The film was selected as the Italian entry for the Best Foreign Language Film at the 67th Academy Awards, but was not accepted as a nominee."@en ;
     dbo:country "Austria" ;
     dbo:director "http://dbpedia.org/resource/Gianni_Amelio" ;
-    dbo:genre "Adventure|Drama" ;
+    dbo:genre "Adventure",
+        "Drama" ;
     dbo:runtime 6960 ;
     dbo:starring "http://dbpedia.org/resource/Carmelo_Di_Mazzarelli",
         "http://dbpedia.org/resource/Elida_Janushi",
@@ -733,7 +438,9 @@ dbr:Lawnmower_Man_2%3A_Beyond_Cyberspace a dbo:Film ;
     dbo:abstract "Lawnmower Man 2: Beyond Cyberspace (also subtitled Jobe's War) is a 1996 American science fiction action film written and directed by Farhad Mann, and starring Matt Frewer, Patrick Bergin, Austin O'Brien, and Ely Pouget. It is a sequel to the 1992 film The Lawnmower Man. The film was negatively reviewed by both critics and fans of the original film."@en ;
     dbo:country "United States" ;
     dbo:director "http://dbpedia.org/resource/Farhad_Mann" ;
-    dbo:genre "Action|Sci-Fi|Thriller" ;
+    dbo:genre "Action",
+        "Sci-Fi",
+        "Thriller" ;
     dbo:runtime 5520 ;
     dbo:starring "http://dbpedia.org/resource/Austin_O'Brien",
         "http://dbpedia.org/resource/Ely_Pouget",
@@ -748,7 +455,8 @@ dbr:Leaving_Las_Vegas a dbo:Film ;
     dbo:abstract "Leaving Las Vegas is a 1995 American drama film written and directed by Mike Figgis, and based on the semi-autobiographical 1990 novel of the same name by John O'Brien. Nicolas Cage stars as a suicidal alcoholic in Los Angeles who, having lost his family and been recently fired, has decided to move to Las Vegas and drink himself to death. He loads a supply of liquor and beer into his BMW and gets drunk as he drives from Los Angeles to Las Vegas. Once there, he develops a romantic relationship with a sex worker played by Elisabeth Shue and the film shifts to include her narrative perspective. O'Brien died from suicide after signing away the film rights to the novel. Leaving Las Vegas was filmed in super 16 mm instead of 35 mm film; while 16 mm was common for art house films at the time, 35 mm is most commonly used for mainstream film. After limited release in the United States on October 27, 1995, Leaving Las Vegas was released nationwide on February 9, 1996, receiving strong praise from critics and audiences. Cage received the Golden Globe Award for Best Actor - Motion Picture Drama and the Academy Award for Best Actor, while Shue was nominated for the Golden Globe Award for Best Actress - Motion Picture Drama and the Academy Award for Best Actress. The film also received nominations for Best Adapted Screenplay and Best Director."@en ;
     dbo:country "United States" ;
     dbo:director "http://dbpedia.org/resource/Mike_Figgis" ;
-    dbo:genre "Drama|Romance" ;
+    dbo:genre "Drama",
+        "Romance" ;
     dbo:runtime 6660 ;
     dbo:starring "http://dbpedia.org/resource/Elisabeth_Shue",
         "http://dbpedia.org/resource/Julian_Sands",
@@ -756,50 +464,14 @@ dbr:Leaving_Las_Vegas a dbo:Film ;
     dbp:released 1995 ;
     dbp:views 76 .
 
-dbr:Living_in_Oblivion a dbo:Film ;
-    rdfs:label "Living in Oblivion"@en ;
-    dbo:abstract "Living in Oblivion is a 1995 American independent black comedy film, written and directed by Tom DiCillo, and starring Steve Buscemi, Catherine Keener, Dermot Mulroney, Danielle von Zerneck, James LeGros and Peter Dinklage in his film debut. The film won the Waldo Salt Screenwriting Award at the 1995 Sundance Film Festival for DiCillo. The film received critical acclaim."@en ;
-    dbo:country "United States" ;
-    dbo:director "http://dbpedia.org/resource/Tom_DiCillo" ;
-    dbo:genre "Comedy" ;
-    dbo:runtime 5400 ;
-    dbo:starring "http://dbpedia.org/resource/Catherine_Keener",
-        "http://dbpedia.org/resource/Danielle_von_Zerneck",
-        "http://dbpedia.org/resource/Dermot_Mulroney",
-        "http://dbpedia.org/resource/James_LeGros",
-        "http://dbpedia.org/resource/Peter_Dinklage",
-        "http://dbpedia.org/resource/Steve_Buscemi" ;
-    dbp:released 1995 ;
-    dbp:views 13 .
-
-dbr:Lord_of_Illusions a dbo:Film ;
-    rdfs:label "Lord of Illusions"@en ;
-    dbo:abstract "Lord of Illusions is a 1995 American neo-noir supernatural horror film written and directed by Clive Barker, based on his own short story \"The Last Illusion\" published in 1985 in the anthology Books of Blood Volume 6. The same story introduced Barker's occult detective Harry D'Amour, who later appeared in several prose stories and comic books. Lord of Illusions is D'Amour's first onscreen appearance, with the character portrayed by actor Scott Bakula. Other actors appearing in the film include Kevin J. O'Connor, Famke Janssen and Daniel von Bargen. The story features D'Amour, who has had several experiences with the supernatural, embarking on an investigation involving a stage illusionist named Swann and a cult led by a sorcerer named Nix. Although Clive Barker decided to keep a few story elements and the same principal characters from \"The Last Illusion\", he otherwise presented a new story for the movie and created a new villain, surprising several readers familiar with the original work. The film met with mixed reception and no further live-action movies featuring Harry D'Amour were made."@en ;
-    dbo:country "United States" ;
-    dbo:director "http://dbpedia.org/resource/Clive_Barker" ;
-    dbo:genre "Horror" ;
-    dbo:runtime 6540 ;
-    dbo:starring "http://dbpedia.org/resource/Daniel_von_Bargen",
-        "http://dbpedia.org/resource/Famke_Janssen",
-        "http://dbpedia.org/resource/Kevin_J._O'Connor_(actor)",
-        "http://dbpedia.org/resource/Scott_Bakula" ;
-    dbp:released 1995 ;
-    dbp:views 8 .
-
-dbr:Man_of_the_Year dbo:genre "Documentary" ;
-    dbp:released 1995 ;
-    dbp:views 1 .
-
-dbr:Mary_Reilly dbo:genre "Drama|Horror|Thriller" ;
-    dbp:released 1996 ;
-    dbp:views 8 .
-
 dbr:Mighty_Aphrodite a dbo:Film ;
     rdfs:label "Mighty Aphrodite"@en ;
     dbo:abstract "Mighty Aphrodite is a 1995 American comedy film written, directed by, and co-starring Woody Allen, alongside Mira Sorvino, Helena Bonham Carter, Michael Rapaport, and F. Murray Abraham. The screenplay was vaguely inspired by the story of Pygmalion and is about Lenny Weinrib's (Allen) search for his genius adopted son's biological mother, ultimately finding that she is a dim-witted prostitute named Linda Ash (Sorvino). While critical reception of Mighty Aphrodite overall was mildly positive, Sorvino was highly praised for her performance, earning several accolades such as the Academy Award for Best Supporting Actress, as well as a Golden Globe Award, New York Film Critics Circle Award, Critics' Choice Movie Award, National Board of Review Award, and a Dallas–Fort Worth Film Critics Association Award."@en ;
     dbo:country "United States" ;
     dbo:director "http://dbpedia.org/resource/Woody_Allen" ;
-    dbo:genre "Comedy|Drama|Romance" ;
+    dbo:genre "Comedy",
+        "Drama",
+        "Romance" ;
     dbo:runtime 5700 ;
     dbo:starring "http://dbpedia.org/resource/Claire_Bloom",
         "http://dbpedia.org/resource/David_Ogden_Stiers",
@@ -814,8 +486,8 @@ dbr:Mighty_Aphrodite a dbo:Film ;
     dbp:released 1995 ;
     dbp:views 28 .
 
-dbr:Mis%C3%A9rables dbo:genre "Drama|War",
-        "Les (1995)\"" ;
+dbr:Mis%C3%A9rables dbo:genre "Drama",
+        "War" ;
     dbp:views 13 .
 
 dbr:Money_Train a dbo:Film ;
@@ -823,7 +495,11 @@ dbr:Money_Train a dbo:Film ;
     dbo:abstract "Money Train is a 1995 American action comedy film starring Wesley Snipes, Woody Harrelson, and Jennifer Lopez, with Robert Blake and Chris Cooper in supporting roles."@en ;
     dbo:country "United States" ;
     dbo:director "http://dbpedia.org/resource/Joseph_Ruben" ;
-    dbo:genre "Action|Comedy|Crime|Drama|Thriller" ;
+    dbo:genre "Action",
+        "Comedy",
+        "Crime",
+        "Drama",
+        "Thriller" ;
     dbo:runtime 6600 ;
     dbo:starring "http://dbpedia.org/resource/Chris_Cooper",
         "http://dbpedia.org/resource/Jennifer_Lopez",
@@ -833,7 +509,9 @@ dbr:Money_Train a dbo:Film ;
     dbp:released 1995 ;
     dbp:views 15 .
 
-dbr:Mortal_Kombat dbo:genre "Action|Adventure|Fantasy" ;
+dbr:Mortal_Kombat dbo:genre "Action",
+        "Adventure",
+        "Fantasy" ;
     dbp:released 1995 ;
     dbp:views 46 .
 
@@ -851,45 +529,6 @@ dbr:Mr._Holland%27s_Opus a dbo:Film ;
     dbp:released 1995 ;
     dbp:views 80 .
 
-dbr:Mr._Wrong a dbo:Film ;
-    rdfs:label "Mr. Wrong"@en ;
-    dbo:abstract "Mr. Wrong is a 1996 American romantic black comedy film starring Ellen DeGeneres and Bill Pullman. It was a critical failure and box office bomb. DeGeneres used to mention it occasionally in her talk show, The Ellen DeGeneres Show, poking fun at the disastrous reception of her major film debut. As of 2022, it remains her first and last film as lead actor in a live action film."@en ;
-    dbo:country "United States" ;
-    dbo:director "http://dbpedia.org/resource/Nick_Castle" ;
-    dbo:genre "Comedy" ;
-    dbo:runtime 5760 ;
-    dbo:starring "http://dbpedia.org/resource/Bill_Pullman",
-        "http://dbpedia.org/resource/Dean_Stockwell",
-        "http://dbpedia.org/resource/Ellen_DeGeneres",
-        "http://dbpedia.org/resource/Joan_Cusack",
-        "http://dbpedia.org/resource/Joan_Plowright" ;
-    dbp:released 1996 ;
-    dbp:views 5 .
-
-dbr:Muppet_Treasure_Island a dbo:Film ;
-    rdfs:label "Muppet Treasure Island"@en ;
-    dbo:abstract "Muppet Treasure Island is a 1996 American musical swashbuckler comedy film directed by Brian Henson. It is the fifth theatrical film in The Muppets franchise. Adapted from the 1883 novel Treasure Island by Robert Louis Stevenson, similarly to its predecessor The Muppet Christmas Carol (1992), the key roles were played by live-action actors, with the Muppets in supporting roles. In addition to the Muppet performers in various roles, the film stars Tim Curry and introduces Kevin Bishop as Jim Hawkins. The film was released in the United States on February 16, 1996, by Buena Vista Pictures Distribution. It grossed $34 million on a budget of $31 million, and received generally positive reviews from critics. It is the second Muppets film to be produced by Walt Disney Pictures, whose parent company would later acquire the Muppets franchise in 2004."@en ;
-    dbo:country "United States" ;
-    dbo:director "http://dbpedia.org/resource/Brian_Henson" ;
-    dbo:genre "Adventure|Children|Comedy|Musical" ;
-    dbo:runtime 6000 ;
-    dbo:starring "http://dbpedia.org/resource/Dave_Goelz",
-        "http://dbpedia.org/resource/Frank_Oz",
-        "http://dbpedia.org/resource/Jerry_Nelson",
-        "http://dbpedia.org/resource/Kevin_Clash",
-        "http://dbpedia.org/resource/Steve_Whitmire",
-        "http://dbpedia.org/resource/Tim_Curry" ;
-    dbp:released 1996 ;
-    dbp:views 26 .
-
-dbr:NeverEnding_Story_III dbo:genre "Adventure|Children|Fantasy",
-        "The (1994)\"" ;
-    dbp:views 7 .
-
-dbr:Nick_of_Time dbo:genre "Action|Thriller" ;
-    dbp:released 1995 ;
-    dbp:views 10 .
-
 dbr:Nico_Icon dbo:genre "Documentary" ;
     dbp:released 1995 ;
     dbp:views 1 .
@@ -898,15 +537,13 @@ dbr:Nixon dbo:genre "Drama" ;
     dbp:released 1995 ;
     dbp:views 18 .
 
-dbr:Nobody_Loves_Me_%28Keiner_liebt_mich%29 dbo:genre "Comedy|Drama" ;
-    dbp:released 1994 ;
-    dbp:views 1 .
-
-dbr:Now_and_Then dbo:genre "Children|Drama" ;
+dbr:Now_and_Then dbo:genre "Children",
+        "Drama" ;
     dbp:released 1995 ;
     dbp:views 9 .
 
-dbr:Once_Upon_a_Time..._When_We_Were_Colored dbo:genre "Drama|Romance" ;
+dbr:Once_Upon_a_Time..._When_We_Were_Colored dbo:genre "Drama",
+        "Romance" ;
     dbp:released 1995 ;
     dbp:views 1 .
 
@@ -914,24 +551,27 @@ dbr:Othello dbo:genre "Drama" ;
     dbp:released 1995 ;
     dbp:views 13 .
 
-dbr:Persuasion dbo:genre "Drama|Romance" ;
+dbr:Persuasion dbo:genre "Drama",
+        "Romance" ;
     dbp:released 1995 ;
     dbp:views 11 .
 
-dbr:Pie_in_the_Sky dbo:genre "Comedy|Romance" ;
-    dbp:released 1996 ;
-    dbp:views 1 .
-
-dbr:Pocahontas dbo:genre "Animation|Children|Drama|Musical|Romance" ;
+dbr:Pocahontas dbo:genre "Animation",
+        "Children",
+        "Drama",
+        "Musical",
+        "Romance" ;
     dbp:released 1995 ;
     dbp:views 68 .
 
-dbr:Postman dbo:genre "Comedy|Drama|Romance",
-        "Il) (1994)\"",
+dbr:Postman dbo:genre "Comedy",
+        "Drama",
+        "Romance",
         "The (Postino" ;
     dbp:views 37 .
 
-dbr:Powder dbo:genre "Drama|Sci-Fi" ;
+dbr:Powder dbo:genre "Drama",
+        "Sci-Fi" ;
     dbp:released 1995 ;
     dbp:views 28 .
 
@@ -939,69 +579,49 @@ dbr:Restoration dbo:genre "Drama" ;
     dbp:released 1995 ;
     dbp:views 8 .
 
-dbr:Richard_III dbo:genre "Drama|War" ;
+dbr:Richard_III dbo:genre "Drama",
+        "War" ;
     dbp:released 1995 ;
     dbp:views 15 .
 
-dbr:Rob_Roy dbo:genre "Action|Drama|Romance|War" ;
-    dbp:released 1995 ;
-    dbp:views 44 .
-
-dbr:Rumble_in_the_Bronx_%28Hont_faan_kui%29 dbo:genre "Action|Adventure|Comedy|Crime" ;
-    dbp:released 1995 ;
-    dbp:views 46 .
-
-dbr:Sabrina dbo:genre "Comedy|Romance" ;
+dbr:Sabrina dbo:genre "Comedy",
+        "Romance" ;
     dbp:released 1995 ;
     dbp:views 54 .
 
-dbr:Screamers dbo:genre "Action|Sci-Fi|Thriller" ;
+dbr:Screamers dbo:genre "Action",
+        "Sci-Fi",
+        "Thriller" ;
     dbp:released 1995 ;
     dbp:views 15 .
 
-dbr:Sense_and_Sensibility dbo:genre "Drama|Romance" ;
+dbr:Sense_and_Sensibility dbo:genre "Drama",
+        "Romance" ;
     dbp:released 1995 ;
     dbp:views 67 .
 
-dbr:Seven_%28a.k.a._Se7en%29 dbo:genre "Mystery|Thriller" ;
+dbr:Seven_%28a.k.a._Se7en%29 dbo:genre "Mystery",
+        "Thriller" ;
     dbp:released 1995 ;
     dbp:views 203 .
 
-dbr:Shanghai_Triad_%28Yao_a_yao_yao_dao_waipo_qiao%29 dbo:genre "Crime|Drama" ;
+dbr:Shanghai_Triad_%28Yao_a_yao_yao_dao_waipo_qiao%29 dbo:genre "Crime",
+        "Drama" ;
     dbp:released 1995 ;
     dbp:views 3 .
-
-dbr:Steal_Big dbo:genre "Comedy",
-        "Steal Little (1995)\"" ;
-    dbp:views 2 .
 
 dbr:Sudden_Death dbo:genre "Action" ;
     dbp:released 1995 ;
     dbp:views 16 .
-
-dbr:Taxi_Driver a dbo:Film ;
-    rdfs:label "Taxi Driver"@en ;
-    dbo:abstract "Taxi Driver is a 1976 American film directed by Martin Scorsese, written by Paul Schrader, and starring Robert De Niro, Jodie Foster, Cybill Shepherd, Harvey Keitel, Peter Boyle, Leonard Harris, and Albert Brooks. Set in a decaying and morally bankrupt New York City following the Vietnam War, the film follows Travis Bickle (De Niro), a veteran working as a taxi driver, and his deteriorating mental state as he works nights in the city. His character is directly inspired by Narasingh, the protagonist of Satyajit Ray's 1962 film Abhijan, according to Scorsese himself. With The Wrong Man (1956) and A Bigger Splash (1973) as inspiration, Scorsese wanted the film to feel like a dream to audiences. With cinematographer Michael Chapman, filming began in the summer of 1975 in New York City, with actors taking pay cuts to ensure that the project could be completed on a low budget of $1.9 million. Production concluded that same year. Bernard Herrmann composed the film's music in what would be his final score, finished just several hours before his death; the film is dedicated to him. The film was theatrically released by Columbia Pictures on February 7, 1976, where it was a critical and commercial success, despite generating controversy for its graphic violence at the climactic ending, and casting of then 12-year-old Foster in the role of a child prostitute. The film received numerous accolades including the 1976 Cannes Film Festival's Palme d'Or, and four nominations at the 49th Academy Awards, including for Best Picture, Best Actor (for De Niro), and Best Supporting Actress (for Foster). Although Taxi Driver generated further controversy for its role in John Hinckley Jr.'s motive to attempt to assassinate then-President Ronald Reagan, the film has remained popular and is considered one of the most culturally significant and inspirational of its time. In 2012, Sight & Sound named it the 31st-best film ever in its decennial critics' poll, ranked with The Godfather Part II, and the fifth-greatest film of all time on its directors' poll. In 1994, the film was considered \"culturally, historically or aesthetically\" significant by the US Library of Congress, and was selected for preservation in the National Film Registry."@en ;
-    dbo:country "United States" ;
-    dbo:director "http://dbpedia.org/resource/Martin_Scorsese" ;
-    dbo:genre "Crime|Drama|Thriller" ;
-    dbo:runtime 6840 ;
-    dbo:starring "http://dbpedia.org/resource/Albert_Brooks",
-        "http://dbpedia.org/resource/Cybill_Shepherd",
-        "http://dbpedia.org/resource/Harvey_Keitel",
-        "http://dbpedia.org/resource/Jodie_Foster",
-        "http://dbpedia.org/resource/Leonard_Harris_(actor)",
-        "http://dbpedia.org/resource/Peter_Boyle",
-        "http://dbpedia.org/resource/Robert_De_Niro" ;
-    dbp:released 1976 ;
-    dbp:views 104 .
 
 dbr:Things_to_Do_in_Denver_When_You%27re_Dead a dbo:Film ;
     rdfs:label "Things to Do in Denver When You're Dead"@en ;
     dbo:abstract "Things to Do in Denver When You're Dead is a 1995 American crime film directed by Gary Fleder and written by Scott Rosenberg. The film features an ensemble cast that includes Andy García, Christopher Lloyd, Treat Williams, Steve Buscemi, Christopher Walken, Fairuza Balk and Gabrielle Anwar. The film's title comes from a Warren Zevon song of the same name, recorded on his 1991 album Mr. Bad Example, which he allowed under the condition that the song be played during the end credits. The lead character's name, \"Jimmy the Saint,\" comes from the Bruce Springsteen song \"Lost in the Flood\" from his 1973 album Greetings from Asbury Park, N.J. The film was screened in the Un Certain Regard section at the 1995 Cannes Film Festival. The film was a box office bomb and received negative reviews from critics, with many dismissing it as a \"Pulp Fiction clone\"."@en ;
     dbo:country "United States" ;
     dbo:director "http://dbpedia.org/resource/Gary_Fleder" ;
-    dbo:genre "Crime|Drama|Romance" ;
+    dbo:genre "Crime",
+        "Drama",
+        "Romance" ;
     dbo:runtime 6900 ;
     dbo:starring "http://dbpedia.org/resource/Andy_García",
         "http://dbpedia.org/resource/Bill_Nunn",
@@ -1021,7 +641,9 @@ dbr:To_Die_For a dbo:Film ;
     dbo:abstract "To Die For is a 1995 satirical black comedy film directed by Gus Van Sant, and written by Buck Henry based on the novel of the same name by Joyce Maynard, which in turn was inspired by the story of Pamela Smart. It stars Nicole Kidman, Joaquin Phoenix, and Matt Dillon, with Illeana Douglas, Wayne Knight, Casey Affleck, Kurtwood Smith, Dan Hedaya, and Alison Folland as supporting cast. Kidman was nominated for a BAFTA, and won a Golden Globe Award and a Best Actress Award at the 1st Empire Awards for her performance. Her character has been described as suffering from narcissistic personality disorder in the scientific journal BMC Psychiatry. The film includes cameos by George Segal, David Cronenberg, author Maynard, and screenwriter Henry. It features original music by Danny Elfman."@en ;
     dbo:country "Canada" ;
     dbo:director "http://dbpedia.org/resource/Gus_Van_Sant" ;
-    dbo:genre "Comedy|Drama|Thriller" ;
+    dbo:genre "Comedy",
+        "Drama",
+        "Thriller" ;
     dbo:runtime 6360 ;
     dbo:starring "http://dbpedia.org/resource/Joaquin_Phoenix",
         "http://dbpedia.org/resource/Matt_Dillon",
@@ -1029,55 +651,43 @@ dbr:To_Die_For a dbo:Film ;
     dbp:released 1995 ;
     dbp:views 32 .
 
-dbr:Tom_and_Huck dbo:genre "Adventure|Children" ;
+dbr:Tom_and_Huck dbo:genre "Adventure",
+        "Children" ;
     dbp:released 1995 ;
     dbp:views 8 .
 
-dbr:Toy_Story dbo:genre "Adventure|Animation|Children|Comedy|Fantasy" ;
+dbr:Toy_Story dbo:genre "Adventure",
+        "Animation",
+        "Children",
+        "Comedy",
+        "Fantasy" ;
     dbp:released 1995 ;
     dbp:views 215 .
 
-dbr:Twelve_Monkeys_%28a.k.a._12_Monkeys%29 dbo:genre "Mystery|Sci-Fi|Thriller" ;
+dbr:Twelve_Monkeys_%28a.k.a._12_Monkeys%29 dbo:genre "Mystery",
+        "Sci-Fi",
+        "Thriller" ;
     dbp:released 1995 ;
     dbp:views 177 .
 
-dbr:Two_if_by_Sea dbo:genre "Comedy|Romance" ;
+dbr:Two_if_by_Sea dbo:genre "Comedy",
+        "Romance" ;
     dbp:released 1996 ;
     dbp:views 5 .
 
-dbr:Unforgettable dbo:genre "Mystery|Sci-Fi|Thriller" ;
-    dbp:released 1996 ;
-    dbp:views 3 .
-
-dbr:Up_Close_and_Personal dbo:genre "Drama|Romance" ;
-    dbp:released 1996 ;
-    dbp:views 16 .
-
-dbr:Usual_Suspects dbo:genre "Crime|Mystery|Thriller",
-        "The (1995)\"" ;
+dbr:Usual_Suspects dbo:genre "Crime",
+        "Mystery",
+        "Thriller" ;
     dbp:views 204 .
-
-dbr:Vampire_in_Brooklyn a dbo:Film ;
-    rdfs:label "Vampire in Brooklyn"@en ;
-    dbo:abstract "Vampire in Brooklyn is a 1995 American dark comedy horror film directed by Wes Craven. It stars Eddie Murphy, who produced and wrote with his brothers Vernon Lynch and Charles Q. Murphy. The film co-stars Angela Bassett, Allen Payne, Kadeem Hardison, John Witherspoon, Zakes Mokae, and Joanna Cassidy. Murphy also plays an alcoholic preacher, Pauly, and a foul-mouthed Italian gangster, Guido, respectively. Vampire in Brooklyn was the final film produced under Eddie Murphy's exclusive contract with Paramount Pictures, which began with 48 Hrs. (1982) and included the Beverly Hills Cop franchise (1984–1994). Vampire in Brooklyn was released theatrically in the United States on October 27, 1995. It received mostly negative reviews and failed to meet the studio's expectations at the box office. Despite this, Vampire In Brooklyn has become regarded as a cult classic and has been subject to critical re-evaluation especially towards Craven’s direction, Murphy and Bassett’s performances and chemistry and the humor."@en ;
-    dbo:country "N/A" ;
-    dbo:director "http://dbpedia.org/resource/Wes_Craven" ;
-    dbo:genre "Comedy|Horror|Romance" ;
-    dbo:runtime 6120 ;
-    dbo:starring "http://dbpedia.org/resource/Allen_Payne",
-        "http://dbpedia.org/resource/Angela_Bassett",
-        "http://dbpedia.org/resource/Eddie_Murphy",
-        "http://dbpedia.org/resource/Kadeem_Hardison",
-        "http://dbpedia.org/resource/Zakes_Mokae" ;
-    dbp:released 1995 ;
-    dbp:views 9 .
 
 dbr:Waiting_to_Exhale a dbo:Film ;
     rdfs:label "Waiting to Exhale"@en ;
     dbo:abstract "Waiting to Exhale is a 1995 American romance film directed by Forest Whitaker (in his feature film directorial debut) and starring Whitney Houston and Angela Bassett. The film was adapted from the 1992 novel of the same name by Terry McMillan. Lela Rochon, Loretta Devine, Dennis Haysbert, Michael Beach, Gregory Hines, Donald Faison, and Mykelti Williamson rounded out the rest of the cast. The original music score was composed by Kenneth \"Babyface\" Edmonds. The story centers on four women living in the Phoenix, Arizona area and their relationships with men and one another. All of them are \"holding their breath\" until the day they can feel comfortable in a committed relationship with themselves."@en ;
     dbo:country "United States" ;
     dbo:director "http://dbpedia.org/resource/Forest_Whitaker" ;
-    dbo:genre "Comedy|Drama|Romance" ;
+    dbo:genre "Comedy",
+        "Drama",
+        "Romance" ;
     dbo:runtime 7440 ;
     dbo:starring "http://dbpedia.org/resource/Angela_Bassett",
         "http://dbpedia.org/resource/Lela_Rochon",
@@ -1091,22 +701,21 @@ dbr:When_Night_Is_Falling a dbo:Film ;
     dbo:abstract "When Night is Falling is a 1995 Canadian drama film directed by Patricia Rozema and starring Pascale Bussières and Rachael Crawford. It was entered into the 45th Berlin International Film Festival."@en ;
     dbo:country "Canada" ;
     dbo:director "http://dbpedia.org/resource/Patricia_Rozema" ;
-    dbo:genre "Drama|Romance" ;
+    dbo:genre "Drama",
+        "Romance" ;
     dbo:runtime 5640 ;
     dbo:starring "http://dbpedia.org/resource/Pascale_Bussières",
         "http://dbpedia.org/resource/Rachael_Crawford" ;
     dbp:released 1995 ;
     dbp:views 1 .
 
-dbr:White_Balloon dbo:genre "Children|Drama",
-        "The (Badkonake sefid) (1995)\"" ;
+dbr:White_Balloon dbo:genre "Children",
+        "Drama" ;
     dbp:views 2 .
 
-dbr:White_Squall dbo:genre "Action|Adventure|Drama" ;
+dbr:White_Squall dbo:genre "Action",
+        "Adventure",
+        "Drama" ;
     dbp:released 1996 ;
     dbp:views 15 .
-
-dbr:Young_Poisoner%27s_Handbook dbo:genre "Crime|Drama",
-        "The (1995)\"" ;
-    dbp:views 1 .
 

@@ -1,3 +1,5 @@
+from typing import Any
+
 import pandas as pd
 import re
 import streamlit as st
@@ -74,7 +76,9 @@ def is_valid_uri(uri):
     except Exception as e:
         return False
 
-def select_genres(movies, default=None):
+
+
+def select_genres(genres, default=None):
     """
     Funzione che permette all'utente di selezionare uno o più generi cinematografici preferiti.
 
@@ -88,15 +92,80 @@ def select_genres(movies, default=None):
     # Mostra un'intestazione per la selezione dei generi preferiti
     st.markdown('<div class="subheader"> What genres of movies do you prefer? </div>', unsafe_allow_html=True)
 
-    # Estrai i generi unici dai film (considerando che i generi sono separati da "|")
-    unique_genres = sorted(set(genre for genres in movies['genres'].dropna() for genre in genres.split("|")))
-
     # Mostra la multiselectbox per la selezione dei generi preferiti
     selected_genres = st.multiselect(" 🎞️ Choose your preferred genres ( 1 or more)",
-                                    unique_genres,
+                                    genres,
                                     default=default)  # Usa il valore di default se disponibile
 
     return selected_genres  # Restituisce la lista di generi selezionati
+
+@st.cache_data
+def select_informations_from_ttl(movies_dataset):
+    g = Graph()
+    file_path = "movies_ontology.ttl"
+    g.parse(file_path, format="turtle")
+
+    movies_dict = {}
+
+    query = """
+        SELECT DISTINCT ?filmName ?genre ?director ?actor ?country ?released
+        WHERE {
+            ?movie rdfs:label ?filmName .
+            OPTIONAL { ?movie dbo:genre ?genre. }
+            OPTIONAL { ?movie dbo:director ?director. }
+            OPTIONAL { ?movie dbo:starring ?actor. }
+            OPTIONAL { ?movie dbo:country ?country. }
+            OPTIONAL { ?movie dbp:released ?released. }
+            FILTER (lang(?filmName) = "en")
+        }
+    """
+
+    results = g.query(query)
+
+    # Normalizza i titoli dei film per il confronto
+    dataset_movie_titles = set(movies_dataset['title'].apply(lambda x: normalize_title(x)).str.lower().tolist())
+
+    # Inizializza set per ogni informazione
+    genres = set()
+    directors = set()
+    actors = set()
+    nationalities = set()
+    years = set()
+
+    for row in results:
+        if row[0]:  # Verifica che il nome del film esista
+            film_name = normalize_title(str(row[0]))
+            film_name_cleaned = film_name.strip().lower()
+
+            # Se il film è nel dataset, aggiungi i relativi dati ai set
+            if film_name_cleaned in dataset_movie_titles:
+                if row[1]:  # ?genre
+                    genre = str(row[1]).rsplit("/", 1)[-1].replace("_", " ")
+                    subgenres = genre.split("|")
+                    for subgenre in subgenres:
+                        genres.add(subgenre.strip())
+                if row[2]:  # ?director
+                    director = str(row[2]).rsplit("/", 1)[-1].replace("_", " ")
+                    directors.add(director)
+                if row[3]:  # ?actor
+                    actor = str(row[3]).rsplit("/", 1)[-1].replace("_", " ")
+                    actors.add(actor)
+                if row[4]:  # ?country
+                    nationality = str(row[4]).rsplit("/", 1)[-1].replace("_", " ")
+                    nationalities.add(nationality)
+                if row[5]:  # ?released
+                    year = str(row[5])[:4]  # Prendi solo l'anno
+                    years.add(year)
+
+    # Ordina ciascun set e converti in liste per le combobox
+    genres_list = sorted(genres)
+    directors_list = sorted(directors)
+    actors_list = sorted(actors)
+    nationalities_list = sorted(nationalities)
+    years_list = sorted(years)
+
+    return genres_list, directors_list, actors_list, nationalities_list, years_list
+
 
 def load_movies_and_directors_from_ttl(file_path, movies_dataset):
     """
@@ -152,18 +221,15 @@ def load_movies_and_directors_from_ttl(file_path, movies_dataset):
 
     return movies_dict
 
-def display_director_selection(movies, default=None):
+def display_director_selection(directors, default=None):
     """
     Interfaccia utente per selezionare un regista e visualizzare i film che ha diretto.
     """
     st.markdown('<div class="subheader"> Which director do you prefer?</div>', unsafe_allow_html=True)
 
-    # **Carica i film e registi dal file RDF, filtrati per dataset**
-    movies_dict = load_movies_and_directors_from_ttl("movies_ontology.ttl", movies)
-
-
-    # **Crea una lista di registi unici dal dizionario**
-    directors = sorted(set(director for directors in movies_dict.values() for director in directors))
+    # # **Carica i film e registi dal file RDF, filtrati per dataset**
+    # movies_dict = load_movies_and_directors_from_ttl("movies_ontology.ttl", movies)
+    #
 
     # **Aggiungi "Choose an option" come opzione predefinita**
     directors.insert(0, "Choose an option")
@@ -235,21 +301,16 @@ def load_movies_and_actor_from_ttl(file_path, movies_dataset):
 
     return movies_act
 
-def display_actor_selection(movies, default=None):
+def display_actor_selection(actors, default=None):
     """
     Interfaccia utente per selezionare un regista e visualizzare i film che ha diretto.
     """
     st.markdown('<div class="subheader"> Which actor do you prefer?</div>', unsafe_allow_html=True)
 
-    # **Carica i film e registi dal file RDF, filtrati per dataset**
-    movies_act = load_movies_and_actor_from_ttl("movies_ontology.ttl", movies)
 
-    # **Crea una lista di attori unici dal dizionario**
-    directors = sorted(set(director for directors in movies_act.values() for director in directors))
-
-    if directors:
+    if actors:
         # **Selezione gli attori**
-        selected_actor = st.multiselect(" 🎭 Choose a actor (1 or more):", directors, default=default)
+        selected_actor = st.multiselect(" 🎭 Choose a actor (1 or more):", actors, default=default)
 
     else:
         st.error("⚠️ No directors found in the dataset.")
@@ -322,19 +383,11 @@ def load_movies_and_nationality_from_ttl(file_path, movies_dataset):
     return movies_nationality
 
 
-def display_nationality_selection(movies, default=None):
+def display_nationality_selection(all_countries, default=None):
     """
     Interfaccia utente per selezionare una nazionalità e visualizzare i film associati.
     """
     st.markdown('<div class="subheader"> Which country do you prefer?</div>', unsafe_allow_html=True)
-
-    # Carica i film e le nazionalità dal file RDF, filtrati per dataset
-    movies_nationality = load_movies_and_nationality_from_ttl("movies_ontology.ttl", movies)
-
-    # Crea una lista unica di tutte le nazionalità per i film presenti nel dataset
-    all_countries = set()
-    for movie in movies_nationality.values():
-        all_countries.update(movie["country"])
 
     # Aggiungi l’etichetta predefinita come primo elemento
     label = "Choose a country"  # Etichetta per indicare che l’utente deve scegliere
@@ -478,15 +531,6 @@ def load_movies_and_release_year_from_ttl(file_path, movies_dataset):
 
 
 def group_movies_by_decade(movies_release):
-    """
-    Raggruppa i film per decennio (40s, 50s, 70s, 80s, 90s, etc.)
-
-    Args:
-        movies_release (dict): Dizionario con film e anni di rilascio.
-
-    Returns:
-        dict: Dizionario con i decenni come chiavi e i film associati come valori.
-    """
     decades = {
         "1900s": [],
         "1910s": [],
@@ -503,56 +547,53 @@ def group_movies_by_decade(movies_release):
         "2020s": [],
     }
 
-    for film, details in movies_release.items():
-        year = int(details["released"])
+    for year_str in movies_release:
+        try:
+            year = int(year_str)  # Converte la stringa in intero
+        except ValueError:
+            continue  # Se il valore non è un numero, lo salta
 
-        # Assegna il film al decennio corretto
+        # Assegna l'anno al decennio corretto
         if 1900 <= year < 1910:
-            decades["1900s"].append(film)
+            decades["1900s"].append(year)
         elif 1910 <= year < 1920:
-            decades["1910s"].append(film)
+            decades["1910s"].append(year)
         elif 1920 <= year < 1930:
-            decades["1920s"].append(film)
+            decades["1920s"].append(year)
         elif 1930 <= year < 1940:
-            decades["1930s"].append(film)
+            decades["1930s"].append(year)
         elif 1940 <= year < 1950:
-            decades["1940s"].append(film)
+            decades["1940s"].append(year)
         elif 1950 <= year < 1960:
-            decades["1950s"].append(film)
+            decades["1950s"].append(year)
         elif 1960 <= year < 1970:
-            decades["1960s"].append(film)
+            decades["1960s"].append(year)
         elif 1970 <= year < 1980:
-            decades["1970s"].append(film)
+            decades["1970s"].append(year)
         elif 1980 <= year < 1990:
-            decades["1980s"].append(film)
+            decades["1980s"].append(year)
         elif 1990 <= year < 2000:
-            decades["1990s"].append(film)
+            decades["1990s"].append(year)
         elif 2000 <= year < 2010:
-            decades["2000s"].append(film)
+            decades["2000s"].append(year)
         elif 2010 <= year < 2020:
-            decades["2010s"].append(film)
+            decades["2010s"].append(year)
         elif 2020 <= year < 2030:
-            decades["2020s"].append(film)
+            decades["2020s"].append(year)
 
     return decades
 
 
-def display_movies_by_decade(movies_dataset, default=None):
+
+def display_movies_by_decade(years: object, default: object = None) -> str | Any:
     """
     Interfaccia utente per selezionare un decennio e visualizzare i film associati.
     """
 
     st.markdown('<div class="subheader"> Choose year of production : </div>', unsafe_allow_html=True)
 
-    # Carica i film e gli anni di rilascio dal file RDF, filtrati per il dataset
-    movies_release = load_movies_and_release_year_from_ttl("movies_ontology.ttl", movies_dataset)
-
-    if not movies_release:
-        st.error("⚠️ No movies found in the RDF dataset or in the provided file.")
-        return ""
-
     # Raggruppa i film per decennio
-    grouped_movies = group_movies_by_decade(movies_release)
+    grouped_movies = group_movies_by_decade(years)
 
     # Crea una lista di decenni
     decades_list = list(grouped_movies.keys())
