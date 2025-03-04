@@ -3,8 +3,9 @@ from Tools.scripts.generate_global_objects import Printer
 import results
 from utils import load_css, load_data, select_genres, display_director_selection, display_actor_selection, \
     display_nationality_selection, display_popularity_preference, display_movies_by_decade, display_runtime_selection, \
-    save_and_navigate_to_results, select_informations_from_ttl
+    save_user_preferences, select_informations_from_ttl
 from confirmation_screen import confirmation_screen
+from reference_film import reference_film_page
 
 # Funzione per gestire la navigazione tra pagine
 def navigate_pages():
@@ -17,10 +18,11 @@ def navigate_pages():
     if st.session_state.page == "main":
         main()  # Mostra la pagina principale
     elif st.session_state.page == "results":
-        print("ANDIAMO ENI RISULTATI")
         results.results()  # Mostra la pagina dei risultati
     elif st.session_state.page == "confirmation screen":
         confirmation_screen()  # Mostra la pagina dei risultati
+    elif st.session_state.page == "reference film":
+        reference_film_page()
 
 
 def main():
@@ -30,10 +32,20 @@ def main():
 
     # Titolo pagina
     st.markdown('<div class="header" style="color: red;"> 🔎 Search Film </div>', unsafe_allow_html=True)
+    # Bottone per aggiungere un film di riferimento
+    st.markdown(
+        "If you have a movie in mind that you really enjoyed, click here, and we’ll help you find similar films.")
+    if st.button("Add a film you liked"):
+        st.session_state.page = "reference film"
+        reference_film_page()
+        st.rerun()
 
+    st.markdown("Otherwise, tell us what you’re looking for and we’ll help you find it.")
     # Carica i dati
     movies, tags, ratings = load_data()
 
+    # Salva 'movies' nello st.session_state
+    st.session_state.movies = movies
     # st.session_state.selected_genres = None
 
     genres, directors, actors, nationality, years = select_informations_from_ttl(movies)
@@ -60,8 +72,8 @@ def main():
 
     # Step 8: Salva i criteri e vai alla pagina dei risultati
     if st.button("Research"):
-        save_and_navigate_to_results(selected_genres, selected_director, selected_actors, selected_nationality,
-                                     selected_popularity, selected_decade, duration)
+        save_user_preferences(selected_genres, selected_director, selected_actors, selected_nationality,
+                              selected_popularity, selected_decade, duration)
         st.session_state.page = "results"
         st.rerun()
 

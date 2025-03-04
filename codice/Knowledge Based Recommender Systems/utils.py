@@ -167,60 +167,6 @@ def select_informations_from_ttl(movies_dataset):
     return genres_list, directors_list, actors_list, nationalities_list, years_list
 
 
-def load_movies_and_directors_from_ttl(file_path, movies_dataset):
-    """
-    Carica il file RDF/Turtle e recupera i film e i loro registi,
-    filtrando solo quelli presenti nel dataset `movies`.
-
-    Args:
-        file_path (str): Percorso del file Turtle contenente i dati dei film.
-        movies_dataset (pd.DataFrame): Dataset dei film da confrontare.
-
-    Returns:
-        dict: Dizionario {titolo_film: [registi]} con solo i film presenti nel dataset.
-    """
-    g = Graph()
-    g.parse(file_path, format="turtle")
-
-    movies_dict = {}
-
-    query = """
-        SELECT DISTINCT ?filmName ?director WHERE {
-            ?film rdfs:label ?filmName .
-            ?film dbo:director ?director .
-            FILTER (lang(?filmName) = "en")
-        }
-    """
-
-    results = g.query(query)
-
-    # Normalizza i titoli dei film per il confronto (rimuovendo l'anno tra parentesi)
-    dataset_movie_titles = set(movies_dataset['title'].apply(lambda x: normalize_title(x)).str.lower().tolist())
-
-    for row in results:
-        if row[0] and row[1]:  # Evita valori nulli
-            # Normalizza il titolo del film (rimuovendo l'anno tra parentesi)
-            film_name = normalize_title(str(row[0]))  # Chiamata alla funzione normalize_title
-
-            # Verifica che l'URI del regista sia valido
-            director_uri = str(row[1])
-            if not is_valid_uri(director_uri):  # Se l'URI non è valido, salta l'iterazione
-                continue
-
-            director = str(row[1]).rsplit("/", 1)[-1].replace("_", " ")
-
-            # Rimuovi spazi extra e metti tutto in minuscolo per un confronto robusto
-            film_name_cleaned = film_name.strip().lower()
-
-            # Filtra solo i film presenti nel dataset
-            if film_name_cleaned in dataset_movie_titles:
-                if film_name in movies_dict:
-                    movies_dict[film_name].append(director)
-                else:
-                    movies_dict[film_name] = [director]
-
-    return movies_dict
-
 def display_director_selection(directors, default=None):
     """
     Interfaccia utente per selezionare un regista e visualizzare i film che ha diretto.
@@ -247,60 +193,6 @@ def display_director_selection(directors, default=None):
     return selected_director
 
 
-def load_movies_and_actor_from_ttl(file_path, movies_dataset):
-    """
-    Carica il file RDF/Turtle e recupera i film e i loro registi,
-    filtrando solo quelli presenti nel dataset `movies`.
-
-    Args:
-        file_path (str): Percorso del file Turtle contenente i dati dei film.
-        movies_dataset (pd.DataFrame): Dataset dei film da confrontare.
-
-    Returns:
-        dict: Dizionario {titolo_film: [registi]} con solo i film presenti nel dataset.
-    """
-    g = Graph()
-    g.parse(file_path, format="turtle")
-
-    movies_act = {}
-
-    query = """
-        SELECT DISTINCT ?filmName ?starring WHERE {
-            ?film rdfs:label ?filmName .
-            ?film dbo:starring ?starring .
-            FILTER (lang(?filmName) = "en")
-        }
-    """
-
-    results = g.query(query)
-
-    # Normalizza i titoli dei film per il confronto (rimuovendo l'anno tra parentesi)
-    dataset_movie_titles = set(movies_dataset['title'].apply(lambda x: normalize_title(x)).str.lower().tolist())
-
-    for row in results:
-        if row[0] and row[1]:  # Evita valori nulli
-            # Normalizza il titolo del film (rimuovendo l'anno tra parentesi)
-            film_name = normalize_title(str(row[0]))  # Chiamata alla funzione normalize_title
-
-            # Verifica che l'URI del regista sia valido
-            actor_uri = str(row[1])
-            if not is_valid_uri(actor_uri):  # Se l'URI non è valido, salta l'iterazione
-                continue
-
-            actor = str(row[1]).rsplit("/", 1)[-1].replace("_", " ")
-
-            # Rimuovi spazi extra e metti tutto in minuscolo per un confronto robusto
-            film_name_cleaned = film_name.strip().lower()
-
-            # Filtra solo i film presenti nel dataset
-            if film_name_cleaned in dataset_movie_titles:
-                if film_name in movies_act:
-                    movies_act[film_name].append(actor)
-                else:
-                    movies_act[film_name] = [actor]
-
-    return movies_act
-
 def display_actor_selection(actors, default=None):
     """
     Interfaccia utente per selezionare un regista e visualizzare i film che ha diretto.
@@ -316,71 +208,6 @@ def display_actor_selection(actors, default=None):
         st.error("⚠️ No directors found in the dataset.")
 
     return selected_actor
-
-
-def load_movies_and_nationality_from_ttl(file_path, movies_dataset):
-    """
-    Carica il file RDF/Turtle e recupera i film, i loro attori e la loro nazionalità,
-    filtrando solo quelli presenti nel dataset `movies`.
-
-    Args:
-        file_path (str): Percorso del file Turtle contenente i dati dei film.
-        movies_dataset (pd.DataFrame): Dataset dei film da confrontare.
-
-    Returns:
-        dict: Dizionario {titolo_film: {"actors": [attori], "country": [nazione]}}
-        con solo i film presenti nel dataset.
-    """
-    g = Graph()
-    g.parse(file_path, format="turtle")
-
-    movies_nationality = {}
-
-    query = """
-        SELECT DISTINCT ?filmName ?country WHERE {
-            ?film rdfs:label ?filmName .
-            ?film dbo:country ?country .
-            FILTER (lang(?filmName) = "en")
-        }
-    """
-
-    results = g.query(query)
-
-    # Normalizza i titoli dei film per il confronto (rimuovendo l'anno tra parentesi)
-    dataset_movie_titles = set(movies_dataset['title'].apply(lambda x: normalize_title(x)).str.lower().tolist())
-
-    for row in results:
-        if row[0]:  # Evita valori nulli
-            # Normalizza il titolo del film (rimuovendo l'anno tra parentesi)
-            film_name = normalize_title(str(row[0]))
-
-            # Estrai la nazionalità (paese)
-            country = str(row[1]) if row[1] else None
-
-            # Rimuovi spazi extra e metti tutto in minuscolo per un confronto robusto
-            film_name_cleaned = film_name.strip().lower()
-
-            # Gestisci URL dei paesi e rimuovi duplicati
-            if country:
-                # Se il paese è un URL, rimuovilo o sostituiscilo con il nome corretto
-                if country.startswith("http://dbpedia.org/resource/"):
-                    # Estrarre il nome del paese dalla URL (rimuovendo il prefisso)
-                    country = country.split("/")[-1].replace("_", " ").title()
-
-                # Se il paese è "N/A", escludilo
-                if country == "N/A":
-                    country = None
-
-            # Verifica che il film sia presente nel dataset
-            if film_name_cleaned in dataset_movie_titles:
-                if film_name not in movies_nationality:
-                    movies_nationality[film_name] = {"country": set()}  # Usa un set per evitare duplicati
-
-                # Aggiungi la nazionalità solo se non è "N/A" e non è già presente nel set
-                if country:
-                    movies_nationality[film_name]["country"].add(country)  # Aggiunge solo se non esiste già
-
-    return movies_nationality
 
 
 def display_nationality_selection(all_countries, default=None):
@@ -407,57 +234,6 @@ def display_nationality_selection(all_countries, default=None):
 
     return selected_country
 
-
-
-def load_movies_and_runtime_from_ttl(file_path, movies_dataset):
-    """
-    Carica il file RDF/Turtle e recupera i film e la loro durata,
-    filtrando solo quelli presenti nel dataset `movies`.
-
-    Args:
-        file_path (str): Percorso del file Turtle contenente i dati dei film.
-        movies_dataset (pd.DataFrame): Dataset dei film da confrontare.
-
-    Returns:
-        dict: Dizionario {titolo_film: {"runtime": durata}} con solo i film presenti nel dataset.
-    """
-    g = Graph()
-    g.parse(file_path, format="turtle")
-
-    movies_runtime = {}
-
-    query = """
-        SELECT DISTINCT ?filmName ?runtime WHERE {
-            ?film rdfs:label ?filmName .
-            ?film dbo:runtime ?runtime .
-            FILTER (lang(?filmName) = "en")
-        }
-    """
-
-    results = g.query(query)
-
-    # Normalizza i titoli dei film per il confronto (rimuovendo l'anno tra parentesi)
-    dataset_movie_titles = set(movies_dataset['title'].apply(lambda x: normalize_title(x)).str.lower().tolist())
-
-    for row in results:
-        if row[0] and row[1]:  # Verifica che ci siano valori validi
-            # Normalizza il titolo del film (rimuovendo l'anno tra parentesi)
-            film_name = normalize_title(str(row[0]))
-
-            # Verifica che la durata sia un numero valido
-            try:
-                runtime = float(row[1]) if row[1] else None
-            except ValueError:
-                runtime = None  # Se non è un numero valido, imposta la durata a None
-
-            # Rimuovi spazi extra e metti tutto in minuscolo per un confronto robusto
-            film_name_cleaned = film_name.strip().lower()
-
-            # Filtra solo i film presenti nel dataset
-            if film_name_cleaned in dataset_movie_titles and runtime is not None:
-                movies_runtime[film_name] = {"runtime": runtime}
-
-    return movies_runtime
 
 def display_runtime_selection(default=None):
     """
@@ -487,49 +263,7 @@ def display_runtime_selection(default=None):
 
     return selected_runtimes
 
-
-
-def load_movies_and_release_year_from_ttl(file_path, movies_dataset):
-    """
-    Carica il file RDF/Turtle e recupera i film e il loro anno di rilascio,
-    filtrando solo quelli presenti nel dataset movies.
-
-    Args:
-        file_path (str): Percorso del file Turtle contenente i dati dei film.
-        movies_dataset (pd.DataFrame): Dataset dei film da confrontare.
-
-    Returns:
-        dict: Dizionario {titolo_film: {"released": anno}} con solo i film presenti nel dataset.
-    """
-    g = Graph()
-    g.parse(file_path, format="turtle")
-
-    movies_release = {}
-
-    query = """
-        SELECT DISTINCT ?filmName ?released WHERE {
-            ?film rdfs:label ?filmName .
-            ?film dbp:released  ?released .
-            FILTER (lang(?filmName) = "en")
-        }
-    """
-
-    results = g.query(query)
-
-    dataset_movie_titles = set(movies_dataset['title'].apply(lambda x: normalize_title(x)).tolist())
-
-    for row in results:
-        if row[0] and row[1]:  # Verifica che ci siano valori validi
-            film_name = normalize_title(str(row[0]))  # Normalizza il titolo
-            released = str(row[1])[:4]  # Prendi solo l'anno (i primi 4 caratteri)
-
-            # Verifica che il film sia presente nel dataset
-            if film_name in dataset_movie_titles and released:
-                movies_release[film_name] = {"released": released}
-
-    return movies_release
-
-
+#todo forse togliere
 def group_movies_by_decade(movies_release):
     decades = {
         "1900s": [],
@@ -616,36 +350,6 @@ def display_movies_by_decade(years: object, default: object = None) -> str | Any
     return selected_decade
 
 
-# def categorize_movies_by_votes(ratings, movies):
-#     """
-#     Funzione per categorizzare i film in base al numero di voti ricevuti.
-#
-#     Args:
-#         ratings (DataFrame): DataFrame contenente le valutazioni dei film, con 'movieId' e 'rating'.
-#         movies (DataFrame): DataFrame contenente i dettagli dei film, con 'movieId' e 'title'.
-#
-#     Returns:
-#         DataFrame: Un DataFrame contenente i film con i rispettivi conteggi di voti e la categoria.
-#     """
-#
-#     # Conta il numero di valutazioni per ciascun film (raggruppa per 'movieId' e conta le righe per ogni film)
-#     vote_counts = ratings.groupby('movieId')['rating'].count().reset_index()
-#     vote_counts.rename(columns={'rating': 'vote_count'}, inplace=True)  # Rinomina la colonna in 'vote_count'
-#
-#     # Unisci il conteggio dei voti con i dettagli dei film nel DataFrame 'movies'
-#     movies_with_votes = pd.merge(movies, vote_counts, on='movieId', how='left')
-#
-#     # Categorizza i film in base al numero di voti ricevuti
-#     movies_with_votes['category'] = movies_with_votes['vote_count'].apply(
-#         lambda x: 'Popular' if 30 <= x <= 100  # Se il numero di voti è tra 30 e 100, il film è "Popular"
-#         else 'Niche' if x < 30  # Se il numero di voti è inferiore a 30, il film è "Niche"
-#         else 'Blockbuster'  # Se il numero di voti è maggiore di 100, il film è "Blockbuster", ovvero campione di incassi
-#     )
-#
-#     return movies_with_votes  # Restituisce il DataFrame con i film e la loro categoria
-#
-
-
 def display_popularity_preference(default=None):
     """
     Funzione che permette all'utente di selezionare una o più preferenze in base alla popolarità del film
@@ -674,8 +378,8 @@ def display_popularity_preference(default=None):
 
 
 
-def save_and_navigate_to_results(selected_genres, selected_director, selected_actors, selected_nationality, selected_popularity, selected_decade, duration,
-                                 ):
+def save_user_preferences(selected_genres, selected_director, selected_actors, selected_nationality, selected_popularity, selected_decade, duration,
+                          ):
     """
        Salva le scelte dell'utente nella sessione di Streamlit e naviga alla pagina dei risultati.
 
@@ -700,8 +404,127 @@ def save_and_navigate_to_results(selected_genres, selected_director, selected_ac
     st.session_state.duration = duration
 
 
+def extract_reference_film_info(reference_title):
+    g = Graph()
+    file_path = "movies_ontology.ttl"
+    g.parse(file_path, format="turtle")
+
+    # Normalizza il titolo di riferimento per il confronto
+    normalized_reference_title = normalize_title(reference_title).strip().lower()
+
+    # Inizializza i contenitori per le informazioni
+    reference_info = {
+        "genres": set(),
+        "director": "",
+        "actors": set(),
+        "countries": "",
+        "year": None,
+        "runtime": None,
+        "views": None
+    }
+
+    query = """
+        SELECT DISTINCT ?filmName ?genre ?director ?actor ?country ?released ?runtime ?views
+        WHERE {
+            ?movie rdfs:label ?filmName .
+            OPTIONAL { ?movie dbo:genre ?genre. }
+            OPTIONAL { ?movie dbo:director ?director. }
+            OPTIONAL { ?movie dbo:starring ?actor. }
+            OPTIONAL { ?movie dbo:country ?country. }
+            OPTIONAL { ?movie dbp:released ?released. }
+            OPTIONAL { ?movie dbo:runtime ?runtime. }
+            OPTIONAL { ?movie dbp:views ?views. }
+            FILTER (lang(?filmName) = "en")
+        }
+    """
+
+    results = g.query(query)
+
+    for row in results:
+        if row[0]:  # Verifica che il nome del film esista
+            # Normalizza il titolo del film corrente
+            film_name = normalize_title(str(row[0])).strip().lower()
+
+            # Se il titolo corrente corrisponde al titolo di riferimento, raccogli le informazioni
+            if film_name == normalized_reference_title:
+                if row[1]:  # ?genre
+                    genre = str(row[1]).rsplit("/", 1)[-1].replace("_", " ")
+                    subgenres = genre.split("|")
+                    for subgenre in subgenres:
+                        reference_info["genres"].add(subgenre.strip())
+                if row[2]:  # ?director
+                    director = str(row[2]).rsplit("/", 1)[-1].replace("_", " ")
+                    reference_info["director"] = director
+                if row[3]:  # ?actor
+                    actor = str(row[3]).rsplit("/", 1)[-1].replace("_", " ")
+                    reference_info["actors"].add(actor)
+                if row[4]:  # ?country
+                    country = str(row[4]).rsplit("/", 1)[-1].replace("_", " ")
+                    reference_info["countries"] = country
+                if row[5]:  # ?released
+                    year = str(row[5])[:4]  # Prendi solo l'anno
+                    try:
+                        reference_info["year"] = int(year)
+                    except ValueError:
+                        reference_info["year"] = None
+                if row[6]:  # ?runtime
+                    runtime = str(row[6]).strip()
+                    try:
+                        reference_info["runtime"] = int(float(runtime))
+                    except ValueError:
+                        reference_info["runtime"] = None
+                if row[7]:  # ?views
+                    views = str(row[7]).strip()
+                    try:
+                        reference_info["views"] = int(float(views))
+                    except ValueError:
+                        reference_info["views"] = None
+
+                # Abbiamo trovato il film di riferimento, non serve continuare
+                break
+
+    # Trasforma l'anno in un decennio, se disponibile
+    if reference_info["year"]:
+        reference_info["year"] = f"{reference_info['year'] // 10 * 10}s"
+
+    # Converte le views in una categoria
+    if reference_info["views"] is not None:
+        if reference_info["views"] < 30:
+            reference_info["views"] = ["Short"]
+        elif 30 <= reference_info["views"] <= 100:
+            reference_info["views"] = ["Popular"]
+        else:
+            reference_info["views"] = ["Blockbuster"]
+
+    # Converte il runtime in una categoria
+    if reference_info["runtime"] is not None:
+        if reference_info["runtime"] < 5400:
+            reference_info["runtime"] = ["Short"]
+        elif 5400 <= reference_info["runtime"] <= 9000:
+            reference_info["runtime"] = ["Medium"]
+        else:
+            reference_info["runtime"] = ["Long"]
+
+    # Converte i generi in una lista ordinata per la coerenza
+    reference_info["genres"] = sorted(reference_info["genres"])
+
+    # Gli altri campi sono già nel formato desiderato
+    return reference_info
 
 
-    number_of_results = 5
-    # recommendation.retrieve_results(number_of_results, selected_genres, selected_director, selected_actors, selected_nationality, selected_popularity, duration, selected_decade)
 
+def search_similar_movies(reference_film):
+    informations = extract_reference_film_info(reference_film)
+
+    # Aggiorna lo stato della sessione Streamlit con i nuovi formati
+    st.session_state.selected_genres = informations["genres"]
+    st.session_state.selected_director = informations["director"]
+    st.session_state.selected_actors = informations["actors"]
+    st.session_state.selected_nationality = informations["countries"]
+    st.session_state.filtered_movies = informations["views"]
+    st.session_state.selected_decade = informations["year"]
+    st.session_state.duration = informations["runtime"]
+
+    # Passa alla pagina dei risultati
+    st.session_state.page = "results"
+    st.rerun()

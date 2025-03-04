@@ -81,20 +81,12 @@ def results():
 
     # Esegue la query per ottenere i risultati dei film
 
-    if selected_director:
-        selected_director = selected_director.replace(" ", "_")
-
-    if selected_actors:
-        selected_actors = [actor.replace(" ", "_").lower() for actor in selected_actors]
-    else:
-        selected_actors = []
 
     recommended =  recommendation.retrieve_results(5, selected_genres, selected_director, selected_actors, selected_nationality,selected_popularity , duration, selected_decade)
     # Rimuovi i duplicati nel risultato in base al titolo del film
 
     # Mostra i risultati
     if recommended:
-        print("\n\n\n\nSTAMPA PROVA \n\n\n\n")
         for idx, (movie, score, explanation, abstract) in enumerate(recommended):
 
             # Mostra il titolo del film

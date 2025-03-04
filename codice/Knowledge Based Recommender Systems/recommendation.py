@@ -197,6 +197,14 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
     g = rdflib.Graph()
     g.parse("movies_ontology.ttl", format="turtle")
 
+    if director:
+        director = director.replace(" ", "_")
+
+    if actors:
+        actors = [actor.replace(" ", "_").lower() for actor in actors]
+    else:
+        actors = []
+
     genre_filters = " || ".join(f'CONTAINS(LCASE(?genre), "{genre.lower()}")' for genre in genres)
 
     actor_filters = " || ".join(f'CONTAINS(LCASE(?actor), "{actor}")' for actor in actors)
@@ -230,8 +238,6 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
     else:
         duration_filter = ""
 
-    print("FILTROO")
-    print(popularity_list)
 
     if year and year.endswith("s"):
         decade_start = int(year[:-1])
@@ -251,69 +257,23 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
         year_filter
     ]
 
-    print("POPOLARITT")
-    print(popularity_filter)
 
     constraints = [constraint for constraint in constraints if constraint]
 
-    results_with_scores = []
+
     subnum = 0
-    # Ciclo attraverso tutte le combinazioni dei vincoli
-    # for num_constraints in range(len(constraints), 0, -1):  # Inizia con tutti i vincoli, riduci gradualmente
-    #
-    #     for subset in combinations(constraints, num_constraints):
-    #         print(f"Testing subset: {subset}")
-    #         subnum = subnum + 1
-    #
-    #         #Genera la stringa dei filtri SPARQL, ma includi solo quelli che non sono vuoti
-    #         filters = " ".join([f"FILTER({constraint})" for constraint in subset if constraint])
-    #
-    #         # Inserisci questi filtri in una query template
-    #         query_template = """
-    #             PREFIX dbo: <http://dbpedia.org/ontology/>
-    #             PREFIX dbp: <http://dbpedia.org/property/>
-    #             SELECT ?title ?genre ?director ?actor ?country ?views ?runtime ?released ?abstract
-    #             WHERE {{
-    #                 ?movie rdfs:label ?title .
-    #                 OPTIONAL {{ ?movie dbo:genre ?genre. }}
-    #                 OPTIONAL {{ ?movie dbo:director ?director. }}
-    #                 OPTIONAL {{ ?movie dbo:starring ?actor. }}
-    #                 OPTIONAL {{ ?movie dbo:country ?country. }}
-    #                 OPTIONAL {{ ?movie dbp:views ?views. }}
-    #                 OPTIONAL {{ ?movie dbo:runtime ?runtime. }}
-    #                 OPTIONAL {{ ?movie dbp:released ?released. }}
-    #                 OPTIONAL {{ ?movie dbo:abstract ?abstract. }}
-    #                 {filters}
-    #             }}
-    #             ORDER BY RAND()
-    #             LIMIT 100
-    #         """
-    #         query = query_template.format(filters=filters)
-    #         print("\n\n\n\nQUESTA LA QUERY")
-    #         print(query)
-    #
-    #         # Esegui la query
-    #         print(f"Testing combination of {num_constraints} constraints: {subset}")
-    #         results = execute_query(g, query, f"Combination of {num_constraints} constraints")
-    #
-    #         # Se ci sono risultati, accumulali
-    #         if results:
-    #             subset_scores = collect_results_with_scores(
-    #                 results, genres, director, actors, country, popularity_list, duration_list, year
-    #             )
-    #             results_with_scores.extend(subset_scores)
-
-
-
     results_with_scores = []
     current_results_count = 0
     max_constraints_found = None  # Tiene traccia del numero di vincoli della prima query che ha restituito risultati
+    unique_titles = set()
+    query_completed = False
 
     for num_constraints in range(len(constraints), 0, -1):
         for subset in combinations(constraints, num_constraints):
             print(f"Testing subset: {subset}")
             subnum = subnum + 1
 
+            # Genera la stringa dei filtri SPARQL
             filters = " ".join([f"FILTER({constraint})" for constraint in subset if constraint])
 
             query_template = """
@@ -339,38 +299,37 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
             print("\n\n\n\nQUESTA LA QUERY")
             print(query)
 
-            results = execute_query(g, query, f"Combination of {num_constraints} constraints")
-
-            # if results:
-            #     # Se è la prima query con risultati, memorizza il numero di vincoli
-            #     if max_constraints_found is None:
-            #         max_constraints_found = num_constraints
-            #
-            #     # Se il numero di vincoli della query è minore rispetto a quello memorizzato, conta i risultati
-            #     if num_constraints < max_constraints_found:
-            #         subset_scores = collect_results_with_scores(
-            #             results, genres, director, actors, country, popularity_list, duration_list, year
-            #         )
-            #         results_with_scores.extend(subset_scores)
-            #         current_results_count += len(subset_scores)
-            #
-            #         # Se hai abbastanza risultati, esci
-            #         if current_results_count >= number_of_results:
-            #             break
-            # else:
-            #     continue
-            # break
             # Esegui la query
-            print(f"Testing combination of {num_constraints} constraints: {subset}")
             results = execute_query(g, query, f"Combination of {num_constraints} constraints")
 
-            # Se ci sono risultati, accumulali
             if results:
-                subset_scores = collect_results_with_scores(
-                    results, genres, director, actors, country, popularity_list, duration_list, year
-                )
-                results_with_scores.extend(subset_scores)
+                for row in results:
+                    # Aggiungi il titolo al set solo se è nuovo
+                    if row.title not in unique_titles:
+                        unique_titles.add(row.title)
 
+                        # Se è la prima query con risultati, memorizza il numero di vincoli
+                        if max_constraints_found is None:
+                            max_constraints_found = num_constraints
+
+                        # Estrai le informazioni del film e aggiungile al risultato
+                        subset_scores = collect_results_with_scores(
+                            [row], genres, director, actors, country, popularity_list, duration_list, year
+                        )
+                        results_with_scores.extend(subset_scores)
+                        current_results_count += 1  # Aumenta il conteggio solo per i film nuovi
+
+                        # Controlla se hai accumulato abbastanza risultati
+                        if current_results_count >= number_of_results:
+                            query_completed = True
+
+            # Se il ciclo corrente ha raggiunto il numero desiderato e non ci sono più combinazioni, termina il ciclo interno
+            if query_completed:
+                break
+
+        # Se il ciclo corrente ha raggiunto il numero desiderato e tutte le combinazioni sono state elaborate, termina il ciclo esterno
+        if query_completed and num_constraints < max_constraints_found:
+            break
 
 
     # Una volta raccolti tutti i risultati, applica epsilon-greedy
@@ -383,8 +342,7 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
 
         # Numero di film mancanti per raggiungere desired_results
         films_needed = number_of_results - len(recommended)
-        print("MI SERVONO")
-        print(films_needed)
+
         # Query per film casuali senza filtri
         random_query = f"""
         PREFIX dbo: <http://dbpedia.org/ontology/>
