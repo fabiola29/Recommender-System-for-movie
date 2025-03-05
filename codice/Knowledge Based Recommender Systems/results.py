@@ -1,8 +1,6 @@
 import streamlit as st
-from SPARQLWrapper import SPARQLWrapper, JSON
 import recommendation
-
-
+from systemEvaluation import evaluate_recommendations
 
 # Funzione per mostrare i risultati in Streamlit
 def results():
@@ -20,6 +18,7 @@ def results():
         '<h2 style="text-align: center; color: @white;"> 🎬 Films Recommended </h2>',
         unsafe_allow_html=True
     )
+
 
     # Recupero dei dati dalla sessione di Streamlit
     selected_genres = st.session_state.get('selected_genres', [])
@@ -82,8 +81,23 @@ def results():
     # Esegue la query per ottenere i risultati dei film
 
 
-    recommended =  recommendation.retrieve_results(5, selected_genres, selected_director, selected_actors, selected_nationality,selected_popularity , duration, selected_decade)
+    recommended =  recommendation.retrieve_results(5, selected_genres, selected_director, selected_actors, selected_nationality, selected_popularity, duration, selected_decade)
     # Rimuovi i duplicati nel risultato in base al titolo del film
+
+    user_preference = {
+        "genres": selected_genres,
+        "director": selected_director,
+        "actors": selected_actors,
+        "country": selected_nationality,
+        "popularity": selected_popularity,
+        "duration": duration,
+        "year": selected_decade
+    }
+
+    print(f"User preferences: {user_preference}")
+
+    # Chiamata alla funzione che valuta il sistema con una soglia di accettabilità del 50%
+    evaluate_recommendations(recommended, user_preference, test_size=0.2, acceptable_threshold=0.5)
 
     # Mostra i risultati
     if recommended:
@@ -119,5 +133,3 @@ def results():
     if st.button("Not satisfied? Go back to main"):
         st.session_state.page = "main"
         st.rerun()
-
-
