@@ -1,4 +1,3 @@
-
 import rdflib
 import random
 import time
@@ -16,6 +15,10 @@ def execute_query(graph, query, description):
         print(
             f"- Titolo: {row.title}, Genere: {getattr(row, 'genre', 'N/A')}, Regista: {getattr(row, 'director', 'N/A')}, Attore: {getattr(row, 'actors', 'N/A')}, Country: {getattr(row, 'country', 'N/A')}, Popularity: {getattr(row, 'views', 'N/A')}, Runtime: {getattr(row, 'runtime', 'N/A')}, Year: {getattr(row, 'released', 'N/A')} ")
 
+    print("CIAO SONO AI RISULTTI")
+
+
+    print(results)
     return results
 
 
@@ -54,6 +57,7 @@ def collect_results_with_scores(results, genres, director, actors, country, view
                     (v == "Niche" and views_count < 30)
                 ]
                 if matching_views:
+                    print(f"Views category for {row.title}: {matching_views}")
                     score += len(matching_views)
                     reasons.append("it's a " + ", ".join(matching_views) + " film")
             except ValueError:
@@ -374,3 +378,18 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
 
     return recommended
 
+
+
+if __name__ == "__main__":
+    genres = ["comedy"]
+    director = "Paul Aster".replace(" ", "_")
+    actors = ["Lou Reed"]
+    actors = [actor.replace(" ", "_").lower() for actor in actors]
+    country = "United States"
+    duration = "Short"
+    popularity = "Niche"
+    year = "1990s"
+    # actors = []
+    # director = None
+    # country = None
+    retrieve_results(genres, director, actors, country, popularity, duration, year)

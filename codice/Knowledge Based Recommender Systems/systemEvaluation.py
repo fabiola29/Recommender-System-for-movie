@@ -183,11 +183,19 @@ def movie_matches_duration(movie_duration, user_duration_range):
         "long": (9000, 18000)     # 9000 to 18000 seconds (150 to 300 minutes)
     }
 
-    if isinstance(user_duration_range, list) and user_duration_range[0].lower() in duration_mapping:
-        min_duration, max_duration = duration_mapping[user_duration_range[0].lower()]
-        print(f"Checking if {min_duration} <= {extracted_duration} <= {max_duration}")
+    # Verifica se l'utente ha definito un range di durata
+    if isinstance(user_duration_range, list) and user_duration_range:
+        user_range_key = user_duration_range[0].lower()
+
+        # Verifica se il range dell'utente è valido
+        if user_range_key in duration_mapping:
+            min_duration, max_duration = duration_mapping[user_range_key]
+            print(f"Checking if {min_duration} <= {extracted_duration} <= {max_duration}")
+        else:
+            print("Invalid User Duration Range format.")
+            return 0
     else:
-        print("Invalid User Duration Range format.")
+        print("No valid user duration range provided.")
         return 0
 
     # Controllo finale
@@ -198,6 +206,9 @@ def movie_matches_duration(movie_duration, user_duration_range):
     print(f"❌ No Duration Match for {extracted_duration} seconds")
     return 0
 
+
+
+import re
 
 def movie_matches_year(movie_year, user_year_range):
     """
@@ -239,21 +250,23 @@ def movie_matches_year(movie_year, user_year_range):
     if isinstance(user_year_range, str) and user_year_range.endswith('s'):
         start_year = int(user_year_range[:4])  # Estrai l'inizio del decennio (e.g., 1990)
         end_year = start_year + 9  # Imposta l'intervallo di anni fino al prossimo decennio
-    else:
-        # L'utente ha fornito un intervallo di anni specifico
+    elif isinstance(user_year_range, tuple) and len(user_year_range) == 2:
+        # Se l'utente ha fornito un intervallo di anni specifico (ad esempio (1990, 2000))
         start_year, end_year = user_year_range
+    else:
+        print("Invalid user year range format. Expected a tuple with 2 values or a decade string.")
+        return 0
 
     print(f"User Year Range: {start_year}-{end_year}")
 
     # Controlla se l'anno estratto è all'interno dell'intervallo specificato
     if start_year <= extracted_year <= end_year:
-        print(f"✅ Year Match Found for {extracted_year} seconds")
-
+        print(f"✅ Year Match Found for {extracted_year}")
         return 1
 
-    print(f"❌ No Year Match for {extracted_year} seconds")
-
+    print(f"❌ No Year Match for {extracted_year}")
     return 0
+
 
 
 def movie_matches_popularity(movie_popularity, user_popularity_threshold):
@@ -326,7 +339,7 @@ def hold_out_split(data, test_size=0.2):
     return training_set, test_set
 
 
-def evaluate_recommendations(recommended, user_preferences, test_size=0.2, acceptable_threshold=0.5):
+def evaluate_recommendations(recommended, user_preferences, test_size=0.2):
     """
     Questa funzione valuta un sistema di raccomandazione in base a vari criteri, inclusi rilevanza, serendipità,
     novità, diversità e accettabilità. Utilizza un set di test per verificare quanto bene i film consigliati
@@ -354,11 +367,14 @@ def evaluate_recommendations(recommended, user_preferences, test_size=0.2, accep
     serendipity_scores = []  # Punteggio di serendipità: quanto le raccomandazioni sono sorprendenti (ma comunque utili)
     novelty_scores = []  # Punteggio di novità: quanto le raccomandazioni sono nuove per l'utente
     diversity_scores = []  # Punteggio di diversità: quanto le raccomandazioni coprono vari aspetti delle preferenze
-    acceptable_count = 0  # Variabile per contare quante raccomandazioni sono accettabili (soddisfano la soglia accettabile)
 
     # Suddividiamo la lista di film consigliati in set di addestramento e test usando il metodo hold-out
     training_set, test_set = hold_out_split(recommended, test_size)
     print(f"\n🔄 Data Split - Training set size: {len(training_set)}, Test set size: {len(test_set)}")
+
+    # Verifica se l'utente ha selezionato solo il genere come preferenza
+    if 'genres' in user_preferences and len(user_preferences) == 1:
+        print("\n🎬 Only genre preference selected, evaluating recommendations based on genre only.")
 
     # Ora eseguiamo la valutazione delle raccomandazioni usando il test set
     for movie in test_set:
@@ -370,71 +386,77 @@ def evaluate_recommendations(recommended, user_preferences, test_size=0.2, accep
         novelty = 0  # Contatore per la novità: film che non soddisfano completamente le preferenze
         movie_features = []  # Lista per tracciare le caratteristiche del film che soddisfano le preferenze dell'utente
 
-        # Verifica se il film soddisfa ciascuna preferenza dell'utente
-        # Controllo per il genere
-        if 'genres' in user_preferences and movie_matches_genre(movie, user_preferences['genres']):
-            matched_constraints += 1
-            movie_features.append('genres')
-        else:
-            partial_matches += 1
-            novelty += 1
+        # Se è stato selezionato solo il genere, valutiamo solo questo criterio
+        if 'genres' in user_preferences and len(user_preferences) == 1:
+            if movie_matches_genre(movie, user_preferences['genres']):
+                matched_constraints += 1
+                movie_features.append('genres')
+            else:
+                novelty += 1  # Il film non corrisponde al genere, quindi è considerato nuovo
 
-        # Controllo per il regista
-        if 'director' in user_preferences and movie_matches_director(movie, user_preferences['director']):
-            matched_constraints += 1
-            movie_features.append('director')
+        # Se sono selezionate altre preferenze, valutiamo anche altri criteri
         else:
-            partial_matches += 1
-            novelty += 1
+            # Controllo per il genere
+            if 'genres' in user_preferences and movie_matches_genre(movie, user_preferences['genres']):
+                matched_constraints += 1
+                movie_features.append('genres')
+            else:
+                partial_matches += 1
+                novelty += 1
 
-        # Controllo per gli attori
-        if 'actors' in user_preferences and movie_matches_actors(movie, user_preferences['actors']):
-            matched_constraints += 1
-            movie_features.append('actors')
-        else:
-            partial_matches += 1
-            novelty += 1
+            # Controllo per il regista
+            if 'director' in user_preferences and movie_matches_director(movie, user_preferences['director']):
+                matched_constraints += 1
+                movie_features.append('director')
+            else:
+                partial_matches += 1
+                novelty += 1
 
-        # Controllo per il paese di origine
-        if 'country' in user_preferences and movie_matches_country(movie, user_preferences['country']):
-            matched_constraints += 1
-            movie_features.append('country')
-        else:
-            partial_matches += 1
-            novelty += 1
+            # Controllo per gli attori
+            if 'actors' in user_preferences and movie_matches_actors(movie, user_preferences['actors']):
+                matched_constraints += 1
+                movie_features.append('actors')
+            else:
+                partial_matches += 1
+                novelty += 1
 
-        # Controllo per la popolarità
-        if 'popularity' in user_preferences and movie_matches_popularity(movie, user_preferences['popularity']):
-            matched_constraints += 1
-            movie_features.append('popularity')
-        else:
-            partial_matches += 1
-            novelty += 1
+            # Controllo per il paese di origine
+            if 'country' in user_preferences and movie_matches_country(movie, user_preferences['country']):
+                matched_constraints += 1
+                movie_features.append('country')
+            else:
+                partial_matches += 1
+                novelty += 1
 
-        # Controllo per la durata
-        if 'duration' in user_preferences and movie_matches_duration(movie, user_preferences['duration']):
-            matched_constraints += 1
-            movie_features.append('duration')
-        else:
-            partial_matches += 1
-            novelty += 1
+            # Controllo per la popolarità
+            if 'popularity' in user_preferences and movie_matches_popularity(movie, user_preferences['popularity']):
+                matched_constraints += 1
+                movie_features.append('popularity')
+            else:
+                partial_matches += 1
+                novelty += 1
 
-        # Controllo per l'anno
-        if 'year' in user_preferences and movie_matches_year(movie, user_preferences['year']):
-            matched_constraints += 1
-            movie_features.append('year')
-        else:
-            partial_matches += 1
-            novelty += 1
+            # Controllo per la durata
+            if 'duration' in user_preferences and movie_matches_duration(movie, user_preferences['duration']):
+                matched_constraints += 1
+                movie_features.append('duration')
+            else:
+                partial_matches += 1
+                novelty += 1
+
+            # Controllo per l'anno
+            if 'year' in user_preferences and movie_matches_year(movie, user_preferences['year']):
+                matched_constraints += 1
+                movie_features.append('year')
+            else:
+                partial_matches += 1
+                novelty += 1
 
         # Debug: Mostra i match per questo film
         print(
             f"✅ Exact Matches: {matched_constraints}, ❌ Partial Matches: {partial_matches}, 🎭 Total Constraints: {total_constraints}")
 
-        # Debug: Mostra il rapporto tra vincoli soddisfatti e vincoli totali
-        print(f"Matched Constraints / Total Constraints: {matched_constraints / total_constraints:.2f}")
-
-        # 🔹 Calcolo migliorato dei punteggi 🔹
+        # Calcolo dei punteggi
         relevance_score = matched_constraints / total_constraints  # Punteggio di rilevanza basato sui match esatti
         serendipity_score = (partial_matches + 1) / (total_constraints + 1)  # Punteggio di serendipità
         novelty_score = (novelty + 1) / (total_constraints + 1)  # Punteggio di novità (evita 0 assoluto)
@@ -447,26 +469,19 @@ def evaluate_recommendations(recommended, user_preferences, test_size=0.2, accep
         novelty_scores.append(novelty_score)
         diversity_scores.append(diversity_score)
 
-        # Verifica se la raccomandazione è accettabile (rispetta la soglia definita dall'utente)
-        if matched_constraints / total_constraints >= acceptable_threshold:
-            acceptable_count += 1
 
-    # 📊 Calcolo dei punteggi medi per il sistema di raccomandazione
+    # Calcolo dei punteggi medi
     avg_relevance = sum(relevance_scores) / len(relevance_scores) if relevance_scores else 0
     avg_serendipity = sum(serendipity_scores) / len(serendipity_scores) if serendipity_scores else 0
     avg_novelty = sum(novelty_scores) / len(novelty_scores) if novelty_scores else 0
     avg_diversity = sum(diversity_scores) / len(diversity_scores) if diversity_scores else 0
 
-    # 🖥️ Debug: Mostra i punteggi medi
+    # Mostra i punteggi medi
     print("\n📊 Average Scores for the Recommendation System:")
     print(f"🔹 Relevance: {avg_relevance * 100:.2f}%")
     print(f"🔹 Serendipity: {avg_serendipity * 100:.2f}%")
     print(f"🔹 Novelty: {avg_novelty * 100:.2f}%")
     print(f"🔹 Diversity: {avg_diversity * 100:.2f}%")
 
-    # Calcoliamo il rapporto di accettabilità (quanto le raccomandazioni soddisfano la soglia)
-    acceptability_ratio = acceptable_count / len(test_set) if test_set else 0
-    print(f"\n📊 Accuracy Acceptability: {acceptability_ratio * 100:.2f}%")
 
-    # Ritorniamo i punteggi calcolati per ciascun criterio
-    return relevance_scores, serendipity_scores, novelty_scores, diversity_scores, acceptability_ratio
+    return relevance_scores, serendipity_scores, novelty_scores, diversity_scores

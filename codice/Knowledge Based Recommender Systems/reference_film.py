@@ -1,6 +1,6 @@
 import streamlit as st
 import utils
-
+from systemEvaluation import evaluate_recommendations
 def reference_film_page():
     movies = st.session_state.movies['title']
 
@@ -10,10 +10,23 @@ def reference_film_page():
     reference_film = st.selectbox("Choose a film you liked:", movies)
 
     if st.button("Search"):
-        # Qui inserisci il codice per avviare la ricerca
-        utils.search_similar_movies(reference_film)
+        # Esegui la ricerca dei film simili
+        recommended = utils.search_similar_movies(reference_film)
         st.write(f"Searching for movies similar to '{reference_film}'...")
 
+        # Recupero delle preferenze dell'utente
+        user_preference = {
+            "genres": st.session_state.selected_genres,
+            "director": st.session_state.selected_director,
+            "actors": st.session_state.selected_actors,
+            "country": st.session_state.selected_nationality,
+            "popularity": st.session_state.filtered_movies,
+            "duration": st.session_state.duration,
+            "year": st.session_state.selected_decade
+        }
+
+        # Valuta le raccomandazioni basate sulle preferenze dell'utente
+        evaluate_recommendations(recommended, user_preference, test_size=0.2)
 
     # Bottone per tornare alla pagina principale
     if st.button("Back to main"):
