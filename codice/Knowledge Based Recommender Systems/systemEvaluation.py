@@ -350,8 +350,6 @@ def evaluate_recommendations(recommended, user_preferences, test_size=0.2):
     - user_preferences (dict): Un dizionario contenente le preferenze dell'utente, ad esempio 'genres',
       'director', 'actors', 'country', ecc.
     - test_size (float, opzionale): La percentuale del set di dati che verrà utilizzata per il test (default è 0.2).
-    - acceptable_threshold (float, opzionale): La soglia minima per considerare una raccomandazione accettabile
-      (default è 0.5).
 
     Ritorna:
     - relevance_scores (list): Una lista di punteggi di rilevanza per ciascun film nel test set.
