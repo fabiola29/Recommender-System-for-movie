@@ -81,7 +81,7 @@ def results():
     # Esegue la query per ottenere i risultati dei film
 
 
-    recommended =  recommendation.retrieve_results(5, selected_genres, selected_director, selected_actors, selected_nationality, selected_popularity, duration, selected_decade)
+    recommended =  recommendation.retrieve_results(10, selected_genres, selected_director, selected_actors, selected_nationality, selected_popularity, duration, selected_decade)
     # Rimuovi i duplicati nel risultato in base al titolo del film
 
     user_preference = {
@@ -97,7 +97,7 @@ def results():
     print(f"User preferences: {user_preference}")
 
     # Chiamata alla funzione che valuta il sistema con una soglia di accettabilità del 50%
-    evaluate_recommendations(recommended, user_preference, test_size=0.2, acceptable_threshold=0.5)
+    evaluate_recommendations(recommended, user_preference, test_size=0.2)
 
     # Mostra i risultati
     if recommended:
