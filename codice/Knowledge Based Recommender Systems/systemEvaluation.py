@@ -356,6 +356,8 @@ def evaluate_recommendations(recommended, user_preferences, test_size=0.2):
     - serendipity_scores (list): Una lista di punteggi di serendipità per ciascun film nel test set.
     - novelty_scores (list): Una lista di punteggi di novità per ciascun film nel test set.
     - diversity_scores (list): Una lista di punteggi di diversità per ciascun film nel test set.
+    - partial_accuracy_scores (list): Una lista di punteggi di accuratezza parziale per ciascun film nel test set.
+
     """
 
     # Inizializzazione delle liste per salvare i punteggi di valutazione
@@ -363,6 +365,7 @@ def evaluate_recommendations(recommended, user_preferences, test_size=0.2):
     serendipity_scores = []  # Punteggio di serendipità: quanto le raccomandazioni sono sorprendenti (ma comunque utili)
     novelty_scores = []  # Punteggio di novità: quanto le raccomandazioni sono nuove per l'utente
     diversity_scores = []  # Punteggio di diversità: quanto le raccomandazioni coprono vari aspetti delle preferenze
+    partial_accuracy_scores = [] # Punteggio di accuratezza parziale: combinazione di match esatti e parziali
 
     # Suddividiamo la lista di film consigliati in set di addestramento e test usando il metodo hold-out
     training_set, test_set = hold_out_split(recommended, test_size)
@@ -458,12 +461,14 @@ def evaluate_recommendations(recommended, user_preferences, test_size=0.2):
         novelty_score = (novelty + 1) / (total_constraints + 1)  # Punteggio di novità (evita 0 assoluto)
         diversity_score = len(set(movie_features)) / (
                     len(movie_features) + 1) if movie_features else 0  # Punteggio di diversità
+        partial_accuracy = (matched_constraints + partial_matches / 2) / total_constraints  # Punteggio di accuratezza parziale
 
         # Salviamo i punteggi aggiornati
         relevance_scores.append(relevance_score)
         serendipity_scores.append(serendipity_score)
         novelty_scores.append(novelty_score)
         diversity_scores.append(diversity_score)
+        partial_accuracy_scores.append(partial_accuracy)
 
 
     # Calcolo dei punteggi medi
@@ -471,6 +476,7 @@ def evaluate_recommendations(recommended, user_preferences, test_size=0.2):
     avg_serendipity = sum(serendipity_scores) / len(serendipity_scores) if serendipity_scores else 0
     avg_novelty = sum(novelty_scores) / len(novelty_scores) if novelty_scores else 0
     avg_diversity = sum(diversity_scores) / len(diversity_scores) if diversity_scores else 0
+    avg_partial_accuracy = sum(partial_accuracy_scores) / len(partial_accuracy_scores) if partial_accuracy_scores else 0
 
     # Mostra i punteggi medi
     print("\n📊 Average Scores for the Recommendation System:")
@@ -478,6 +484,7 @@ def evaluate_recommendations(recommended, user_preferences, test_size=0.2):
     print(f"🔹 Serendipity: {avg_serendipity * 100:.2f}%")
     print(f"🔹 Novelty: {avg_novelty * 100:.2f}%")
     print(f"🔹 Diversity: {avg_diversity * 100:.2f}%")
+    print(f"🔹 Partial Accuracy: {avg_partial_accuracy * 100:.2f}%")
 
 
-    return relevance_scores, serendipity_scores, novelty_scores, diversity_scores
+    return relevance_scores, serendipity_scores, novelty_scores, diversity_scores, partial_accuracy_scores
