@@ -352,11 +352,12 @@ def evaluate_recommendations(recommended, user_preferences, test_size=0.2):
     - test_size (float, opzionale): La percentuale del set di dati che verrà utilizzata per il test (default è 0.2).
 
     Ritorna:
-    - relevance_scores (list): Una lista di punteggi di rilevanza per ciascun film nel test set.
-    - serendipity_scores (list): Una lista di punteggi di serendipità per ciascun film nel test set.
-    - novelty_scores (list): Una lista di punteggi di novità per ciascun film nel test set.
-    - diversity_scores (list): Una lista di punteggi di diversità per ciascun film nel test set.
-    - partial_accuracy_scores (list): Una lista di punteggi di accuratezza parziale per ciascun film nel test set.
+    - relevance_scores (list): Punteggi di rilevanza per film nel test set.
+    - serendipity_scores (list): Punteggi di serendipità per film nel test set.
+    - novelty_scores (list): Punteggi di novità per  film nel test set.
+    - diversity_scores (list): Punteggi di diversità per film nel test set.
+    - partial_accuracy_scores (list): Punteggi di accuratezza parziale per film nel test set.
+    - accuracy_score (float): Punteggio di accuratezza che misura quanto le raccomandazioni soddisfano le preferenze.
 
     """
 
@@ -366,6 +367,7 @@ def evaluate_recommendations(recommended, user_preferences, test_size=0.2):
     novelty_scores = []  # Punteggio di novità: quanto le raccomandazioni sono nuove per l'utente
     diversity_scores = []  # Punteggio di diversità: quanto le raccomandazioni coprono vari aspetti delle preferenze
     partial_accuracy_scores = [] # Punteggio di accuratezza parziale: combinazione di match esatti e parziali
+    constraint_accuracy_scores = []  # Punteggio di accuratezza sui vincoli
 
     # Suddividiamo la lista di film consigliati in set di addestramento e test usando il metodo hold-out
     training_set, test_set = hold_out_split(recommended, test_size)
@@ -463,12 +465,16 @@ def evaluate_recommendations(recommended, user_preferences, test_size=0.2):
                     len(movie_features) + 1) if movie_features else 0  # Punteggio di diversità
         partial_accuracy = (matched_constraints + partial_matches / 2) / total_constraints  # Punteggio di accuratezza parziale
 
+        # Calcolo dell'accuratezza sui vincoli (vincoli soddisfatti / vincoli totali)
+        constraint_accuracy = matched_constraints / total_constraints if total_constraints > 0 else 0
+
         # Salviamo i punteggi aggiornati
         relevance_scores.append(relevance_score)
         serendipity_scores.append(serendipity_score)
         novelty_scores.append(novelty_score)
         diversity_scores.append(diversity_score)
         partial_accuracy_scores.append(partial_accuracy)
+        constraint_accuracy_scores.append(constraint_accuracy)
 
 
     # Calcolo dei punteggi medi
@@ -477,6 +483,7 @@ def evaluate_recommendations(recommended, user_preferences, test_size=0.2):
     avg_novelty = sum(novelty_scores) / len(novelty_scores) if novelty_scores else 0
     avg_diversity = sum(diversity_scores) / len(diversity_scores) if diversity_scores else 0
     avg_partial_accuracy = sum(partial_accuracy_scores) / len(partial_accuracy_scores) if partial_accuracy_scores else 0
+    avg_constraint_accuracy = sum(constraint_accuracy_scores) / len(constraint_accuracy_scores) if constraint_accuracy_scores else 0
 
     # Mostra i punteggi medi
     print("\n📊 Average Scores for the Recommendation System:")
@@ -485,6 +492,7 @@ def evaluate_recommendations(recommended, user_preferences, test_size=0.2):
     print(f"🔹 Novelty: {avg_novelty * 100:.2f}%")
     print(f"🔹 Diversity: {avg_diversity * 100:.2f}%")
     print(f"🔹 Partial Accuracy: {avg_partial_accuracy * 100:.2f}%")
+    print(f"🔹 Constraint Accuracy: {avg_constraint_accuracy * 100:.2f}%")
 
 
-    return relevance_scores, serendipity_scores, novelty_scores, diversity_scores, partial_accuracy_scores
+    return relevance_scores, serendipity_scores, novelty_scores, diversity_scores, partial_accuracy_scores, constraint_accuracy_scores
