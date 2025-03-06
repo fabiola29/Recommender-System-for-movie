@@ -358,8 +358,6 @@ def evaluate_recommendations(recommended, user_preferences, test_size=0.2):
     - serendipity_scores (list): Una lista di punteggi di serendipità per ciascun film nel test set.
     - novelty_scores (list): Una lista di punteggi di novità per ciascun film nel test set.
     - diversity_scores (list): Una lista di punteggi di diversità per ciascun film nel test set.
-    - acceptability_ratio (float): Il rapporto di accettabilità delle raccomandazioni, ovvero la percentuale di film
-      che soddisfano la soglia di accettabilità.
     """
 
     # Inizializzazione delle liste per salvare i punteggi di valutazione
