@@ -318,7 +318,6 @@ def group_movies_by_decade(movies_release):
     return decades
 
 
-
 def display_movies_by_decade(years: object, default: object = None) -> str | Any:
     """
     Interfaccia utente per selezionare un decennio e visualizzare i film associati.
@@ -375,7 +374,6 @@ def display_popularity_preference(default=None):
         preferences.append("Blockbuster")
 
     return preferences
-
 
 
 def save_user_preferences(selected_genres, selected_director, selected_actors, selected_nationality, selected_popularity, selected_decade, duration,
@@ -516,6 +514,8 @@ def extract_reference_film_info(reference_title):
 def search_similar_movies(reference_film):
     informations = extract_reference_film_info(reference_film)
 
+    print("INFORMAZIONI")
+    print(informations)
     # Aggiorna lo stato della sessione Streamlit con i nuovi formati
     st.session_state.selected_genres = informations["genres"]
     st.session_state.selected_director = informations["director"]
@@ -528,3 +528,30 @@ def search_similar_movies(reference_film):
     # Passa alla pagina dei risultati
     st.session_state.page = "results"
     st.rerun()
+
+
+def print_recommendations(recommendations):
+    """
+    Stampa le raccomandazioni in un formato leggibile.
+
+    Parametri:
+    - recommendations (dict): Dizionario contenente le raccomandazioni con i dettagli dei film.
+    """
+    for title, details in recommendations.items():
+        if not isinstance(details, dict):  # Controllo se details è un dizionario
+            print(f"Avviso: Formato non valido per '{title}', dettagli mancanti.")
+            continue
+
+        # Controllo se la chiave 'title' esiste, altrimenti usa il nome della chiave come titolo
+        film_title = details.get('title', title)
+
+        print(f"\nTitle: {film_title}")
+        print(f"Score: {details.get('score', 'N/A'):.2f}")
+        print(f"Explanation: {details.get('explanation', 'N/A')}")
+        print(f"Genres: {details.get('genres', 'N/A')}")
+        print(f"Director: {details.get('director', 'N/A')}")
+        print(f"Actors: {details.get('actors', 'N/A')}")
+        print(f"Country: {details.get('country', 'N/A')}")
+        print(f"Year: {details.get('year', 'N/A')}")
+        print(f"Abstract: {details.get('abstract', 'N/A')[:200]}..." if details.get('abstract') else "Abstract: N/A")
+        print("-" * 60)

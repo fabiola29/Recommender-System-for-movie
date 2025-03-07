@@ -1,0 +1,48 @@
+{
+    "user_horror_enthusiast": {
+        "genres": ["Horror"]
+    },
+    "user_blockbuster_fan": {
+        "genres": ["Action", "Adventure"],
+        "directors": "Christopher Nolan",
+        "actors": ["Tom Cruise"],
+        "duration": "Long",
+        "popularity": "Blockbuster",
+        "year": "2010s",
+        "country": "USA"
+    },
+    "user_art_house_cinephile": {
+        "genres": ["Drama"],
+        "directors": "Wong Kar Wai",
+        "popularity": "Niche"
+    },
+    "user_family_animation": {
+        "genres": ["Animation", "Comedy"],
+        "duration": "Medium"
+    },
+    "user_thriller_minimal": {
+        "genres": ["Thriller"]
+    },
+    "user_classic_cinema_lover": {
+        "genres": ["Drama", "Romance"],
+        "year": "1960s",
+        "popularity": "Niche"
+    },
+    "user_foreign_intermediate": {
+        "genres": ["Drama"],
+        "country": "France",
+        "duration": "Long"
+    },
+    "user_comedy_fan": {
+        "genres": ["Comedy"],
+        "actors": "Jim Carrey",
+        "popularity": "Popular"
+    },
+    "user_romantic_classics": {
+        "genres": ["Romance"],
+        "year": "1950s"
+    },
+    "user_minimalist_drama": {
+        "genres": ["Drama"]
+    }
+}

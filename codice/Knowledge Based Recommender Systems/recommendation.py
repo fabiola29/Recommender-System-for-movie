@@ -7,135 +7,148 @@ import streamlit as st
 #TODO RENDI I RISULTATI UNICI
 def execute_query(graph, query, description):
     """Esegue una query SPARQL e restituisce i risultati come una lista."""
-    print(f"Eseguendo query: {description}")
+
     results = list(graph.query(query))
-    print(f"Risultati trovati: {len(results)}")
-
-    for row in results:
-        print(
-            f"- Titolo: {row.title}, Genere: {getattr(row, 'genre', 'N/A')}, Regista: {getattr(row, 'director', 'N/A')}, Attore: {getattr(row, 'actors', 'N/A')}, Country: {getattr(row, 'country', 'N/A')}, Popularity: {getattr(row, 'views', 'N/A')}, Runtime: {getattr(row, 'runtime', 'N/A')}, Year: {getattr(row, 'released', 'N/A')} ")
-
-    print("CIAO SONO AI RISULTTI")
 
 
-    print(results)
+    # for row in results:
+    #     print("DEVO VERIFICARE")
+    #     print(
+    #         f"- Titolo: {row.title}, Genere: {getattr(row, 'genre', 'N/A')}, Regista: {getattr(row, 'director', 'N/A')}, Attore: {getattr(row, 'actors', 'N/A')}, Country: {getattr(row, 'country', 'N/A')}, Popularity: {getattr(row, 'views', 'N/A')}, Runtime: {getattr(row, 'runtime', 'N/A')}, Year: {getattr(row, 'released', 'N/A')} ")
+
+
     return results
 
 
-def collect_results_with_scores(results, genres, director, actors, country, views_list, duration_list, year):
+def collect_results_with_scores(results, genres, user_director, user_actors, user_country, views_list, duration_list, user_year):
     """
     Colleziona i risultati e assegna loro un punteggio in base ai vincoli soddisfatti.
     """
     print("Assegnando punteggi ai risultati...")
-    results_with_scores = []
+
+    # Controlli preventivi per garantire che le liste siano sempre iterabili
+    genres = genres or []
+    user_actors = user_actors or []
+    views_list = views_list or []
+    duration_list = duration_list or []
+
+    results_with_scores = {}
+
     for row in results:
         score = 0
         reasons = []
-        if genres and hasattr(row, "genre") and row.genre:
-            matching_genres = [genre for genre in genres if genre.lower() in row.genre.lower()]
+
+        title = str(getattr(row, "title", "Unknown Title"))
+        genre = str(getattr(row, "genre", "N/A"))
+        director = str(getattr(row, "director", "N/A"))
+        actors = str(getattr(row, "actor", "N/A"))
+        country = str(getattr(row, "country", "N/A"))
+        views = str(getattr(row, "views", "0"))  # Assicuriamoci che sia un numero valido
+        runtime = str(getattr(row, "runtime", "0"))  # Assicuriamoci che sia un numero valido
+        release_year = str(getattr(row, "released", "N/A"))
+        abstract = str(getattr(row, "abstract", "N/A"))
+
+        # ✅ Normalizziamo gli attori (rimuoviamo URI e trasformiamo in lista)
+        actors = [a.split("/")[-1].replace("_", " ").strip() for a in actors.split(",") if a] if actors != "N/A" else []
+
+        # ✅ Debug sugli attori
+        print(f"DEBUG - Film: {title}, Attori film normalizzati: {actors}, Attori utente: {user_actors}")
+
+        # ✅ Verifica e assegna punteggi ai vincoli rispettati
+        if genres and genre != "N/A":
+            matching_genres = [g for g in genres if g.lower() in genre.lower()]
             if matching_genres:
                 score += len(matching_genres)
                 reasons.append("you like genres like " + ", ".join(matching_genres))
-        if director and hasattr(row, "director") and row.director and director.lower() in row.director.lower():
+
+        if user_director and director != "N/A" and user_director.lower() in director.lower():
             score += 1
-            reasons.append(f"you appreciate films by {director}")
-        if actors and hasattr(row, "actors") and row.actors:
-            matching_actors = [actor for actor in actors if actor.lower() in row.actor.lower()]
+            reasons.append(f"you appreciate films by {user_director}")
+
+        # ✅ Confronto migliorato sugli attori
+        if user_actors and actors:  # ✅ Controlliamo solo se entrambe le liste non sono vuote
+
+            user_actors = [a.replace("_", " ").lower() for a in user_actors]
+
+            matching_actors = [actor for actor in user_actors if any(actor.lower() in a.lower() for a in actors)]
+
             if matching_actors:
                 score += len(matching_actors)
-                reasons.append("you like actors like " + ", ".join(matching_actors))
-        if country and hasattr(row, "country") and row.country and country.lower() in row.country.lower():
+                reasons.append("you like actors like " + ", ".join(actors))
+
+        if user_country and country != "N/A" and user_country.lower() in country.lower():
             score += 1
-            reasons.append(f"you enjoy movies from {country}")
-        if views_list and hasattr(row, "views") and row.views:
-            try:
-                views_count = int(row.views)
-                matching_views = [
-                    v for v in views_list if
-                    (v == "Blockbuster" and views_count > 100) or
-                    (v == "Popular" and 30 <= views_count <= 100) or
-                    (v == "Niche" and views_count < 30)
-                ]
-                if matching_views:
-                    print(f"Views category for {row.title}: {matching_views}")
-                    score += len(matching_views)
-                    reasons.append("it's a " + ", ".join(matching_views) + " film")
-            except ValueError:
-                print(f"Valore di views non valido: {row.views}")
+            reasons.append(f"you enjoy movies from {user_country}")
 
-        if duration_list and hasattr(row, "runtime") and row.runtime:
-            try:
-                runtime = int(row.runtime)
-                matching_durations = [
-                    d for d in duration_list if
-                    (d == "Short" and runtime < 5400) or
-                    (d == "Medium" and 5400 <= runtime <= 9000) or
-                    (d == "Long" and runtime > 9000)
-                ]
-                if matching_durations:
-                    score += len(matching_durations)
-                    reasons.append("it's a " + ", ".join(matching_durations) + "-lenght film")
-            except ValueError:
-                print(f"Valore di runtime non valido: {row.runtime}")
+        # ✅ Confronto su popolarità (views)
+        views = int(views) if views.isdigit() else 0
+        views_result = None  # Inizializza con None
 
-        if year and hasattr(row, "released") and row.released:
-            try:
-                release_year = int(row.released)
-                if year == "1900s" and 1900 <= release_year <= 1909:
-                    score += 1
-                    reasons.append("it's from the 1900s")
-                elif year == "1910s" and 1910 <= release_year <= 1919:
-                    score += 1
-                    reasons.append("it's from the 1910s")
-                elif year == "1920s" and 1920 <= release_year <= 1929:
-                    score += 1
-                    reasons.append("it's from the 1920s")
-                elif year == "1930s" and 1930 <= release_year <= 1939:
-                    score += 1
-                    reasons.append("it's from the 1930s")
-                elif year == "1940s" and 1940 <= release_year <= 1949:
-                    score += 1
-                    reasons.append("it's from the 1940s")
-                elif year == "1950s" and 1950 <= release_year <= 1959:
-                    score += 1
-                    reasons.append("it's from the 1950s")
-                elif year == "1960s" and 1960 <= release_year <= 1969:
-                    score += 1
-                    reasons.append("it's from the 1960s")
-                elif year == "1970s" and 1970 <= release_year <= 1979:
-                    score += 1
-                    reasons.append("it's from the 1970s")
-                elif year == "1980s" and 1980 <= release_year <= 1989:
-                    score += 1
-                    reasons.append("it's from the 1980s")
-                elif year == "1990s" and 1990 <= release_year <= 1999:
-                    score += 1
-                    reasons.append("it's from the 1990s")
-                elif year == "2000s" and 2000 <= release_year <= 2009:
-                    score += 1
-                    reasons.append("it's from the 2000s")
-                elif year == "2010s" and 2010 <= release_year <= 2019:
-                    score += 1
-                    reasons.append("it's from the 2010s")
-                elif year == "2020s" and 2020 <= release_year <= 2029:
-                    score += 1
-                    reasons.append("it's from the 2020s")
-                elif year == "2030s" and 2030 <= release_year <= 2039:
-                    score += 1
-                    reasons.append("it's from the 2030s")
-            except ValueError:
-                print(f"Valore di year non valido: {row.released}")
+        if views_list:
+            matching_views = []
 
-        explanation = " and ".join(reasons)
-        for row in results:
-            # Esempio: estrai l'abstract dal risultato corrente
-            abstract = getattr(row, 'abstract', 'N/A')
-            # Aggiungi il titolo, lo score e l'abstract ai risultati
-            results_with_scores.append((row.title, score, explanation, abstract))
+            if views > 100:
+                views_result = "Blockbuster"
+                matching_views.append("Blockbuster")
+            elif 30 <= views <= 100:
+                views_result = "Popular"
+                matching_views.append("Popular")
+            elif views < 30:
+                views_result = "Niche"
+                matching_views.append("Niche")
+
+            if matching_views:
+                score += len(matching_views)
+                reasons.append("it's a " + ", ".join(matching_views) + " film")
+
+        # ✅ Confronto sulla durata
+        runtime = int(runtime) if runtime.isdigit() else 0
+        duration_result = None  # Inizializza con None
+
+        if duration_list:
+            matching_durations = []
+
+            if runtime < 5400:
+                duration_result = "Short"
+                matching_durations.append("Short")
+            elif 5400 <= runtime <= 9000:
+                duration_result = "Medium"
+                matching_durations.append("Medium")
+            elif runtime > 9000:
+                duration_result = "Long"
+                matching_durations.append("Long")
+
+            if matching_durations:
+                score += len(matching_durations)
+                reasons.append("it's a " + ", ".join(matching_durations) + "-length film")
+
+        # ✅ Calcolo della decade
+        decade = None
+        if release_year.isdigit():
+            release_year_int = int(release_year)
+            decade = f"{(release_year_int // 10) * 10}s"
+            if user_year == decade:
+                score += 1
+                reasons.append(f"it's from the {decade}")
+
+        explanation = " and ".join(reasons) if reasons else "No specific reason found"
+
+        # ✅ Salviamo i dati normalizzati nel dizionario
+        results_with_scores[title] = {
+            "title": title,
+            "score": score,
+            "explanation": explanation,
+            "abstract": abstract,
+            "genres": genre,
+            "director": director,
+            "actors": ", ".join(actors),  # Ora è una stringa leggibile
+            "country": country,
+            "views": views_result,
+            "duration": duration_result,
+            "year": decade
+        }
 
     return results_with_scores
-
-
 
 def epsilon_greedy_recommendation(results_with_scores, top_k, epsilon=0.2):
     """
@@ -143,53 +156,64 @@ def epsilon_greedy_recommendation(results_with_scores, top_k, epsilon=0.2):
     altrimenti, preferisce quelli con punteggi più alti ma introduce un elemento casuale.
     """
     print(f"Applicando epsilon-greedy con epsilon={epsilon}...")
+
     if not results_with_scores:
         print("Nessun risultato disponibile per epsilon-greedy.")
-        return []
+        return {}
 
-    # Aggiungi un elemento casuale ai punteggi per introdurre maggiore casualità.
+    # 🔹 Estrai la lista di film corretta
+    films_list = [list(film.values())[0] for film in results_with_scores]  # ✅ Estrai il dizionario corretto
+
+    # Creare una lista di tuple con il punteggio randomizzato
     randomized_scores = [
-        (title, score + random.uniform(-0.5, 0.5), explanation, abstract)
-        for title, score, explanation, abstract in results_with_scores
+        (
+            film.get("title", "Unknown"),  # ✅ Garantiamo che ogni film abbia un titolo
+            film,
+            film.get("score", 0) + random.uniform(-0.5, 0.5)  # Se "score" non esiste, usa 0
+        )
+        for film in films_list  # ✅ Iteriamo sulla lista corretta
     ]
 
-    # Ordina per il nuovo punteggio "casuale"
-    randomized_scores = sorted(randomized_scores, key=lambda x: x[1], reverse=True)
+    # Ordina per il punteggio randomizzato in ordine decrescente
+    randomized_scores.sort(key=lambda x: x[2], reverse=True)
 
-    # Stampa i risultati con i loro nuovi punteggi casuali e spiegazioni
     print("Risultati disponibili per epsilon-greedy (con randomizzazione):")
-    for title, score, explanation, abstract in randomized_scores:
-        print(f"- Titolo: {title}, Punteggio randomizzato: {score}, Motivo: {explanation}")
+    for title, film, score in randomized_scores:
+        print(f"- Titolo: {title}, Punteggio randomizzato: {score}, Motivo: {film.get('explanation', 'N/A')}")
 
-    selected = []
-    selected_titles = set()  # Un set per tenere traccia dei titoli già scelti
-    available = randomized_scores[:]
+    selected = {}  # Ora è un DIZIONARIO con la stessa struttura di results_with_scores
+    selected_titles = set()  # Per evitare duplicati
+    available = randomized_scores[:]  # Copia della lista dei film disponibili
 
     random.seed(time.time())
 
     while len(selected) < top_k and available:
-        # Genera un numero casuale float
+        # Genera un numero casuale per decidere tra esplorazione ed esploitazione
         random_value = random.random()
         print(f"Valore casuale generato: {random_value}")
 
         if random_value < epsilon and len(available) > 1:
-            # Esplorazione: scegli un film a caso tra quelli non ancora selezionati
-            chosen = random.choice(available)
+            chosen = random.choice(available)  # Esplorazione: scegli un film a caso
         else:
-            # Sfruttamento (ma con punteggi già randomizzati): scegli il primo (migliore) film disponibile
-            chosen = available[0]
+            chosen = available[0]  # Sfruttamento: scegli il film con punteggio massimo
 
-        title, score, explanation, abstract = chosen
+        title, film, score = chosen
+
         if title not in selected_titles:
-            # Aggiungi il film scelto ai selezionati, incluso l’abstract
-            selected.append((title, score, explanation, abstract))
-            selected_titles.add(title)
-            print(f"Film scelto: {title} con punteggio {score}, Motivo: {explanation}")
+            # Aggiunge il film scelto al dizionario mantenendo tutti i dati
+            film_copy = film.copy()
+            film_copy["score"] = score  # Aggiorna il punteggio con quello randomizzato
+            selected[title] = film_copy  # Mantiene la struttura originale
 
-        # Rimuovi il film scelto dai disponibili
+            selected_titles.add(title)
+
+            print(f"Film scelto: {title} con punteggio {score}, Motivo: {film.get('explanation', 'N/A')}")
+
+        # Rimuove il film scelto dalla lista disponibile
         available = [movie for movie in available if movie[0] != title]
 
     return selected
+
 
 
 @st.cache_data
@@ -262,7 +286,7 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
 
 
     subnum = 0
-    results_with_scores = []
+    list_results_with_scores = []
     current_results_count = 0
     max_constraints_found = None  # Tiene traccia del numero di vincoli della prima query che ha restituito risultati
     unique_titles = set()
@@ -296,14 +320,14 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
                 LIMIT 10
             """
             query = query_template.format(filters=filters)
-            print("\n\n\n\nQUESTA LA QUERY")
-            print(query)
+
 
             # Esegui la query
             results = execute_query(g, query, f"Combination of {num_constraints} constraints")
 
             if results:
                 for row in results:
+                    # print(row.title, row.genre, row.director, row.actor, row.country, row.views, row.runtime, row.released, row.abstract)
                     # Aggiungi il titolo al set solo se è nuovo
                     if row.title not in unique_titles:
                         unique_titles.add(row.title)
@@ -316,7 +340,7 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
                         subset_scores = collect_results_with_scores(
                             [row], genres, director, actors, country, popularity_list, duration_list, year
                         )
-                        results_with_scores.extend(subset_scores)
+                        list_results_with_scores.append(subset_scores)
                         current_results_count += 1  # Aumenta il conteggio solo per i film nuovi
 
                         # Controlla se hai accumulato abbastanza risultati
@@ -332,8 +356,7 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
             break
 
 
-    # Una volta raccolti tutti i risultati, applica epsilon-greedy
-    recommended = epsilon_greedy_recommendation(results_with_scores, number_of_results)
+    recommended = epsilon_greedy_recommendation(list_results_with_scores, number_of_results)
 
     # Dopo aver calcolato recommended con epsilon_greedy_recommendation
     print(len(recommended))
@@ -342,43 +365,81 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
 
         # Numero di film mancanti per raggiungere desired_results
         films_needed = number_of_results - len(recommended)
+        random_results = random_recommendation(films_needed)
 
-        # Query per film casuali senza filtri
-        random_query = f"""
-        PREFIX dbo: <http://dbpedia.org/ontology/>
-        PREFIX dbp: <http://dbpedia.org/property/>
-        SELECT ?title ?genre ?director ?actor ?country ?views ?runtime ?released ?abstract
-        WHERE {{
-            ?movie rdfs:label ?title .
-            OPTIONAL {{ ?movie dbo:genre ?genre. }}
-            OPTIONAL {{ ?movie dbo:director ?director. }}
-            OPTIONAL {{ ?movie dbo:starring ?actor. }}
-            OPTIONAL {{ ?movie dbo:country ?country. }}
-            OPTIONAL {{ ?movie dbp:views ?views. }}
-            OPTIONAL {{ ?movie dbo:runtime ?runtime. }}
-            OPTIONAL {{ ?movie dbp:released ?released. }}
-            OPTIONAL {{ ?movie dbo:abstract ?abstract. }}
-        }}
-        ORDER BY RAND()
-        LIMIT {films_needed}
-        """
-
-        print("RANDOM QUERYYYY")
-        print(random_query)
-
-        # Esegui la query per ottenere film casuali
-        random_results = execute_query(g, random_query, "Film casuali per completare")
-        print("\n\nCI ARRIVO QUI")
         # Aggiungi questi film ai risultati consigliati
         for row in random_results:
             # Aggiungi un motivo specifico per i film random
-            recommended.append((row.title, 0, "chosen randomly", getattr(row, 'abstract', 'N/A')))
+            recommended[row.title] = {
+                "score": 0,
+                "explanation": "chosen randomly",
+                "abstract": getattr(row, "abstract", "N/A")
+            }
 
         # Ora 'recommended' contiene almeno 'desired_results' film
 
     return recommended
 
+def random_recommendation(number_of_results):
+    """
+    Genera raccomandazioni casuali di film nel formato corretto.
 
+    Parametri:
+    - number_of_results (int): Numero di risultati da generare.
+    - genres (list): Lista dei generi preferiti.
+    - director (str): Regista preferito.
+    - actors (list): Lista di attori preferiti.
+    - country (str): Paese preferito.
+    - popularity_list (list): Lista di parametri di popolarità.
+    - duration_list (list): Lista delle durate preferite.
+    - year (str): Decennio preferito.
+
+    Ritorna:
+    - dict: Raccomandazioni di film nel formato corretto.
+    """
+    g = rdflib.Graph()
+    g.parse("movies_ontology.ttl", format="turtle")
+
+    random_query = f"""
+           PREFIX dbo: <http://dbpedia.org/ontology/>
+           PREFIX dbp: <http://dbpedia.org/property/>
+           SELECT ?title ?genre ?director ?actors ?country ?views ?runtime ?released ?abstract
+           WHERE {{
+               ?movie rdfs:label ?title .
+               OPTIONAL {{ ?movie dbo:genre ?genre. }}
+               OPTIONAL {{ ?movie dbo:director ?director. }}
+               OPTIONAL {{ ?movie dbo:starring ?actors. }}
+               OPTIONAL {{ ?movie dbo:country ?country. }}
+               OPTIONAL {{ ?movie dbp:views ?views. }}
+               OPTIONAL {{ ?movie dbo:runtime ?runtime. }}
+               OPTIONAL {{ ?movie dbp:released ?released. }}
+               OPTIONAL {{ ?movie dbo:abstract ?abstract. }}
+           }}
+           ORDER BY RAND()
+           LIMIT {number_of_results}
+           """
+
+    list_results_with_scores = {}
+    random_results = execute_query(g, random_query, "Film casuali per completare")
+
+    for row in random_results:
+        film_title = str(row[0])
+        film_details = {
+            'title': film_title,
+            'score': 1.0,  # Score predefinito per film casuali
+            'explanation': 'Randomly selected movie',
+            'abstract': str(row[8]) if row[8] else None,
+            'genres': str(row[1]) if row[1] else None,
+            'director': str(row[2]) if row[2] else None,
+            'actors': str(row[3]) if row[3] else None,
+            'country': str(row[4]) if row[4] else None,
+            'views': str(row[5]) if row[5] else None,
+            'duration': str(row[6]) if row[6] else None,
+            'year': str(row[7]) if row[7] else None,
+        }
+        list_results_with_scores[film_title] = film_details
+
+    return list_results_with_scores
 
 if __name__ == "__main__":
     genres = ["comedy"]
@@ -389,7 +450,5 @@ if __name__ == "__main__":
     duration = "Short"
     popularity = "Niche"
     year = "1990s"
-    # actors = []
-    # director = None
-    # country = None
-    retrieve_results(genres, director, actors, country, popularity, duration, year)
+
+    retrieve_results(5, genres, director, actors, country, popularity, duration, year)

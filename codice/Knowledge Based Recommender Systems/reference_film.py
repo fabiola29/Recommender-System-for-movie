@@ -11,22 +11,9 @@ def reference_film_page():
 
     if st.button("Search"):
         # Esegui la ricerca dei film simili
-        recommended = utils.search_similar_movies(reference_film)
+        utils.search_similar_movies(reference_film)
         st.write(f"Searching for movies similar to '{reference_film}'...")
 
-        # Recupero delle preferenze dell'utente
-        user_preference = {
-            "genres": st.session_state.selected_genres,
-            "director": st.session_state.selected_director,
-            "actors": st.session_state.selected_actors,
-            "country": st.session_state.selected_nationality,
-            "popularity": st.session_state.filtered_movies,
-            "duration": st.session_state.duration,
-            "year": st.session_state.selected_decade
-        }
-
-        # Valuta le raccomandazioni basate sulle preferenze dell'utente
-        evaluate_recommendations(recommended, user_preference)
 
     # Bottone per tornare alla pagina principale
     if st.button("Back to main"):

@@ -94,25 +94,29 @@ def results():
         "year": selected_decade
     }
 
-    print(f"User preferences: {user_preference}")
+    # print(f"User preferences: {user_preference}")
 
 
     # Chiamata alla funzione che valuta il sistema con una soglia di accettabilità del 50%
-    evaluate_recommendations(recommended, user_preference)
+    # evaluate_recommendations(recommended, user_preference)
 
     # Mostra i risultati
     if recommended:
-        for idx, (movie, score, explanation, abstract) in enumerate(recommended):
+        for idx, (title, details) in enumerate(recommended.items()):  # ✅ CORRETTO
+            score = details.get("score", 0)
+            explanation = details.get("explanation", "No explanation available")
+            abstract = details.get("abstract", "N/A")
+            #print(f"{idx + 1}. {title} - Score: {score}, Reason: {explanation}, Abstract: {abstract}")
 
             # Mostra il titolo del film
-            st.subheader(movie)  # Qui movie è solo la stringa del titolo
+            st.subheader(title)  # Qui movie è solo la stringa del titolo
 
             # Mostra lo score e l'explanation
             # st.write(f"**Score:** {score}")
             st.write(f"**Explanation:** {explanation}")
 
             # Make the description read-only
-            st.text_area("Description", abstract, height=150, key=f"{movie}_{idx}", disabled=True)
+            st.text_area("Description", abstract, height=150, key=f"{title}_{idx}", disabled=True)
             # Se desideri renderlo più stilizzato, puoi usare markdown
             # st.markdown(f"**Score:** {score}  \n**Explanation:** {explanation}")
 
@@ -123,7 +127,7 @@ def results():
 
             if st.button(f"Choose", key=f"choose_{idx}"):
                 # Salva il film selezionato e imposta la visualizzazione della schermata successiva
-                st.session_state["selected_movie"] = movie
+                st.session_state["selected_movie"] = title
                 st.session_state.page = "confirmation screen"   # Imposta la pagina a "other suggestions"
                 st.rerun()
 
