@@ -321,178 +321,176 @@ def movie_matches_popularity(movie_popularity, user_popularity_threshold):
 
     return 0
 
-def hold_out_split(data, test_size=0.2):
+
+def evaluate_recommendations(recommended, user_preferences):
     """
-           Divide il dataset in set di addestramento e di test.
-
-           Parameters:
-               data (list): Il dataset da suddividere.
-               test_size (float): La frazione di dati da usare per il test (default 0.2).
-
-           Returns:
-               tuple: Set di addestramento e set di test.
-    """
-    test_set_size = int(len(data) * test_size)
-    random.shuffle(data)  # Shuffle to ensure randomness
-    test_set = data[:test_set_size]
-    training_set = data[test_set_size:]
-    return training_set, test_set
-
-
-def evaluate_recommendations(recommended, user_preferences, test_size=0.2):
-    """
-    Questa funzione valuta un sistema di raccomandazione in base a vari criteri, inclusi rilevanza, serendipità,
-    novità, diversità e accettabilità. Utilizza un set di test per verificare quanto bene i film consigliati
-    soddisfano le preferenze dell'utente.
+    Questa funzione valuta un sistema di raccomandazione di film in base a vari criteri, inclusi rilevanza,
+    serendipità, novità, diversità e accettabilità. La valutazione si basa su un set di film consigliati e
+    le preferenze dell'utente.
 
     Parametri:
-    - recommended (list): Una lista di film consigliati dal sistema.
-    - user_preferences (dict): Un dizionario contenente le preferenze dell'utente, ad esempio 'genres',
-      'director', 'actors', 'country', ecc.
-    - test_size (float, opzionale): La percentuale del set di dati che verrà utilizzata per il test (default è 0.2).
+    - recommended (list): Una lista di film consigliati dal sistema di raccomandazione.
+    - user_preferences (dict): Un dizionario contenente le preferenze dell'utente, ad esempio:
+      'genres', 'director', 'actors', 'country', ecc. Le chiavi del dizionario rappresentano i diversi
+      criteri di preferenza, e i valori sono le preferenze specifiche per ogni criterio (ad esempio, un elenco
+      di generi o attori preferiti).
 
     Ritorna:
-    - relevance_scores (list): Punteggi di rilevanza per film nel test set.
-    - serendipity_scores (list): Punteggi di serendipità per film nel test set.
-    - novelty_scores (list): Punteggi di novità per  film nel test set.
-    - diversity_scores (list): Punteggi di diversità per film nel test set.
-    - partial_accuracy_scores (list): Punteggi di accuratezza parziale per film nel test set.
-    - accuracy_score (float): Punteggio di accuratezza che misura quanto le raccomandazioni soddisfano le preferenze.
-
+    - Punteggi per rilevanza, serendipità, novità, diversità e accuratezza parziale, che sono valori
+      compresi tra 0 e 1. Questi punteggi indicano quanto i film consigliati si allineano con le preferenze
+      dell'utente e la loro varietà.
     """
 
     # Inizializzazione delle liste per salvare i punteggi di valutazione
-    relevance_scores = []  # Punteggio di rilevanza: quanto le raccomandazioni sono pertinenti rispetto alle preferenze
-    serendipity_scores = []  # Punteggio di serendipità: quanto le raccomandazioni sono sorprendenti (ma comunque utili)
-    novelty_scores = []  # Punteggio di novità: quanto le raccomandazioni sono nuove per l'utente
-    diversity_scores = []  # Punteggio di diversità: quanto le raccomandazioni coprono vari aspetti delle preferenze
-    partial_accuracy_scores = [] # Punteggio di accuratezza parziale: combinazione di match esatti e parziali
-    constraint_accuracy_scores = []  # Punteggio di accuratezza sui vincoli
+    relevance_scores = []  # Punteggio di rilevanza (quanto il film è in linea con le preferenze)
+    serendipity_scores = []  # Punteggio di serendipità (quanto il film è sorprendente rispetto alle preferenze)
+    novelty_scores = []  # Punteggio di novità (quanto il film è nuovo o non visto)
+    diversity_scores = []  # Punteggio di diversità (quanto i film sono vari tra loro)
+    partial_accuracy_scores = []  # Punteggio di accuratezza parziale (quanto bene il film soddisfa le preferenze)
 
-    # Suddividiamo la lista di film consigliati in set di addestramento e test usando il metodo hold-out
-    training_set, test_set = hold_out_split(recommended, test_size)
-    print(f"\n🔄 Data Split - Training set size: {len(training_set)}, Test set size: {len(test_set)}")
+    # Verifica se l'utente ha selezionato solo una preferenza
+    if len(user_preferences) == 1:
+        print("\n🎬 Only one preference selected, evaluating recommendations based on it.")
 
-    # Verifica se l'utente ha selezionato solo il genere come preferenza
-    if 'genres' in user_preferences and len(user_preferences) == 1:
-        print("\n🎬 Only genre preference selected, evaluating recommendations based on genre only.")
+        # Per ogni film consigliato, calcola il punteggio in base alla preferenza unica
+        for movie in recommended:
+            matched_constraints = 0  # Numero di vincoli (preferenze) soddisfatti dal film
+            total_constraints = 1  # Solo una preferenza, quindi 1 vincolo
+            movie_features = []  # Caratteristiche del film che soddisfano le preferenze dell'utente
 
-    # Ora eseguiamo la valutazione delle raccomandazioni usando il test set
-    for movie in test_set:
-        print(f"\n🔍 Debug - Movie: {movie}")
+            # Controlla quale tipo di preferenza è stato selezionato (genere, regista, attori, ecc.)
+            if 'genres' in user_preferences:
+                if movie_matches_genre(movie, user_preferences['genres']):
+                    matched_constraints += 1
+                    movie_features.append('genres')
 
-        matched_constraints = 0  # Contatore per i vincoli esatti che il film soddisfa
-        total_constraints = len(user_preferences)  # Numero totale di preferenze dell'utente
-        partial_matches = 0  # Contatore per i vincoli parzialmente soddisfatti
-        novelty = 0  # Contatore per la novità: film che non soddisfano completamente le preferenze
-        movie_features = []  # Lista per tracciare le caratteristiche del film che soddisfano le preferenze dell'utente
+            elif 'director' in user_preferences:
+                if movie_matches_director(movie, user_preferences['director']):
+                    matched_constraints += 1
+                    movie_features.append('director')
 
-        # Se è stato selezionato solo il genere, valutiamo solo questo criterio
-        if 'genres' in user_preferences and len(user_preferences) == 1:
-            if movie_matches_genre(movie, user_preferences['genres']):
-                matched_constraints += 1
-                movie_features.append('genres')
-            else:
-                novelty += 1  # Il film non corrisponde al genere, quindi è considerato nuovo
+            elif 'actors' in user_preferences:
+                if movie_matches_actors(movie, user_preferences['actors']):
+                    matched_constraints += 1
+                    movie_features.append('actors')
 
-        # Se sono selezionate altre preferenze, valutiamo anche altri criteri
-        else:
-            # Controllo per il genere
-            if 'genres' in user_preferences and movie_matches_genre(movie, user_preferences['genres']):
-                matched_constraints += 1
-                movie_features.append('genres')
-            else:
-                partial_matches += 1
-                novelty += 1
+            elif 'country' in user_preferences:
+                if movie_matches_country(movie, user_preferences['country']):
+                    matched_constraints += 1
+                    movie_features.append('country')
 
-            # Controllo per il regista
-            if 'director' in user_preferences and movie_matches_director(movie, user_preferences['director']):
-                matched_constraints += 1
-                movie_features.append('director')
-            else:
-                partial_matches += 1
-                novelty += 1
+            elif 'popularity' in user_preferences:
+                if movie_matches_popularity(movie, user_preferences['popularity']):
+                    matched_constraints += 1
+                    movie_features.append('popularity')
 
-            # Controllo per gli attori
-            if 'actors' in user_preferences and movie_matches_actors(movie, user_preferences['actors']):
-                matched_constraints += 1
-                movie_features.append('actors')
-            else:
-                partial_matches += 1
-                novelty += 1
+            elif 'duration' in user_preferences:
+                if movie_matches_duration(movie, user_preferences['duration']):
+                    matched_constraints += 1
+                    movie_features.append('duration')
 
-            # Controllo per il paese di origine
-            if 'country' in user_preferences and movie_matches_country(movie, user_preferences['country']):
-                matched_constraints += 1
-                movie_features.append('country')
-            else:
-                partial_matches += 1
-                novelty += 1
+            elif 'year' in user_preferences:
+                if movie_matches_year(movie, user_preferences['year']):
+                    matched_constraints += 1
+                    movie_features.append('year')
 
-            # Controllo per la popolarità
-            if 'popularity' in user_preferences and movie_matches_popularity(movie, user_preferences['popularity']):
-                matched_constraints += 1
-                movie_features.append('popularity')
-            else:
-                partial_matches += 1
-                novelty += 1
+            # Calcolo dei punteggi per il film
+            relevance_score = matched_constraints / total_constraints  # Punteggio di rilevanza
+            serendipity_score = 1 - relevance_score  # Punteggio di serendipità (inversamente proporzionale alla rilevanza)
+            novelty_score = 1 - relevance_score  # Punteggio di novità (inversamente proporzionale alla rilevanza)
+            diversity_score = len(set(movie_features)) / (len(movie_features) + 1) if movie_features else 0  # Diversità
+            partial_accuracy = relevance_score  # Punteggio di accuratezza parziale
 
-            # Controllo per la durata
-            if 'duration' in user_preferences and movie_matches_duration(movie, user_preferences['duration']):
-                matched_constraints += 1
-                movie_features.append('duration')
-            else:
-                partial_matches += 1
-                novelty += 1
+            # Aggiunta dei punteggi alle rispettive liste
+            relevance_scores.append(relevance_score)
+            serendipity_scores.append(serendipity_score)
+            novelty_scores.append(novelty_score)
+            diversity_scores.append(diversity_score)
+            partial_accuracy_scores.append(partial_accuracy)
 
-            # Controllo per l'anno
-            if 'year' in user_preferences and movie_matches_year(movie, user_preferences['year']):
-                matched_constraints += 1
-                movie_features.append('year')
-            else:
-                partial_matches += 1
-                novelty += 1
+    else:
+        # Se l'utente ha selezionato più preferenze, valuta tutte le preferenze
+        for movie in recommended:
+            matched_constraints = 0  # Numero di vincoli soddisfatti dal film
+            total_constraints = len(user_preferences)  # Numero totale di preferenze selezionate
+            movie_features = []  # Caratteristiche del film che soddisfano le preferenze
+            novelty = 0  # Contatore per la novità
 
-        # Debug: Mostra i match per questo film
-        print(
-            f"✅ Exact Matches: {matched_constraints}, ❌ Partial Matches: {partial_matches}, 🎭 Total Constraints: {total_constraints}")
+            # Valutazione per ogni preferenza selezionata
+            if 'genres' in user_preferences:
+                if movie_matches_genre(movie, user_preferences['genres']):
+                    matched_constraints += 1
+                    movie_features.append('genres')
+                else:
+                    novelty += 1  # Incrementa la novità se non c'è match
 
-        # Calcolo dei punteggi
-        relevance_score = matched_constraints / total_constraints  # Punteggio di rilevanza basato sui match esatti
-        serendipity_score = (partial_matches + 1) / (total_constraints + 1)  # Punteggio di serendipità
-        novelty_score = (novelty + 1) / (total_constraints + 1)  # Punteggio di novità (evita 0 assoluto)
-        diversity_score = len(set(movie_features)) / (
-                    len(movie_features) + 1) if movie_features else 0  # Punteggio di diversità
-        partial_accuracy = (matched_constraints + partial_matches / 2) / total_constraints  # Punteggio di accuratezza parziale
+            if 'director' in user_preferences:
+                if movie_matches_director(movie, user_preferences['director']):
+                    matched_constraints += 1
+                    movie_features.append('director')
+                else:
+                    novelty += 1
 
-        # Calcolo dell'accuratezza sui vincoli (vincoli soddisfatti / vincoli totali)
-        constraint_accuracy = matched_constraints / total_constraints if total_constraints > 0 else 0
+            if 'actors' in user_preferences:
+                if movie_matches_actors(movie, user_preferences['actors']):
+                    matched_constraints += 1
+                    movie_features.append('actors')
+                else:
+                    novelty += 1
 
-        # Salviamo i punteggi aggiornati
-        relevance_scores.append(relevance_score)
-        serendipity_scores.append(serendipity_score)
-        novelty_scores.append(novelty_score)
-        diversity_scores.append(diversity_score)
-        partial_accuracy_scores.append(partial_accuracy)
-        constraint_accuracy_scores.append(constraint_accuracy)
+            if 'country' in user_preferences:
+                if movie_matches_country(movie, user_preferences['country']):
+                    matched_constraints += 1
+                    movie_features.append('country')
+                else:
+                    novelty += 1
 
+            if 'popularity' in user_preferences:
+                if movie_matches_popularity(movie, user_preferences['popularity']):
+                    matched_constraints += 1
+                    movie_features.append('popularity')
+                else:
+                    novelty += 1
 
-    # Calcolo dei punteggi medi
-    avg_relevance = sum(relevance_scores) / len(relevance_scores) if relevance_scores else 0
-    avg_serendipity = sum(serendipity_scores) / len(serendipity_scores) if serendipity_scores else 0
-    avg_novelty = sum(novelty_scores) / len(novelty_scores) if novelty_scores else 0
-    avg_diversity = sum(diversity_scores) / len(diversity_scores) if diversity_scores else 0
-    avg_partial_accuracy = sum(partial_accuracy_scores) / len(partial_accuracy_scores) if partial_accuracy_scores else 0
-    avg_constraint_accuracy = sum(constraint_accuracy_scores) / len(constraint_accuracy_scores) if constraint_accuracy_scores else 0
+            if 'duration' in user_preferences:
+                if movie_matches_duration(movie, user_preferences['duration']):
+                    matched_constraints += 1
+                    movie_features.append('duration')
+                else:
+                    novelty += 1
 
-    # Mostra i punteggi medi
+            if 'year' in user_preferences:
+                if movie_matches_year(movie, user_preferences['year']):
+                    matched_constraints += 1
+                    movie_features.append('year')
+                else:
+                    novelty += 1
+
+            # Calcolo dei punteggi per il film
+            relevance_score = matched_constraints / total_constraints
+            serendipity_score = (novelty + 1) / (total_constraints + 1)
+            novelty_score = (novelty + 1) / (total_constraints + 1)
+            diversity_score = len(set(movie_features)) / (len(movie_features) + 1) if movie_features else 0
+            partial_accuracy = (matched_constraints + novelty / 2) / total_constraints
+
+            # Aggiunta dei punteggi alle rispettive liste
+            relevance_scores.append(relevance_score)
+            serendipity_scores.append(serendipity_score)
+            novelty_scores.append(novelty_score)
+            diversity_scores.append(diversity_score)
+            partial_accuracy_scores.append(partial_accuracy)
+
+    # Calcolo dei punteggi medi per tutti i film
+    avg_relevance = sum(relevance_scores) / len(relevance_scores)
+    avg_serendipity = sum(serendipity_scores) / len(serendipity_scores)
+    avg_novelty = sum(novelty_scores) / len(novelty_scores)
+    avg_diversity = sum(diversity_scores) / len(diversity_scores)
+    avg_partial_accuracy = sum(partial_accuracy_scores) / len(partial_accuracy_scores)
+
+    # Mostra i punteggi medi per il sistema di raccomandazione
     print("\n📊 Average Scores for the Recommendation System:")
     print(f"🔹 Relevance: {avg_relevance * 100:.2f}%")
     print(f"🔹 Serendipity: {avg_serendipity * 100:.2f}%")
     print(f"🔹 Novelty: {avg_novelty * 100:.2f}%")
     print(f"🔹 Diversity: {avg_diversity * 100:.2f}%")
     print(f"🔹 Partial Accuracy: {avg_partial_accuracy * 100:.2f}%")
-    print(f"🔹 Constraint Accuracy: {avg_constraint_accuracy * 100:.2f}%")
-
-
-    return relevance_scores, serendipity_scores, novelty_scores, diversity_scores, partial_accuracy_scores, constraint_accuracy_scores
