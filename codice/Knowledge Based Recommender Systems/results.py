@@ -1,7 +1,7 @@
 import streamlit as st
 import recommendation
 from systemEvaluation import evaluate_recommendations
-
+import pandas as pd
 # Funzione per mostrare i risultati in Streamlit
 def results():
 
@@ -96,8 +96,9 @@ def results():
 
     print(f"User preferences: {user_preference}")
 
+
     # Chiamata alla funzione che valuta il sistema con una soglia di accettabilità del 50%
-    evaluate_recommendations(recommended, user_preference, test_size=0.2)
+    evaluate_recommendations(recommended, user_preference)
 
     # Mostra i risultati
     if recommended:
