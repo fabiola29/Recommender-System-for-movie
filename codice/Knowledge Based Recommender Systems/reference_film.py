@@ -26,7 +26,7 @@ def reference_film_page():
         }
 
         # Valuta le raccomandazioni basate sulle preferenze dell'utente
-        evaluate_recommendations(recommended, user_preference, test_size=0.2)
+        evaluate_recommendations(recommended, user_preference)
 
     # Bottone per tornare alla pagina principale
     if st.button("Back to main"):
