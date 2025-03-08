@@ -1,48 +1,55 @@
 {
     "user_horror_enthusiast": {
-        "genres": ["Horror"]
+        "genres": ["Horror"],
+        "popularity": ["Popular"],
+        "actors": ["Jamie Lee Curtis"],
+        "year": "1980s"
     },
     "user_blockbuster_fan": {
         "genres": ["Action", "Adventure"],
-        "directors": "Christopher Nolan",
+        "popularity": ["Blockbuster"],
         "actors": ["Tom Cruise"],
-        "duration": "Long",
-        "popularity": "Blockbuster",
-        "year": "2010s",
-        "country": "USA"
+        "duration": ["Long"]
     },
-    "user_art_house_cinephile": {
-        "genres": ["Drama"],
-        "directors": "Wong Kar Wai",
-        "popularity": "Niche"
+    "user_casual_viewer": {
+        "popularity": ["Popular", "Blockbuster"]
+    },
+    "user_indie_lover": {
+        "genres": ["Drama", "Independent"],
+        "directors": "Greta Gerwig",
+        "popularity": ["Niche"],
+        "year": "2010s"
     },
     "user_family_animation": {
         "genres": ["Animation", "Comedy"],
-        "duration": "Medium"
+        "popularity": ["Popular"],
+        "duration": ["Short","Medium"]
     },
-    "user_thriller_minimal": {
-        "genres": ["Thriller"]
+    "user_thriller_fan": {
+        "genres": ["Thriller"],
+        "directors": "David Fincher",
+        "year": "2000s"
     },
     "user_classic_cinema_lover": {
         "genres": ["Drama", "Romance"],
-        "year": "1960s",
-        "popularity": "Niche"
+        "year": "1950s",
+        "popularity": ["Niche"],
+        "actors": ["Audrey Hepburn"]
     },
-    "user_foreign_intermediate": {
+    "user_foreign_film_explorer": {
         "genres": ["Drama"],
-        "country": "France",
-        "duration": "Long"
+        "country": "France"
     },
     "user_comedy_fan": {
-        "genres": ["Comedy"],
-        "actors": "Jim Carrey",
-        "popularity": "Popular"
+        "genres": [
+            "Comedy"
+        ],
+        "popularity": ["Popular", "Blockbuster"],
+        "actors": ["Jim Carrey"]
     },
-    "user_romantic_classics": {
-        "genres": ["Romance"],
-        "year": "1950s"
-    },
-    "user_minimalist_drama": {
-        "genres": ["Drama"]
+    "user_sci_fi_buff": {
+        "genres": ["Sci-Fi"],
+        "directors": "Denis Villeneuve",
+        "year": "2020s"
     }
 }

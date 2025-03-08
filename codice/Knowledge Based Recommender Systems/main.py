@@ -72,6 +72,7 @@ def main():
 
     # Step 8: Salva i criteri e vai alla pagina dei risultati
     if st.button("Research"):
+        st.session_state.pop("current_search_results", None)
         save_user_preferences(selected_genres, selected_director, selected_actors, selected_nationality,
                               selected_popularity, selected_decade, duration)
         st.session_state.page = "results"

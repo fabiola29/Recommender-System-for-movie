@@ -1,7 +1,7 @@
 import streamlit as st
 import recommendation
 import time
-from systemEvaluation import evaluate_recommendations
+
 import pandas as pd
 # Funzione per mostrare i risultati in Streamlit
 def results():
@@ -95,28 +95,9 @@ def results():
 
     progress_bar.empty()  # Nasconde la barra di caricamento dopo la ricerca
 
-    # Rimuovi i duplicati nel risultato in base al titolo del film
-
-    user_preference = {
-        "genres": selected_genres,
-        "director": selected_director,
-        "actors": selected_actors,
-        "country": selected_nationality,
-        "popularity": selected_popularity,
-        "duration": duration,
-        "year": selected_decade
-    }
-
-    # print(f"User preferences: {user_preference}")
-
-
-    # Chiamata alla funzione che valuta il sistema con una soglia di accettabilità del 50%
-    # evaluate_recommendations(recommended, user_preference)
-
-
     # Ordina i risultati in base al punteggio (dal più alto al più basso)
     if recommended is None:
-        print("❌ Errore: `recommended` è None. Assicurati che venga popolato correttamente.")
+        print("Errore: `recommended` è None. Assicurati che venga popolato correttamente.")
         recommended = {}  # Imposta un dizionario vuoto per evitare il crash
 
     sorted_recommendations = sorted(recommended.items(), key=lambda x: x[1].get("score", 0), reverse=True)
@@ -133,6 +114,7 @@ def results():
 
             # Mostra lo score e l'explanation
 
+            #st.write(f"**Score:** {score}")
             st.write(f"**Explanation:** {explanation}")
 
             # Make the description read-only
@@ -147,7 +129,7 @@ def results():
     else:
         st.write("No movies found matching your criteria.")
 
-    # Mostra il bottone per tornare al main
     if st.button("Not satisfied? Go back to main"):
         st.session_state.page = "main"
+        st.session_state.pop("recommended_movies", None)  # ✅ Cancella i risultati per forzare una nuova query
         st.rerun()

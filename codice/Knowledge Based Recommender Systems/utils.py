@@ -66,6 +66,7 @@ def normalize_title(movie_title):
 
     return cleaned_title
 
+
 def is_valid_uri(uri):
     """
     Funzione per verificare se una URI è valida.
@@ -290,7 +291,7 @@ def display_runtime_selection(default=None):
 
     return selected_runtimes
 
-#todo forse togliere
+
 def group_movies_by_decade(movies_release):
     decades = {
         "1900s": [],

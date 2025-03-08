@@ -200,7 +200,8 @@ def compute_serendipity(recommendations, user_constraints):
             matches += 1
 
         # Controllo attori
-        actors = set(details.get('actors', "").split(', '))
+        actors = set((details.get('actors') or "").split(', '))
+
         if any(actor in user_constraints.get('actors', []) for actor in actors):
             matches += 1
 
@@ -220,14 +221,14 @@ def compute_serendipity(recommendations, user_constraints):
     return serendipity
 
 
-def evaluate_recommendations(recommended, user_preferences):
-    accuracy = compute_accuracy(recommended, user_preferences)
-    partial_accuracy = compute_partial_accuracy(recommended, user_preferences)
-    diversity = compute_diversity(recommended)
-    serendipity = compute_serendipity(recommended, user_preferences)
-    # Mostra i punteggi medi per il sistema di raccomandazione
-    print("\n📊 Average Scores for the Recommendation System:")
-    print(f"🔹 Accuracy: {accuracy * 100:.2f}%")
-    print(f"🔹 Partial Accuracy: {partial_accuracy * 100:.2f}%")
-    print(f"🔹 Diversity: {diversity * 100:.2f}%")
-    print(f"🔹 Serendipity: {serendipity * 100:.2f}%")
+# def evaluate_recommendations(recommended, user_preferences):
+#     accuracy = compute_accuracy(recommended, user_preferences)
+#     partial_accuracy = compute_partial_accuracy(recommended, user_preferences)
+#     diversity = compute_diversity(recommended)
+#     serendipity = compute_serendipity(recommended, user_preferences)
+#     # Mostra i punteggi medi per il sistema di raccomandazione
+#     print("\n📊 Average Scores for the Recommendation System:")
+#     print(f"🔹 Accuracy: {accuracy * 100:.2f}%")
+#     print(f"🔹 Partial Accuracy: {partial_accuracy * 100:.2f}%")
+#     print(f"🔹 Diversity: {diversity * 100:.2f}%")
+#     print(f"🔹 Serendipity: {serendipity * 100:.2f}%")

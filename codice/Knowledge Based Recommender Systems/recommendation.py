@@ -1,20 +1,16 @@
-import rdflib
 import random
 import time
 from itertools import combinations
 import streamlit as st
 import utils
+import pandas as pd
+import rdflib
 
-#TODO RENDI I RISULTATI UNICI
 def execute_query(graph, query, description):
     """Esegue una query SPARQL e restituisce i risultati come una lista."""
     results = list(graph.query(query))
 
-    if len(results) == 0:
-        print("⚠️ Nessun risultato trovato nella query SPARQL!")
-
     return results
-
 
 def collect_results_with_scores(results, genres, user_director, user_actors, user_country, views_list, duration_list, user_year):
     """
@@ -44,13 +40,13 @@ def collect_results_with_scores(results, genres, user_director, user_actors, use
         release_year = str(getattr(row, "released", "N/A"))
         abstract = str(getattr(row, "abstract", "N/A"))
 
-        # ✅ Normalizziamo gli attori (rimuoviamo URI e trasformiamo in lista)
+        # Normalizziamo gli attori (rimuoviamo URI e trasformiamo in lista)
         actors = [a.split("/")[-1].replace("_", " ").strip() for a in actors.split(",") if a] if actors != "N/A" else []
 
-        # ✅ Debug sugli attori
+        # Debug sugli attori
         print(f"DEBUG - Film: {title}, Attori film normalizzati: {actors}, Attori utente: {user_actors}")
 
-        # ✅ Verifica e assegna punteggi ai vincoli rispettati
+        # Verifica e assegna punteggi ai vincoli rispettati
         if genres and genre != "N/A":
             matching_genres = [g for g in genres if g.lower() in genre.lower()]
             if matching_genres:
@@ -59,10 +55,10 @@ def collect_results_with_scores(results, genres, user_director, user_actors, use
 
         if user_director and director != "N/A" and user_director.lower() in director.lower():
             score += 1
-            reasons.append(f"you appreciate films by {user_director}")
+            reasons.append(f"you appreciate films by {user_director.replace('_', ' ')}")
 
-        # ✅ Confronto migliorato sugli attori
-        if user_actors and actors:  # ✅ Controlliamo solo se entrambe le liste non sono vuote
+        # Confronto migliorato sugli attori
+        if user_actors and actors:  # Controlliamo solo se entrambe le liste non sono vuote
 
             user_actors = [a.replace("_", " ").lower() for a in user_actors]
 
@@ -76,7 +72,7 @@ def collect_results_with_scores(results, genres, user_director, user_actors, use
             score += 1
             reasons.append(f"you enjoy movies from {user_country}")
 
-        # ✅ Confronto su popolarità (views)
+        # Confronto su popolarità (views)
         views = int(views) if views.isdigit() else 0
         views_result = None  # Inizializza con None
 
@@ -97,7 +93,7 @@ def collect_results_with_scores(results, genres, user_director, user_actors, use
                 score += len(matching_views)
                 reasons.append("it's a " + ", ".join(matching_views) + " film")
 
-        # ✅ Confronto sulla durata
+        # Confronto sulla durata
         runtime = int(runtime) if runtime.isdigit() else 0
         duration_result = None  # Inizializza con None
 
@@ -118,7 +114,7 @@ def collect_results_with_scores(results, genres, user_director, user_actors, use
                 score += len(matching_durations)
                 reasons.append("it's a " + ", ".join(matching_durations) + "-length film")
 
-        # ✅ Calcolo della decade
+        # Calcolo della decade
         decade = None
         if release_year.isdigit():
             release_year_int = int(release_year)
@@ -129,7 +125,7 @@ def collect_results_with_scores(results, genres, user_director, user_actors, use
 
         explanation = " and ".join(reasons) if reasons else "No specific reason found"
 
-        # ✅ Salviamo i dati normalizzati nel dizionario
+        # Salviamo i dati normalizzati nel dizionario
         results_with_scores[title] = {
             "title": title,
             "score": score,
@@ -158,16 +154,16 @@ def epsilon_greedy_recommendation(results_with_scores, top_k, epsilon=0.2):
         return {}
 
     # 🔹 Estrai la lista di film corretta
-    films_list = [list(film.values())[0] for film in results_with_scores]  # ✅ Estrai il dizionario corretto
+    films_list = [list(film.values())[0] for film in results_with_scores]  # Estrai il dizionario corretto
 
     # Creare una lista di tuple con il punteggio randomizzato
     randomized_scores = [
         (
-            film.get("title", "Unknown"),  # ✅ Garantiamo che ogni film abbia un titolo
+            film.get("title", "Unknown"),  # Garantiamo che ogni film abbia un titolo
             film,
             film.get("score", 0) + random.uniform(-0.5, 0.5)  # Se "score" non esiste, usa 0
         )
-        for film in films_list  # ✅ Iteriamo sulla lista corretta
+        for film in films_list  # Iteriamo sulla lista corretta
     ]
 
     # Ordina per il punteggio randomizzato in ordine decrescente
@@ -210,12 +206,32 @@ def epsilon_greedy_recommendation(results_with_scores, top_k, epsilon=0.2):
 
     return selected
 
+def retrieve_results(number_of_results, genres, director, actors, country, popularity_list, duration_list, year, _progress_bar, use_cache=True):
+    """
+        Recupera raccomandazioni di film in base ai filtri e vincoli specificati.
+        La funzione esegue query su un file RDF utilizzando SPARQL e applica vari criteri di filtraggio,
+        tra cui generi, regista, attori, paese, popolarità, durata e anno di uscita.
+        Utilizza un approccio epsilon-greedy per classificare i risultati e garantisce che vengano consigliati solo film unici.
+        Se non vengono trovati risultati sufficienti, vengono aggiunte raccomandazioni casuali.
 
+        Argomenti:
+            number_of_results (int): Numero di raccomandazioni di film da recuperare.
+            genres (list di str): Elenco dei generi per filtrare i film.
+            director (str): Nome del regista per filtrare i film.
+            actors (list di str): Elenco degli attori per filtrare i film.
+            country (str): Paese di origine per filtrare i film.
+            popularity_list (list di str): Elenco dei livelli di popolarità ('Blockbuster', 'Popular', 'Niche').
+            duration_list (list di str): Elenco delle durate dei film ('Short', 'Medium', 'Long').
+            year (str): Decennio o anno specifico per filtrare i film.
+            _progress_bar (st.progress o None): Oggetto barra di avanzamento Streamlit per visualizzare il progresso della query.
+            use_cache (bool, opzionale): Indica se utilizzare i risultati memorizzati nella sessione corrente. Predefinito a True.
 
-
-def retrieve_results(number_of_results, genres, director, actors, country, popularity_list, duration_list, year, _progress_bar):
-    if "recommended_movies" in st.session_state:
-        return st.session_state.recommended_movies  # ✅ Se i risultati esistono, restituiscili subito
+        Restituisce:
+            dict: Un dizionario contenente le raccomandazioni dei film con punteggi e spiegazioni.
+        """
+    if  use_cache and "current_search_results" in st.session_state:
+        print("Usando i risultati temporanei della ricerca corrente")
+        return st.session_state["current_search_results"]
 
     g = rdflib.Graph()
     g.parse("movies_ontology.ttl", format="turtle")
@@ -269,7 +285,6 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
     else:
         year_filter = ""
 
-
     constraints = [
         genre_filters,
         f"CONTAINS(LCASE(?director), '{director.lower()}')" if director else "",
@@ -279,8 +294,6 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
         duration_filter,
         year_filter
     ]
-
-
     constraints = [constraint for constraint in constraints if constraint]
 
 
@@ -291,7 +304,6 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
     unique_titles = set()
     query_completed = False
 
-    #SPINNER
 
     total_queries = sum(range(len(constraints) + 1))  # Numero totale di combinazioni da provare
     completed_queries = 0  # Contatore per l'avanzamento della barra
@@ -303,7 +315,8 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
             print(f"Testing subset: {subset}")
             completed_queries += 1  # Incrementa il numero di query eseguite
             progress_percentage = min(int((completed_queries / total_queries) * 100), 100)  # Calcola la percentuale
-            _progress_bar.progress(progress_percentage)  # **Aggiorna la barra di caricamento**
+            if _progress_bar:
+                _progress_bar.progress(progress_percentage)  # **Aggiorna la barra di caricamento**
 
             subnum = subnum + 1
 
@@ -344,17 +357,12 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
             if results:
                 for row in results:
                     row_title = row.title.strip().lower()
-                    print("-------")
-                    print("PARAGONIAMO")
-                    print(excluded_title)
-                    print(row_title.title)
-                    print("--------")
-                    # ✅ Escludiamo il film di riferimento SOLO se `excluded_title` esiste
+
+                    # Escludiamo il film di riferimento SOLO se `excluded_title` esiste
                     if excluded_title and row_title == excluded_title:
-                        print(f"❌ Film escluso: {row.title}")  # Debug per verificare
                         continue  # Saltiamo questo film
 
-                    # ✅ Aggiungiamo solo titoli unici
+                    # Aggiungiamo solo titoli unici
                     if row.title not in unique_titles:
                         unique_titles.add(row.title)
 
@@ -394,10 +402,10 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
         random_results = random_recommendation(films_needed)
 
 
-        # ✅ Iteriamo correttamente su `random_results.items()` per accedere ai dettagli
+        # Iteriamo su `random_results.items()` per accedere ai dettagli
         for title, details in random_results.items():  # ✅ CORRETTO SE random_results È UN DIZIONARIO
             if not isinstance(details, dict):  # Se details non è un dizionario, ignora il film
-                print(f"⚠️ Errore: Dettagli mancanti per '{title}', skipping... Contenuto: {details}")
+                print(f"Errore: Dettagli mancanti per '{title}', skipping... Contenuto: {details}")
                 continue
 
             recommended[title] = {
@@ -410,8 +418,10 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
                 "country": details.get("country", "N/A"),
                 "year": details.get("year", "N/A")
             }
+    st.session_state["current_search_results"] = recommended
 
-    _progress_bar.empty()  # **Rimuove la barra di avanzamento dopo la ricerca**
+    if _progress_bar:
+        _progress_bar.empty()  # **Rimuove la barra di avanzamento dopo la ricerca**
 
     return recommended
 
@@ -475,5 +485,110 @@ def random_recommendation(number_of_results):
             'year': str(row[7]) if row[7] else None,
         }
         list_results_with_scores[film_title] = film_details
+
+    return list_results_with_scores
+
+def most_popular_recommendation(k, rdf_file="movies_ontology.ttl", ratings_file="../../dataset/archive/ratings.csv",
+                                movies_file="../../dataset/archive/movies.csv"):
+    """
+    Trova i k film più popolari leggendo i titoli dall'ontologia RDF,
+    mappandoli a movieId e calcolando la popolarità dai ratings (scegliamo i film con rating più alto).
+    Restituisce un dizionario con i film popolari.
+    """
+
+    # Step 1: Carica l'ontologia RDF
+    g = rdflib.Graph()
+    g.parse(rdf_file, format="turtle")
+
+    # Step 2: Estrai i titoli dei film dal file RDF
+    sparql_query = """
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX dbo: <http://dbpedia.org/ontology/>
+        PREFIX dbp: <http://dbpedia.org/property/>
+        SELECT ?movie ?title ?genre ?director ?actors ?country ?views ?runtime ?released ?abstract
+        WHERE {
+            ?movie rdfs:label ?title .
+            OPTIONAL { ?movie dbo:genre ?genre . }
+            OPTIONAL { ?movie dbo:director ?director . }
+            OPTIONAL { ?movie dbo:starring ?actors . }
+            OPTIONAL { ?movie dbo:country ?country . }
+            OPTIONAL { ?movie dbp:views ?views . }
+            OPTIONAL { ?movie dbo:runtime ?runtime . }
+            OPTIONAL { ?movie dbp:released ?released . }
+            OPTIONAL { ?movie dbo:abstract ?abstract . }
+            FILTER (lang(?title) = "en")
+        }
+    """
+
+    rdf_movies = {}
+    for row in g.query(sparql_query):
+        title = str(row.title)
+        normalized_title = utils.normalize_title(title)
+        rdf_movies[normalized_title] = {
+            "title": title,
+            "genres": str(row.genre) if row.genre else None,
+            "director": str(row.director) if row.director else None,
+            "actors": str(row.actors) if row.actors else None,
+            "country": str(row.country) if row.country else None,
+            "views": str(row.views) if row.views else None,
+            "duration": str(row.runtime) if row.runtime else None,
+            "year": str(row.released) if row.released else None,
+            "abstract": str(row.abstract) if row.abstract else None
+        }
+
+    print(f"🔍 {len(rdf_movies)} film trovati nell'ontologia RDF.")
+
+    # Step 3: Carica `movies.csv` per ottenere il mapping movieId → titolo
+    movies_df = pd.read_csv(movies_file)
+    movies_df["normalized_title"] = movies_df["title"].apply(utils.normalize_title)
+
+    # Step 4: Filtra solo i film che sono presenti sia nell'ontologia RDF che in `movies.csv`
+    merged_movies = movies_df[movies_df["normalized_title"].isin(rdf_movies)]
+
+    if merged_movies.empty:
+        print("Nessun film trovato con corrispondenza tra RDF e MovieLens.")
+        return {}
+
+    print(f"{len(merged_movies)} film con corrispondenza tra RDF e MovieLens.")
+
+    # Step 5: Carica `ratings.csv` per calcolare la popolarità
+    ratings_df = pd.read_csv(ratings_file)
+
+    # Uniamo i movieId con i rating
+    merged_ratings = ratings_df[ratings_df["movieId"].isin(merged_movies["movieId"])]
+
+    # Step 6: Calcola la popolarità
+    C = 1  # Costante per evitare divisioni per zero
+    popularity_df = merged_ratings.groupby("movieId")["rating"].agg(["sum", "count"]).reset_index()
+    popularity_df["popularity"] = popularity_df["sum"] / (popularity_df["count"] + C)
+
+    # Uniamo le informazioni di popolarità con `merged_movies`
+    popular_movies = popularity_df.merge(merged_movies, on="movieId").sort_values(by="popularity", ascending=False)
+
+    # Step 7: Seleziona i primi k film più popolari
+    top_movies = popular_movies.head(k)
+
+    print("\n✅ Film più popolari trovati:")
+    print(top_movies[["title", "popularity"]])
+
+    # Step 8: Creiamo il dizionario finale con tutti i dati RDF
+    list_results_with_scores = {}
+
+    for _, row in top_movies.iterrows():
+        rdf_title = rdf_movies[row["normalized_title"]]  # Otteniamo i dettagli dall'ontologia RDF
+
+        list_results_with_scores[rdf_title["title"]] = {
+            "title": rdf_title["title"],
+            "score": row["popularity"],
+            "explanation": "Selected based on popularity formula",
+            "abstract": rdf_title["abstract"],
+            "genres": rdf_title["genres"],
+            "director": rdf_title["director"],
+            "actors": rdf_title["actors"],
+            "country": rdf_title["country"],
+            "views": rdf_title["views"],
+            "duration": rdf_title["duration"],
+            "year": rdf_title["year"]
+        }
 
     return list_results_with_scores

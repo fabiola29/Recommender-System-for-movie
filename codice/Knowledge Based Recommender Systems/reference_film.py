@@ -1,6 +1,6 @@
 import streamlit as st
 import utils
-from systemEvaluation import evaluate_recommendations
+
 def reference_film_page():
 
     # ✅ Carica solo i film presenti nel file TTL
