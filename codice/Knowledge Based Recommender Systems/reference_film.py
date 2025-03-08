@@ -2,14 +2,21 @@ import streamlit as st
 import utils
 from systemEvaluation import evaluate_recommendations
 def reference_film_page():
-    movies = st.session_state.movies['title']
+
+    # ✅ Carica solo i film presenti nel file TTL
+    movies_in_ttl = utils.get_movies_from_ttl()
 
     st.markdown('<div class="header"> 🎥 Add Reference Film </div>', unsafe_allow_html=True)
 
-    # Usa una selectbox per visualizzare i film
-    reference_film = st.selectbox("Choose a film you liked:", movies)
+    if not movies_in_ttl:
+        st.write("⚠️ No movies available in the dataset.")
+        return
+
+    reference_film = st.selectbox("Choose a film you liked:", movies_in_ttl)
 
     if st.button("Search"):
+        print("DEBUG: Dopo il pulsante - Sto cercando film simili!")  # Dovrebbe apparire quando premi il pulsante
+
         # Esegui la ricerca dei film simili
         utils.search_similar_movies(reference_film)
         st.write(f"Searching for movies similar to '{reference_film}'...")

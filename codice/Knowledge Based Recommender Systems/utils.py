@@ -167,6 +167,33 @@ def select_informations_from_ttl(movies_dataset):
     return genres_list, directors_list, actors_list, nationalities_list, years_list
 
 
+import rdflib
+
+
+def get_movies_from_ttl():
+    """
+    Carica i titoli dei film dal file TTL.
+
+    Ritorna:
+    - lista dei titoli dei film presenti nel dataset TTL.
+    """
+    g = rdflib.Graph()
+    g.parse("movies_ontology.ttl", format="turtle")
+
+    query = """
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        SELECT ?title
+        WHERE {
+            ?movie rdfs:label ?title .
+        }
+    """
+
+    results = g.query(query)
+    movie_titles = [str(row[0]) for row in results]  # Converte i risultati in una lista di stringhe
+
+    return movie_titles
+
+
 def display_director_selection(directors, default=None):
     """
     Interfaccia utente per selezionare un regista e visualizzare i film che ha diretto.
@@ -512,7 +539,10 @@ def extract_reference_film_info(reference_title):
 
 
 def search_similar_movies(reference_film):
+    print(f"DEBUG: Funzione chiamata con film '{reference_film}'")  # ✅ Verifica che la funzione venga chiamata
+
     informations = extract_reference_film_info(reference_film)
+    print(f"DEBUG: Informazioni estratte: {informations}")  # ✅ Verifica che `extract_reference_film_info()` funzioni
 
     # Aggiorna lo stato della sessione Streamlit con i nuovi formati
     st.session_state.selected_genres = informations["genres"]
@@ -527,6 +557,8 @@ def search_similar_movies(reference_film):
 
     # Passa alla pagina dei risultati
     st.session_state.page = "results"
+    print("DEBUG: Stato aggiornato per passare alla pagina dei risultati")  # ✅ Verifica che la pagina venga aggiornata
+
     st.rerun()
 
 

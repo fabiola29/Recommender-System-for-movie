@@ -212,8 +212,11 @@ def epsilon_greedy_recommendation(results_with_scores, top_k, epsilon=0.2):
 
 
 
-@st.cache_data
-def retrieve_results(number_of_results, genres, director, actors, country, popularity_list, duration_list, year):
+
+def retrieve_results(number_of_results, genres, director, actors, country, popularity_list, duration_list, year, _progress_bar):
+    if "recommended_movies" in st.session_state:
+        return st.session_state.recommended_movies  # ✅ Se i risultati esistono, restituiscili subito
+
     g = rdflib.Graph()
     g.parse("movies_ontology.ttl", format="turtle")
 
@@ -288,9 +291,20 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
     unique_titles = set()
     query_completed = False
 
+    #SPINNER
+
+    total_queries = sum(range(len(constraints) + 1))  # Numero totale di combinazioni da provare
+    completed_queries = 0  # Contatore per l'avanzamento della barra
+
     for num_constraints in range(len(constraints), 0, -1):
+
         for subset in combinations(constraints, num_constraints):
+
             print(f"Testing subset: {subset}")
+            completed_queries += 1  # Incrementa il numero di query eseguite
+            progress_percentage = min(int((completed_queries / total_queries) * 100), 100)  # Calcola la percentuale
+            _progress_bar.progress(progress_percentage)  # **Aggiorna la barra di caricamento**
+
             subnum = subnum + 1
 
             # Genera la stringa dei filtri SPARQL
@@ -397,6 +411,7 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
                 "year": details.get("year", "N/A")
             }
 
+    _progress_bar.empty()  # **Rimuove la barra di avanzamento dopo la ricerca**
 
     return recommended
 

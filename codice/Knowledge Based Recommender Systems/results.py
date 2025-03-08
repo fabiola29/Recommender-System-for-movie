@@ -1,5 +1,6 @@
 import streamlit as st
 import recommendation
+import time
 from systemEvaluation import evaluate_recommendations
 import pandas as pd
 # Funzione per mostrare i risultati in Streamlit
@@ -80,8 +81,20 @@ def results():
 
     # Esegue la query per ottenere i risultati dei film
 
+    progress_bar = st.progress(0)  # Inizializza la barra di caricamento
+    with st.spinner("Searching for the best movies..."):
 
-    recommended =  recommendation.retrieve_results(10, selected_genres, selected_director, selected_actors, selected_nationality, selected_popularity, duration, selected_decade)
+
+        recommended = recommendation.retrieve_results(
+            10, selected_genres, selected_director, selected_actors,
+            selected_nationality, selected_popularity, duration,
+            selected_decade, progress_bar
+        )
+
+        progress_bar.empty()  # Rimuove la barra di avanzamento
+
+    progress_bar.empty()  # Nasconde la barra di caricamento dopo la ricerca
+
     # Rimuovi i duplicati nel risultato in base al titolo del film
 
     user_preference = {
