@@ -321,10 +321,26 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
             # Esegui la query
             results = execute_query(g, query, f"Combination of {num_constraints} constraints")
 
+            if "excluded_film" in st.session_state and st.session_state.excluded_film:
+                excluded_title = st.session_state.excluded_film
+                excluded_title = excluded_title.split("(")[0].strip().lower()
+            else:
+                excluded_title = None  # Se non c'è, lasciamo il valore None
+
             if results:
                 for row in results:
-                    # print(row.title, row.genre, row.director, row.actor, row.country, row.views, row.runtime, row.released, row.abstract)
-                    # Aggiungi il titolo al set solo se è nuovo
+                    row_title = row.title.strip().lower()
+                    print("-------")
+                    print("PARAGONIAMO")
+                    print(excluded_title)
+                    print(row_title.title)
+                    print("--------")
+                    # ✅ Escludiamo il film di riferimento SOLO se `excluded_title` esiste
+                    if excluded_title and row_title == excluded_title:
+                        print(f"❌ Film escluso: {row.title}")  # Debug per verificare
+                        continue  # Saltiamo questo film
+
+                    # ✅ Aggiungiamo solo titoli unici
                     if row.title not in unique_titles:
                         unique_titles.add(row.title)
 

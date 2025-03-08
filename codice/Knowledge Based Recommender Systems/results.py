@@ -100,8 +100,6 @@ def results():
     # Chiamata alla funzione che valuta il sistema con una soglia di accettabilità del 50%
     # evaluate_recommendations(recommended, user_preference)
 
-    print("DEBUG: Tipo di recommended prima di ordinare:", type(recommended))
-    print("DEBUG: Contenuto di recommended:", recommended)
 
     # Ordina i risultati in base al punteggio (dal più alto al più basso)
     if recommended is None:

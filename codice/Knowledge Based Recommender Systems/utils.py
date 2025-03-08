@@ -514,8 +514,6 @@ def extract_reference_film_info(reference_title):
 def search_similar_movies(reference_film):
     informations = extract_reference_film_info(reference_film)
 
-    print("INFORMAZIONI")
-    print(informations)
     # Aggiorna lo stato della sessione Streamlit con i nuovi formati
     st.session_state.selected_genres = informations["genres"]
     st.session_state.selected_director = informations["director"]
@@ -524,6 +522,8 @@ def search_similar_movies(reference_film):
     st.session_state.filtered_movies = informations["views"]
     st.session_state.selected_decade = informations["year"]
     st.session_state.duration = informations["runtime"]
+
+    st.session_state.excluded_film = reference_film
 
     # Passa alla pagina dei risultati
     st.session_state.page = "results"
