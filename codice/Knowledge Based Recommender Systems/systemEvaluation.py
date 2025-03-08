@@ -170,11 +170,11 @@ def compute_diversity(recommendations):
 
 def compute_serendipity(recommendations, user_constraints):
     """
-    Calcola la serendipità delle raccomandazioni senza considerare la popolarità.
+    Calcola la serendipità delle raccomandazioni rispetto ai vincoli dell'utente.
 
     La serendipità misura quanto le raccomandazioni siano inaspettate ma potenzialmente utili.
-    Un valore più alto indica che il sistema suggerisce film che **deviano leggermente dai vincoli**,
-    offrendo nuove scoperte all'utente.
+    Un valore più alto indica che il sistema suggerisce film che **deviano dai vincoli**,
+    offrendo nuove scoperte all'utente senza essere completamente irrilevanti.
 
     Parametri:
     - recommendations (dict): Dizionario delle raccomandazioni con i dettagli dei film.
@@ -184,14 +184,16 @@ def compute_serendipity(recommendations, user_constraints):
     - float: Valore della serendipità (0 a 1).
     """
     total_recommendations = len(recommendations)
-    serendipitous_recommendations = 0
+    serendipitous_scores = []
 
     for title, details in recommendations.items():
         matches = 0
+        total_constraints = sum(1 for key in user_constraints if user_constraints[key])  # Conta i vincoli effettivi
 
         # Controllo generi
         genres = set(details.get('genres', "").split(', '))
-        if any(genre in user_constraints.get('genres', []) for genre in genres):
+        genre_match = genres.intersection(set(user_constraints.get('genres', [])))
+        if genre_match:
             matches += 1
 
         # Controllo regista
@@ -201,8 +203,8 @@ def compute_serendipity(recommendations, user_constraints):
 
         # Controllo attori
         actors = set((details.get('actors') or "").split(', '))
-
-        if any(actor in user_constraints.get('actors', []) for actor in actors):
+        actor_match = actors.intersection(set(user_constraints.get('actors', [])))
+        if actor_match:
             matches += 1
 
         # Controllo anno di uscita
@@ -213,12 +215,19 @@ def compute_serendipity(recommendations, user_constraints):
         if details.get('country', "") == user_constraints.get('country', ""):
             matches += 1
 
-        # Se il film non soddisfa TUTTI i vincoli, è considerato serendipitous
-        if matches < len(user_constraints):
-            serendipitous_recommendations += 1
+        # Percentuale di vincoli soddisfatti
+        if total_constraints > 0:
+            match_ratio = matches / total_constraints  # Quanto il film rispetta i vincoli
+        else:
+            match_ratio = 0  # Se non ci sono vincoli definiti dall'utente
 
-    serendipity = serendipitous_recommendations / total_recommendations if total_recommendations else 0
+        # La serendipità è alta se il film è leggermente fuori dai vincoli ma non completamente diverso
+        serendipity_score = 1 - match_ratio if 0 < match_ratio < 0.7 else 0  # Consideriamo serendipitosi i film con 30%-70% di match
+        serendipitous_scores.append(serendipity_score)
+
+    serendipity = sum(serendipitous_scores) / total_recommendations if total_recommendations else 0
     return serendipity
+
 
 
 # def evaluate_recommendations(recommended, user_preferences):
