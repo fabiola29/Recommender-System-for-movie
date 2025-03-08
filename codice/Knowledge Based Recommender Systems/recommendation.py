@@ -3,19 +3,15 @@ import random
 import time
 from itertools import combinations
 import streamlit as st
+import utils
 
 #TODO RENDI I RISULTATI UNICI
 def execute_query(graph, query, description):
     """Esegue una query SPARQL e restituisce i risultati come una lista."""
-
     results = list(graph.query(query))
 
-
-    # for row in results:
-    #     print("DEVO VERIFICARE")
-    #     print(
-    #         f"- Titolo: {row.title}, Genere: {getattr(row, 'genre', 'N/A')}, Regista: {getattr(row, 'director', 'N/A')}, Attore: {getattr(row, 'actors', 'N/A')}, Country: {getattr(row, 'country', 'N/A')}, Popularity: {getattr(row, 'views', 'N/A')}, Runtime: {getattr(row, 'runtime', 'N/A')}, Year: {getattr(row, 'released', 'N/A')} ")
-
+    if len(results) == 0:
+        print("⚠️ Nessun risultato trovato nella query SPARQL!")
 
     return results
 
@@ -359,7 +355,7 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
     recommended = epsilon_greedy_recommendation(list_results_with_scores, number_of_results)
 
     # Dopo aver calcolato recommended con epsilon_greedy_recommendation
-    print(len(recommended))
+
     if len(recommended) < number_of_results:
         print("Non abbastanza risultati, aggiungendo film random...")
 
@@ -367,18 +363,27 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
         films_needed = number_of_results - len(recommended)
         random_results = random_recommendation(films_needed)
 
-        # Aggiungi questi film ai risultati consigliati
-        for row in random_results:
-            # Aggiungi un motivo specifico per i film random
-            recommended[row.title] = {
+
+        # ✅ Iteriamo correttamente su `random_results.items()` per accedere ai dettagli
+        for title, details in random_results.items():  # ✅ CORRETTO SE random_results È UN DIZIONARIO
+            if not isinstance(details, dict):  # Se details non è un dizionario, ignora il film
+                print(f"⚠️ Errore: Dettagli mancanti per '{title}', skipping... Contenuto: {details}")
+                continue
+
+            recommended[title] = {
                 "score": 0,
                 "explanation": "chosen randomly",
-                "abstract": getattr(row, "abstract", "N/A")
+                "abstract": details.get("abstract", "N/A"),
+                "genres": details.get("genres", "N/A"),
+                "director": details.get("director", "N/A"),
+                "actors": details.get("actors", "N/A"),
+                "country": details.get("country", "N/A"),
+                "year": details.get("year", "N/A")
             }
 
-        # Ora 'recommended' contiene almeno 'desired_results' film
 
     return recommended
+
 
 def random_recommendation(number_of_results):
     """
@@ -422,11 +427,12 @@ def random_recommendation(number_of_results):
     list_results_with_scores = {}
     random_results = execute_query(g, random_query, "Film casuali per completare")
 
+
     for row in random_results:
         film_title = str(row[0])
         film_details = {
             'title': film_title,
-            'score': 1.0,  # Score predefinito per film casuali
+            'score': 0,  # Score predefinito per film casuali
             'explanation': 'Randomly selected movie',
             'abstract': str(row[8]) if row[8] else None,
             'genres': str(row[1]) if row[1] else None,
@@ -440,15 +446,3 @@ def random_recommendation(number_of_results):
         list_results_with_scores[film_title] = film_details
 
     return list_results_with_scores
-
-if __name__ == "__main__":
-    genres = ["comedy"]
-    director = "Paul Aster".replace(" ", "_")
-    actors = ["Lou Reed"]
-    actors = [actor.replace(" ", "_").lower() for actor in actors]
-    country = "United States"
-    duration = "Short"
-    popularity = "Niche"
-    year = "1990s"
-
-    retrieve_results(5, genres, director, actors, country, popularity, duration, year)

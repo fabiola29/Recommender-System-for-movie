@@ -537,21 +537,43 @@ def print_recommendations(recommendations):
     Parametri:
     - recommendations (dict): Dizionario contenente le raccomandazioni con i dettagli dei film.
     """
+
+    if not isinstance(recommendations, dict):
+        print(f"❌ Errore: recommendations NON è un dizionario, ma {type(recommendations)}")
+        return
+
+    if len(recommendations) == 0:
+        print("⚠️ Nessun film trovato.")
+        return
+
     for title, details in recommendations.items():
-        if not isinstance(details, dict):  # Controllo se details è un dizionario
-            print(f"Avviso: Formato non valido per '{title}', dettagli mancanti.")
+        if not isinstance(details, dict):
+            print(f"⚠️ Attenzione: '{title}' non ha dettagli validi: {details}")
             continue
 
-        # Controllo se la chiave 'title' esiste, altrimenti usa il nome della chiave come titolo
-        film_title = details.get('title', title)
+        # Recuperiamo i dettagli e assicuriamoci che non siano `None`
+        genres = str(details.get('genres', 'N/A')).strip()
+        director = str(details.get('director', 'N/A')).strip()
+        actors = str(details.get('actors', 'N/A')).strip()
+        country = str(details.get('country', 'N/A')).strip()
+        year = str(details.get('year', 'N/A')).strip()
+        abstract = str(details.get('abstract', 'N/A')).strip()
 
-        print(f"\nTitle: {film_title}")
-        print(f"Score: {details.get('score', 'N/A'):.2f}")
-        print(f"Explanation: {details.get('explanation', 'N/A')}")
-        print(f"Genres: {details.get('genres', 'N/A')}")
-        print(f"Director: {details.get('director', 'N/A')}")
-        print(f"Actors: {details.get('actors', 'N/A')}")
-        print(f"Country: {details.get('country', 'N/A')}")
-        print(f"Year: {details.get('year', 'N/A')}")
-        print(f"Abstract: {details.get('abstract', 'N/A')[:200]}..." if details.get('abstract') else "Abstract: N/A")
+        # Se alcuni dettagli contengono URL di DBpedia, estraiamo solo il nome alla fine
+        if director.startswith("http"):
+            director = director.split("/")[-1].replace("_", " ")
+        if actors.startswith("http"):
+            actors = actors.split("/")[-1].replace("_", " ")
+        if country.startswith("http"):
+            country = country.split("/")[-1].replace("_", " ")
+
+        print("\n🎬 Title:", details.get('title', title))  # Usa la chiave se manca il titolo
+        print("⭐ Score:", details.get('score', 'N/A'))
+        print("📖 Explanation:", details.get('explanation', 'N/A'))
+        print("🎭 Genres:", genres)
+        print("🎬 Director:", director)
+        print("👥 Actors:", actors)
+        print("🌍 Country:", country)
+        print("📆 Year:", year)
+        print("📜 Abstract:", abstract)
         print("-" * 60)
