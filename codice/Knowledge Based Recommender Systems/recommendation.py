@@ -6,6 +6,35 @@ import utils
 import pandas as pd
 import rdflib
 
+"""
+Modulo per il recupero e il filtraggio dei film in base alle preferenze dell'utente.
+
+Gestisce il processo di selezione dei film da un dataset RDF e applica diversi criteri di filtraggio, 
+inclusi genere, regista, attori, paese di produzione, popolarità, durata e anno di uscita. Inoltre, utilizza strategie
+di ranking come epsilon-greedy per la selezione delle migliori raccomandazioni.
+
+Funzioni principali:
+- `execute_query(graph, query, description)`: Esegue una query SPARQL su un grafo RDF.
+- `collect_results_with_scores(results, genres, user_director, user_actors, user_country, views_list, duration_list, user_year)`: 
+  Assegna punteggi ai film in base ai vincoli soddisfatti dall'utente.
+- `epsilon_greedy_recommendation(results_with_scores, top_k, epsilon=0.2)`: Implementa l'algoritmo epsilon-greedy per selezionare 
+  film rilevanti con un elemento di esplorazione casuale.
+- `retrieve_results(number_of_results, genres, director, actors, country, popularity_list, duration_list, year, _progress_bar, use_cache=True)`: 
+  Recupera film basati sui criteri di ricerca specificati ed esegue query SPARQL sul file RDF.
+- `random_recommendation(number_of_results)`: Seleziona casualmente film dal RDF per completare i risultati mancanti.
+- `most_popular_recommendation(k, rdf_file, ratings_file, movies_file)`: Trova i film più popolari combinando dati RDF e MovieLens, 
+  utilizzando una formula basata sui rating per determinare la popolarità.
+
+Caratteristiche:
+- Supporta il filtraggio basato su dati RDF estratti da DBpedia.
+- Implementa un sistema di punteggio per classificare i film in base alle preferenze dell'utente.
+- Integra strategie di esplorazione (epsilon-greedy) per migliorare la varietà delle raccomandazioni.
+- Gestisce i risultati temporanei nella sessione per evitare interrogazioni ripetitive.
+
+Il modulo è ottimizzato per garantire raccomandazioni bilanciate, introducendo sia film altamente compatibili con le preferenze 
+dell'utente sia una componente di scoperta per favorire la diversità nei suggerimenti.
+"""
+
 def execute_query(graph, query, description):
     """Esegue una query SPARQL e restituisce i risultati come una lista."""
     results = list(graph.query(query))
@@ -153,15 +182,15 @@ def epsilon_greedy_recommendation(results_with_scores, top_k, epsilon=0.2):
         print("Nessun risultato disponibile per epsilon-greedy.")
         return {}
 
-    # 🔹 Estrai la lista di film corretta
+    # Estrai la lista di film corretta
     films_list = [list(film.values())[0] for film in results_with_scores]  # Estrai il dizionario corretto
 
-    # Creare una lista di tuple con il punteggio randomizzato
+    # Crea una lista di tuple con il punteggio randomizzato
     randomized_scores = [
         (
             film.get("title", "Unknown"),  # Garantiamo che ogni film abbia un titolo
             film,
-            film.get("score", 0) + random.uniform(-0.5, 0.5)  # Se "score" non esiste, usa 0
+            film.get("score", 0) + random.uniform(-0.5, 0.5)  # Aggiunge ulteriore variabilità
         )
         for film in films_list  # Iteriamo sulla lista corretta
     ]
@@ -173,7 +202,7 @@ def epsilon_greedy_recommendation(results_with_scores, top_k, epsilon=0.2):
     for title, film, score in randomized_scores:
         print(f"- Titolo: {title}, Punteggio randomizzato: {score}, Motivo: {film.get('explanation', 'N/A')}")
 
-    selected = {}  # Ora è un DIZIONARIO con la stessa struttura di results_with_scores
+    selected = {}
     selected_titles = set()  # Per evitare duplicati
     available = randomized_scores[:]  # Copia della lista dei film disponibili
 
@@ -234,7 +263,7 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
         return st.session_state["current_search_results"]
 
     g = rdflib.Graph()
-    g.parse("movies_ontology.ttl", format="turtle")
+    g.parse("movies_rdf.ttl", format="turtle")
 
     if director:
         director = director.replace(" ", "_")
@@ -296,14 +325,12 @@ def retrieve_results(number_of_results, genres, director, actors, country, popul
     ]
     constraints = [constraint for constraint in constraints if constraint]
 
-
     subnum = 0
     list_results_with_scores = []
     current_results_count = 0
     max_constraints_found = None  # Tiene traccia del numero di vincoli della prima query che ha restituito risultati
     unique_titles = set()
     query_completed = False
-
 
     total_queries = sum(range(len(constraints) + 1))  # Numero totale di combinazioni da provare
     completed_queries = 0  # Contatore per l'avanzamento della barra
@@ -444,7 +471,7 @@ def random_recommendation(number_of_results):
     - dict: Raccomandazioni di film nel formato corretto.
     """
     g = rdflib.Graph()
-    g.parse("movies_ontology.ttl", format="turtle")
+    g.parse("movies_rdf.ttl", format="turtle")
 
     random_query = f"""
            PREFIX dbo: <http://dbpedia.org/ontology/>
@@ -488,7 +515,7 @@ def random_recommendation(number_of_results):
 
     return list_results_with_scores
 
-def most_popular_recommendation(k, rdf_file="movies_ontology.ttl", ratings_file="../../dataset/archive/ratings.csv",
+def most_popular_recommendation(k, rdf_file="movies_rdf.ttl", ratings_file="../../dataset/archive/ratings.csv",
                                 movies_file="../../dataset/archive/movies.csv"):
     """
     Trova i k film più popolari leggendo i titoli dall'ontologia RDF,
@@ -568,7 +595,7 @@ def most_popular_recommendation(k, rdf_file="movies_ontology.ttl", ratings_file=
     # Step 7: Seleziona i primi k film più popolari
     top_movies = popular_movies.head(k)
 
-    print("\n✅ Film più popolari trovati:")
+    print("\nFilm più popolari trovati:")
     print(top_movies[["title", "popularity"]])
 
     # Step 8: Creiamo il dizionario finale con tutti i dati RDF

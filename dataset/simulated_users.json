@@ -12,7 +12,7 @@
         "duration": ["Long"]
     },
     "user_casual_viewer": {
-        "popularity": ["Popular", "Blockbuster"]
+        "popularity": ["Blockbuster"]
     },
     "user_indie_lover": {
         "genres": ["Drama", "Independent"],
@@ -23,7 +23,7 @@
     "user_family_animation": {
         "genres": ["Animation", "Comedy"],
         "popularity": ["Popular"],
-        "duration": ["Short","Medium"]
+        "duration": ["Short"]
     },
     "user_thriller_fan": {
         "genres": ["Thriller"],
@@ -44,7 +44,7 @@
         "genres": [
             "Comedy"
         ],
-        "popularity": ["Popular", "Blockbuster"],
+        "popularity": ["Popular"],
         "actors": ["Jim Carrey"]
     },
     "user_sci_fi_buff": {

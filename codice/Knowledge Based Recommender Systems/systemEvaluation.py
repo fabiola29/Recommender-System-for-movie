@@ -1,5 +1,35 @@
-
 from itertools import combinations
+
+"""
+Modulo per il calcolo delle metriche di valutazione delle raccomandazioni.
+
+Fornisce diverse metriche per valutare la qualità delle raccomandazioni di film, 
+confrontandole con le preferenze dell'utente. Le metriche implementate sono:
+
+1. **Accuracy**: Percentuale di film raccomandati che soddisfano **tutti** i vincoli dell'utente.
+2. **Partial Accuracy**: Percentuale media di vincoli soddisfatti dai film raccomandati.
+3. **Diversity**: Misura quanto i film consigliati siano diversi tra loro.
+4. **Serendipity**: Indica quanto le raccomandazioni siano sorprendenti ma potenzialmente utili.
+
+Funzioni principali:
+- `compute_accuracy(recommendations, user_constraints)`: 
+  - Calcola la precisione basata sul numero di film che soddisfano tutti i criteri selezionati.
+- `compute_partial_accuracy(recommendations, user_constraints)`: 
+  - Misura la percentuale media di vincoli soddisfatti per ogni film raccomandato.
+- `compute_diversity(recommendations)`: 
+  - Analizza quanto i film suggeriti siano differenti tra loro, considerando generi, registi, attori e paese di produzione.
+- `compute_serendipity(recommendations, user_constraints)`: 
+  - Valuta la capacità del sistema di suggerire film inaspettati ma potenzialmente apprezzati.
+
+Caratteristiche:
+- Supporta il confronto tra le raccomandazioni e i vincoli impostati dall'utente.
+- Gestisce correttamente dati mancanti (None) e formati diversi (stringhe, liste).
+- Implementa un calcolo di diversità basato su similarità tra i film suggeriti.
+- Il valore di serendipità premia le raccomandazioni che escono leggermente dai vincoli ma non sono completamente casuali.
+
+Questo modulo è utile per valutare e migliorare l'efficacia del sistema di raccomandazione.
+"""
+
 
 def compute_accuracy(recommendations, user_constraints):
     """
@@ -21,48 +51,69 @@ def compute_accuracy(recommendations, user_constraints):
     if isinstance(recommendations, list):
         recommendations = {str(i): rec for i, rec in enumerate(recommendations)}
 
+    # Filtriamo solo i vincoli effettivamente impostati dall'utente (non vuoti)
+    active_constraints = {k: v for k, v in user_constraints.items() if v}
+
     for title, details in recommendations.items():
         matches = 0
-        total_constraints = len(user_constraints)  # Conta solo i vincoli effettivamente impostati
+        total_constraints = 0  # Conta solo i vincoli effettivamente richiesti
 
         # Controllo generi
-        if 'genres' in user_constraints:
+        if 'genres' in active_constraints:
             genres = details.get('genres', [])
-            if isinstance(genres, str):
+            if genres is None:
+                genres = []
+            elif isinstance(genres, str):
                 genres = genres.split(', ')
-            if any(genre in user_constraints['genres'] for genre in genres):
+            if any(genre in active_constraints['genres'] for genre in genres):
                 matches += 1
+            total_constraints += 1  # Conta questo vincolo
 
         # Controllo regista
-        if 'directors' in user_constraints:
-            if details.get('director', '').split('/')[-1] == user_constraints.get('directors', '').split('/')[-1]:
+        if 'directors' in active_constraints:
+            director = details.get('director', '')
+            if director is None:
+                director = ''
+            if director == active_constraints.get('directors', ''):
                 matches += 1
+            total_constraints += 1  # Conta questo vincolo
 
-        # Controllo attori
-        if 'actors' in user_constraints:
+        # Controllo attori (RISOLTO IL PROBLEMA DI NoneType)
+        if 'actors' in active_constraints:
             actors = details.get('actors', [])
-            if isinstance(actors, str):
+            if actors is None:
+                actors = []
+            elif isinstance(actors, str):
                 actors = actors.split(', ')
-            if any(actor in user_constraints['actors'] for actor in actors):
+            if any(actor in active_constraints['actors'] for actor in actors):
                 matches += 1
+            total_constraints += 1  # Conta questo vincolo
 
-        # Controllo anno di uscita
-        if 'year' in user_constraints:
-            if details.get('year', '') == user_constraints['year']:
-                matches += 1
+        # Controllo anno di uscita (gestione del formato "1980s")
+        if 'year' in active_constraints:
+            user_decade = active_constraints['year']
+            movie_decade = details.get('year', '')
+
+            if isinstance(user_decade, str) and user_decade.endswith('s') and isinstance(movie_decade, str) and movie_decade.endswith('s'):
+                if user_decade == movie_decade:
+                    matches += 1
+            total_constraints += 1  # Conta questo vincolo
 
         # Controllo paese di produzione
-        if 'country' in user_constraints:
-            if details.get('country', '') == user_constraints['country']:
+        if 'country' in active_constraints:
+            country = details.get('country', '')
+            if country is None:
+                country = ''
+            if country == active_constraints['country']:
                 matches += 1
+            total_constraints += 1  # Conta questo vincolo
 
         # Se il film soddisfa tutti i vincoli forniti, conta come corretto
-        if matches == total_constraints:
+        if matches == total_constraints and total_constraints > 0:
             correct_recommendations += 1
 
     accuracy = correct_recommendations / total_recommendations if total_recommendations else 0
     return accuracy
-
 
 def compute_partial_accuracy(recommendations, user_constraints):
     """
@@ -227,17 +278,3 @@ def compute_serendipity(recommendations, user_constraints):
 
     serendipity = sum(serendipitous_scores) / total_recommendations if total_recommendations else 0
     return serendipity
-
-
-
-# def evaluate_recommendations(recommended, user_preferences):
-#     accuracy = compute_accuracy(recommended, user_preferences)
-#     partial_accuracy = compute_partial_accuracy(recommended, user_preferences)
-#     diversity = compute_diversity(recommended)
-#     serendipity = compute_serendipity(recommended, user_preferences)
-#     # Mostra i punteggi medi per il sistema di raccomandazione
-#     print("\n📊 Average Scores for the Recommendation System:")
-#     print(f"🔹 Accuracy: {accuracy * 100:.2f}%")
-#     print(f"🔹 Partial Accuracy: {partial_accuracy * 100:.2f}%")
-#     print(f"🔹 Diversity: {diversity * 100:.2f}%")
-#     print(f"🔹 Serendipity: {serendipity * 100:.2f}%")

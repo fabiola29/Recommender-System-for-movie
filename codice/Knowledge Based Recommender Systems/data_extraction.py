@@ -2,8 +2,31 @@ import rdflib
 from SPARQLWrapper import SPARQLWrapper, JSON
 import re
 import os
-import signal
 import urllib.parse
+
+"""
+Modulo per l'estrazione e la memorizzazione di dati RDF sui film utilizzando DBpedia.
+
+Questo script esegue le seguenti operazioni:
+1. Connessione all'endpoint SPARQL di DBpedia per recuperare informazioni sui film.
+2. Creazione e aggiornamento di un grafo RDF con i dati estratti.
+3. Lettura dei dataset di film e valutazioni, arricchendo il grafo RDF con dettagli come titolo, anno di uscita, regista, attori, paese di produzione, durata e numero di visualizzazioni.
+4. Utilizzo di funzioni per elaborare e ripulire i titoli dei film, formattare query SPARQL e verificare la presenza di un film nel grafo RDF.
+5. Salvataggio periodico dell'ontologia RDF in formato Turtle per interrogazioni locali.
+
+Funzioni principali:
+- `extract_title_and_year(raw_title)`: Estrae il titolo e l'anno da una stringa contenente un titolo di film.
+- `create_valid_uri(title)`: Genera un URI valido per DBpedia basato sul titolo del film.
+- `is_title_in_graph(title)`: Verifica se un film è già presente nell'ontologia RDF.
+- `sanitize_sparql_title(title)`: Modifica il titolo per essere utilizzato nelle query SPARQL.
+- `filter_genres(genre_str)`: Filtra i generi di un film eliminando valori non validi.
+- `get_movie_data(title, retries=3)`: Recupera informazioni su un film da DBpedia utilizzando SPARQL.
+- `save_graph()`: Salva il grafo RDF su file.
+
+Il dataset dei film viene letto da `movies.csv`, mentre il dataset delle valutazioni da `ratings.csv`.
+I dati vengono arricchiti con informazioni estratte da DBpedia e memorizzati in un file RDF locale `movies_rdf.ttl`.
+"""
+
 
 # Impostazione dell'endpoint SPARQL di DBpedia con timeout
 sparql = SPARQLWrapper("http://dbpedia.org/sparql")
@@ -17,11 +40,9 @@ g.bind("dbp", "http://dbpedia.org/property/")
 g.bind("dbr", "http://dbpedia.org/resource/")
 
 # Caricare l'ontologia esistente se esiste
-ontology_file = "movies_ontology.ttl"
-if os.path.exists(ontology_file):
-    g.parse(ontology_file, format="turtle")
-    print("Ontologia esistente caricata.")
-
+rdf_file = "movies_rdf.ttl"
+if os.path.exists(rdf_file):
+    g.parse(rdf_file, format="turtle")
 
 def extract_title_and_year(raw_title):
     parts = raw_title.split(",")
@@ -43,25 +64,21 @@ def extract_title_and_year(raw_title):
     print(year)
     return title, year
 
-
 # Funzione per creare un URI valido per DBpedia
 def create_valid_uri(title):
     title = title.strip().replace(" ", "_")  # Sostituisce spazi con "_"
     title = urllib.parse.quote(title, safe="_")  # Codifica caratteri speciali
     return rdflib.URIRef(f"http://dbpedia.org/resource/{title}")
 
-
 # Funzione per verificare se il titolo è già presente nell'ontologia
 def is_title_in_graph(title):
     movie_uri = create_valid_uri(title)
     return (movie_uri, None, None) in g
 
-
 # Funzione per sanificare il titolo per SPARQL
 def sanitize_sparql_title(title):
     title = title.replace('"', "'")  # Sostituisce i doppi apici con apici singoli
     return f'"""{title}"""'  # Usa triple virgolette per evitare problemi di sintassi
-
 
 def filter_genres(genre_str):
     genres = genre_str.split('|')  # Divide i generi separati da "|"
@@ -131,14 +148,12 @@ def get_movie_data(title, retries=3):
     print(f"Errore definitivo nella richiesta SPARQL per {title}.")
     return None
 
-
 # Funzione per salvare periodicamente il grafo
 def save_graph():
-    g.serialize(destination=ontology_file, format="turtle")
-    print(f"Ontologia RDF salvata in '{ontology_file}' e interrogabile con query SPARQL in locale!")
+    g.serialize(destination=rdf_file, format="turtle")
+    print(f"Ontologia RDF salvata in '{rdf_file}' e interrogabile con query SPARQL in locale!")
 
-
-# --- AGGIUNTA: Caricamento delle views dal file ratings.csv ---
+# Caricamento delle views dal file ratings.csv ---
 ratings_file = "../../dataset/archive/ratings.csv"
 views_dict = {}
 
@@ -153,7 +168,6 @@ if os.path.exists(ratings_file):
                 views_dict[rating_movie_id] = views_dict.get(rating_movie_id, 0) + 1
 else:
     print(f"File delle valutazioni '{ratings_file}' non trovato. Nessuna view sarà aggiunta.")
-# --- FINE AGGIUNTA ---
 
 # Lettura del dataset di input
 input_file = "../../dataset/archive/movies.csv"
@@ -165,9 +179,8 @@ with open(input_file, mode="r", encoding="utf-8") as infile:
         title, year = extract_title_and_year(row.strip())
         genres = row.strip()
 
-
         if is_title_in_graph(title):
-            print(f"Il film '{title}' è già presente nell'ontologia, salto.")
+            print(f"Il film '{title}' è già presente, salto.")
             continue
 
         print(f"Recupero dati per: {title}")
@@ -202,8 +215,6 @@ with open(input_file, mode="r", encoding="utf-8") as infile:
             g.add((movie_uri, rdflib.URIRef("http://dbpedia.org/ontology/country"),
                    rdflib.Literal(movie_data["Country"])))
 
-
-            # GESTIONE ATTORI MULTIPLI: la query li concatena con '@@'
             # Se 'Starring' è diverso da 'N/A', scompone la stringa
             if movie_data["Starring"] != "N/A":
                 # Sarà una stringa come \"Actor1@@Actor2@@Actor3...\"
@@ -215,14 +226,10 @@ with open(input_file, mode="r", encoding="utf-8") as infile:
                                rdflib.Literal(actor)))
 
         splitted = row.strip().split(",")
-        # AGGIUNTA: Salva l'ID del film
         movie_id = splitted[0]  # Consideriamo che la prima colonna sia l'ID
-        # AGGIUNTA: Recupera il numero di views dal dizionario creato prima
         views = views_dict.get(movie_id, 0)
-        # AGGIUNTA: Inserisci la property "views" nel grafo
         g.add((movie_uri, rdflib.URIRef("http://dbpedia.org/property/views"), rdflib.Literal(views)))
 
-        # AGGIUNTA (pre-esistente): controlla se splitted[2], splitted[3], ecc. è un anno (4 cifre) o dei generi.
         for col in range(2, len(splitted)):
             val = splitted[col].strip()
 
@@ -246,7 +253,6 @@ with open(input_file, mode="r", encoding="utf-8") as infile:
                 if not re.search(r"\(\d{4}\)", genre_cleaned) and genre_cleaned not in ["The"]:
                     g.add(
                         (movie_uri, rdflib.URIRef("http://dbpedia.org/ontology/genre"), rdflib.Literal(genre_cleaned)))
-
         if idx % 10 == 0:
             save_graph()
 

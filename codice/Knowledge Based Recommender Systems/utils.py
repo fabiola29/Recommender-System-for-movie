@@ -1,12 +1,52 @@
+from __future__ import annotations
 from typing import Any
-
 import pandas as pd
 import re
 import streamlit as st
 from rdflib import Graph
 from urllib.parse import urlparse
-import recommendation
-import results
+import rdflib
+
+"""
+Modulo di utilità per la gestione e il filtraggio dei film nell'applicazione di raccomandazione.
+
+Fornisce funzioni per il caricamento dei dati, la selezione delle preferenze dell'utente,
+la gestione delle query su RDF e l'estrazione delle informazioni dai dataset.
+
+Funzioni principali:
+- **Gestione della UI e delle preferenze utente:**
+  - `load_css()`: Carica un foglio di stile CSS personalizzato per Streamlit.
+  - `select_genres(genres, default)`: Permette all'utente di selezionare i generi preferiti.
+  - `display_director_selection(directors, default)`: Permette di selezionare un regista preferito.
+  - `display_actor_selection(actors, default)`: Permette di selezionare attori preferiti.
+  - `display_nationality_selection(all_countries, default)`: Permette di selezionare una nazionalità preferita.
+  - `display_runtime_selection(default)`: Permette di selezionare la durata del film.
+  - `display_movies_by_decade(years, default)`: Permette di selezionare la decade di uscita del film.
+  - `display_popularity_preference(default)`: Permette di selezionare il livello di popolarità dei film.
+  - `save_user_preferences(...)`: Salva le preferenze dell'utente nella sessione di Streamlit.
+
+- **Gestione dei dati RDF:**
+  - `load_data()`: Carica i dataset di MovieLens (movies, tags, ratings).
+  - `select_informations_from_ttl(movies_dataset)`: Estrae generi, registi, attori, nazionalità e anni disponibili dal file RDF.
+  - `get_movies_from_ttl()`: Recupera i titoli dei film presenti nel dataset RDF.
+  - `extract_reference_film_info(reference_title)`: Estrae le informazioni di un film di riferimento dall'ontologia RDF.
+  - `search_similar_movies(reference_film)`: Cerca film simili a un film di riferimento selezionato dall'utente.
+
+- **Gestione e normalizzazione dei dati:**
+  - `normalize_title(movie_title)`: Normalizza i titoli dei film rimuovendo l'anno e spostando gli articoli all'inizio.
+  - `is_valid_uri(uri)`: Verifica se una URI è valida.
+  - `group_movies_by_decade(movies_release)`: Raggruppa i film per decennio.
+
+- **Stampa e debugging:**
+  - `print_recommendations(recommendations)`: Stampa i film raccomandati in un formato leggibile.
+
+Caratteristiche:
+- **Compatibilità con RDF e DBpedia**: Il modulo interagisce con un file RDF contenente i dati dei film e permette di eseguire query SPARQL.
+- **Ottimizzazione per Streamlit**: Include funzioni per la gestione della UI e il salvataggio delle preferenze utente.
+- **Supporto alla ricerca di film simili**: Consente di utilizzare un film di riferimento per ottenere suggerimenti personalizzati.
+
+Questo modulo è essenziale per la gestione dei dati e l'interfaccia utente nel sistema di raccomandazione di film.
+"""
 
 def load_css():
     """
@@ -103,7 +143,7 @@ def select_genres(genres, default=None):
 @st.cache_data
 def select_informations_from_ttl(movies_dataset):
     g = Graph()
-    file_path = "movies_ontology.ttl"
+    file_path = "movies_rdf.ttl"
     g.parse(file_path, format="turtle")
 
     movies_dict = {}
@@ -168,9 +208,6 @@ def select_informations_from_ttl(movies_dataset):
     return genres_list, directors_list, actors_list, nationalities_list, years_list
 
 
-import rdflib
-
-
 def get_movies_from_ttl():
     """
     Carica i titoli dei film dal file TTL.
@@ -179,7 +216,7 @@ def get_movies_from_ttl():
     - lista dei titoli dei film presenti nel dataset TTL.
     """
     g = rdflib.Graph()
-    g.parse("movies_ontology.ttl", format="turtle")
+    g.parse("movies_rdf.ttl", format="turtle")
 
     query = """
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
@@ -202,7 +239,7 @@ def display_director_selection(directors, default=None):
     st.markdown('<div class="subheader"> Which director do you prefer?</div>', unsafe_allow_html=True)
 
     # # **Carica i film e registi dal file RDF, filtrati per dataset**
-    # movies_dict = load_movies_and_directors_from_ttl("movies_ontology.ttl", movies)
+    # movies_dict = load_movies_and_directors_from_ttl("movies_rdf.ttl", movies)
     #
 
     # **Aggiungi "Choose an option" come opzione predefinita**
@@ -432,7 +469,7 @@ def save_user_preferences(selected_genres, selected_director, selected_actors, s
 
 def extract_reference_film_info(reference_title):
     g = Graph()
-    file_path = "movies_ontology.ttl"
+    file_path = "movies_rdf.ttl"
     g.parse(file_path, format="turtle")
 
     # Normalizza il titolo di riferimento per il confronto
