@@ -6,32 +6,31 @@ from utils import load_css, load_data, select_genres, display_director_selection
 from confirmation_screen import confirmation_screen
 from reference_film import reference_film_page
 
-"""
-Modulo principale dell'applicazione Streamlit per la ricerca e la raccomandazione di film.
+# Modulo principale dell'applicazione Streamlit per la ricerca e la raccomandazione di film.
+#
+# Gestisce la navigazione tra le diverse pagine dell'app e permette all'utente di
+# selezionare preferenze sui film per ricevere suggerimenti personalizzati.
+#
+# Funzioni principali:
+# - `navigate_pages()`: Controlla la navigazione tra le pagine dell'applicazione:
+#   - "main": Pagina principale per l'inserimento dei criteri di ricerca.
+#   - "results": Pagina dei risultati con i film consigliati.
+#   - "confirmation screen": Schermata di conferma dopo la selezione del film.
+#   - "reference film": Pagina per selezionare un film di riferimento simile a quelli desiderati.
+#
+# - `main()`: Carica l'interfaccia della pagina principale, consentendo all'utente di specificare le
+#   preferenze di ricerca per trovare film rilevanti. Gli utenti possono:
+#   - Selezionare generi preferiti.
+#   - Scegliere registi e attori preferiti.
+#   - Indicare una nazionalità preferita.
+#   - Esprimere preferenze di popolarità (blockbuster o film di nicchia).
+#   - Specificare una decade di uscita del film.
+#   - Definire una durata preferita.
+#   - Utilizzare un film di riferimento per affinare la ricerca.
+#
+# Avvio:
+# - Il modulo viene eseguito direttamente avviando `navigate_pages()`, che determina la pagina da visualizzare.
 
-Gestisce la navigazione tra le diverse pagine dell'app e permette all'utente di
-selezionare preferenze sui film per ricevere suggerimenti personalizzati.
-
-Funzioni principali:
-- `navigate_pages()`: Controlla la navigazione tra le pagine dell'applicazione:
-  - "main": Pagina principale per l'inserimento dei criteri di ricerca.
-  - "results": Pagina dei risultati con i film consigliati.
-  - "confirmation screen": Schermata di conferma dopo la selezione del film.
-  - "reference film": Pagina per selezionare un film di riferimento simile a quelli desiderati.
-
-- `main()`: Carica l'interfaccia della pagina principale, consentendo all'utente di specificare le
-  preferenze di ricerca per trovare film rilevanti. Gli utenti possono:
-  - Selezionare generi preferiti.
-  - Scegliere registi e attori preferiti.
-  - Indicare una nazionalità preferita.
-  - Esprimere preferenze di popolarità (blockbuster o film di nicchia).
-  - Specificare una decade di uscita del film.
-  - Definire una durata preferita.
-  - Utilizzare un film di riferimento per affinare la ricerca.
-
-Avvio:
-- Il modulo viene eseguito direttamente avviando `navigate_pages()`, che determina la pagina da visualizzare.
-"""
 
 # Funzione per gestire la navigazione tra pagine
 def navigate_pages():

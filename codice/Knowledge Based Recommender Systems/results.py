@@ -1,33 +1,33 @@
 import streamlit as st
 import recommendation
 
-"""
-Modulo per la visualizzazione dei risultati della ricerca dei film in Streamlit.
-
-Mostra i film consigliati in base ai criteri selezionati dall'utente, recuperandoli 
-attraverso una query al sistema di raccomandazione.
-
-Funzioni principali:
-- `results()`: 
-  - Recupera i criteri di ricerca selezionati dall'utente nella sessione di Streamlit.
-  - Esegue una query per ottenere i film che soddisfano tali criteri.
-  - Visualizza i risultati in ordine di punteggio, mostrando per ogni film:
-    - Titolo
-    - Motivazione della raccomandazione
-    - Descrizione (abstract)
-    - Pulsante per selezionare il film
-  - Se non vengono trovati risultati, mostra un messaggio di avviso.
-  - Permette all'utente di tornare alla pagina principale per modificare i criteri di ricerca.
-
-Caratteristiche:
-- Utilizza una barra di avanzamento per indicare lo stato della ricerca.
-- Mostra i film ordinati per punteggio in ordine decrescente.
-- Fornisce una spiegazione del perché ogni film è stato consigliato.
-- Consente di selezionare un film per proseguire nella navigazione.
-
-Questo modulo rappresenta il punto di accesso principale ai film suggeriti, garantendo 
-un'esperienza utente chiara e interattiva.
-"""
+# """
+# Modulo per la visualizzazione dei risultati della ricerca dei film in Streamlit.
+#
+# Mostra i film consigliati in base ai criteri selezionati dall'utente, recuperandoli
+# attraverso una query al sistema di raccomandazione.
+#
+# Funzioni principali:
+# - `results()`:
+#   - Recupera i criteri di ricerca selezionati dall'utente nella sessione di Streamlit.
+#   - Esegue una query per ottenere i film che soddisfano tali criteri.
+#   - Visualizza i risultati in ordine di punteggio, mostrando per ogni film:
+#     - Titolo
+#     - Motivazione della raccomandazione
+#     - Descrizione (abstract)
+#     - Pulsante per selezionare il film
+#   - Se non vengono trovati risultati, mostra un messaggio di avviso.
+#   - Permette all'utente di tornare alla pagina principale per modificare i criteri di ricerca.
+#
+# Caratteristiche:
+# - Utilizza una barra di avanzamento per indicare lo stato della ricerca.
+# - Mostra i film ordinati per punteggio in ordine decrescente.
+# - Fornisce una spiegazione del perché ogni film è stato consigliato.
+# - Consente di selezionare un film per proseguire nella navigazione.
+#
+# Questo modulo rappresenta il punto di accesso principale ai film suggeriti, garantendo
+# un'esperienza utente chiara e interattiva.
+# """
 
 
 # Funzione per mostrare i risultati in Streamlit
@@ -111,7 +111,7 @@ def results():
     with st.spinner("Searching for the best movies..."):
 
         recommended = recommendation.retrieve_results(
-            10, selected_genres, selected_director, selected_actors,
+            5, selected_genres, selected_director, selected_actors,
             selected_nationality, selected_popularity, duration,
             selected_decade, progress_bar
         )

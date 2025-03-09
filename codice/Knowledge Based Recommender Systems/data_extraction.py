@@ -4,29 +4,26 @@ import re
 import os
 import urllib.parse
 
-"""
-Modulo per l'estrazione e la memorizzazione di dati RDF sui film utilizzando DBpedia.
-
-Questo script esegue le seguenti operazioni:
-1. Connessione all'endpoint SPARQL di DBpedia per recuperare informazioni sui film.
-2. Creazione e aggiornamento di un grafo RDF con i dati estratti.
-3. Lettura dei dataset di film e valutazioni, arricchendo il grafo RDF con dettagli come titolo, anno di uscita, regista, attori, paese di produzione, durata e numero di visualizzazioni.
-4. Utilizzo di funzioni per elaborare e ripulire i titoli dei film, formattare query SPARQL e verificare la presenza di un film nel grafo RDF.
-5. Salvataggio periodico dell'ontologia RDF in formato Turtle per interrogazioni locali.
-
-Funzioni principali:
-- `extract_title_and_year(raw_title)`: Estrae il titolo e l'anno da una stringa contenente un titolo di film.
-- `create_valid_uri(title)`: Genera un URI valido per DBpedia basato sul titolo del film.
-- `is_title_in_graph(title)`: Verifica se un film è già presente nell'ontologia RDF.
-- `sanitize_sparql_title(title)`: Modifica il titolo per essere utilizzato nelle query SPARQL.
-- `filter_genres(genre_str)`: Filtra i generi di un film eliminando valori non validi.
-- `get_movie_data(title, retries=3)`: Recupera informazioni su un film da DBpedia utilizzando SPARQL.
-- `save_graph()`: Salva il grafo RDF su file.
-
-Il dataset dei film viene letto da `movies.csv`, mentre il dataset delle valutazioni da `ratings.csv`.
-I dati vengono arricchiti con informazioni estratte da DBpedia e memorizzati in un file RDF locale `movies_rdf.ttl`.
-"""
-
+# Modulo per l'estrazione e la memorizzazione di dati RDF sui film utilizzando DBpedia.
+#
+# Questo script esegue le seguenti operazioni:
+# 1. Connessione all'endpoint SPARQL di DBpedia per recuperare informazioni sui film.
+# 2. Creazione e aggiornamento di un grafo RDF con i dati estratti.
+# 3. Lettura dei dataset di film e valutazioni, arricchendo il grafo RDF con dettagli come titolo, anno di uscita, regista, attori, paese di produzione, durata e numero di visualizzazioni.
+# 4. Utilizzo di funzioni per elaborare e ripulire i titoli dei film, formattare query SPARQL e verificare la presenza di un film nel grafo RDF.
+# 5. Salvataggio periodico dell'ontologia RDF in formato Turtle per interrogazioni locali.
+#
+# Funzioni principali:
+# - `extract_title_and_year(raw_title)`: Estrae il titolo e l'anno da una stringa contenente un titolo di film.
+# - `create_valid_uri(title)`: Genera un URI valido per DBpedia basato sul titolo del film.
+# - `is_title_in_graph(title)`: Verifica se un film è già presente nell'ontologia RDF.
+# - `sanitize_sparql_title(title)`: Modifica il titolo per essere utilizzato nelle query SPARQL.
+# - `filter_genres(genre_str)`: Filtra i generi di un film eliminando valori non validi.
+# - `get_movie_data(title, retries=3)`: Recupera informazioni su un film da DBpedia utilizzando SPARQL.
+# - `save_graph()`: Salva il grafo RDF su file.
+#
+# Il dataset dei film viene letto da `movies.csv`, mentre il dataset delle valutazioni da `ratings.csv`.
+# I dati vengono arricchiti con informazioni estratte da DBpedia e memorizzati in un file RDF locale `movies_rdf.ttl`.
 
 # Impostazione dell'endpoint SPARQL di DBpedia con timeout
 sparql = SPARQLWrapper("http://dbpedia.org/sparql")

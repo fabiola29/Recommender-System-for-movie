@@ -1,34 +1,34 @@
 from itertools import combinations
 
-"""
-Modulo per il calcolo delle metriche di valutazione delle raccomandazioni.
-
-Fornisce diverse metriche per valutare la qualità delle raccomandazioni di film, 
-confrontandole con le preferenze dell'utente. Le metriche implementate sono:
-
-1. **Accuracy**: Percentuale di film raccomandati che soddisfano **tutti** i vincoli dell'utente.
-2. **Partial Accuracy**: Percentuale media di vincoli soddisfatti dai film raccomandati.
-3. **Diversity**: Misura quanto i film consigliati siano diversi tra loro.
-4. **Serendipity**: Indica quanto le raccomandazioni siano sorprendenti ma potenzialmente utili.
-
-Funzioni principali:
-- `compute_accuracy(recommendations, user_constraints)`: 
-  - Calcola la precisione basata sul numero di film che soddisfano tutti i criteri selezionati.
-- `compute_partial_accuracy(recommendations, user_constraints)`: 
-  - Misura la percentuale media di vincoli soddisfatti per ogni film raccomandato.
-- `compute_diversity(recommendations)`: 
-  - Analizza quanto i film suggeriti siano differenti tra loro, considerando generi, registi, attori e paese di produzione.
-- `compute_serendipity(recommendations, user_constraints)`: 
-  - Valuta la capacità del sistema di suggerire film inaspettati ma potenzialmente apprezzati.
-
-Caratteristiche:
-- Supporta il confronto tra le raccomandazioni e i vincoli impostati dall'utente.
-- Gestisce correttamente dati mancanti (None) e formati diversi (stringhe, liste).
-- Implementa un calcolo di diversità basato su similarità tra i film suggeriti.
-- Il valore di serendipità premia le raccomandazioni che escono leggermente dai vincoli ma non sono completamente casuali.
-
-Questo modulo è utile per valutare e migliorare l'efficacia del sistema di raccomandazione.
-"""
+# """
+# Modulo per il calcolo delle metriche di valutazione delle raccomandazioni.
+#
+# Fornisce diverse metriche per valutare la qualità delle raccomandazioni di film,
+# confrontandole con le preferenze dell'utente. Le metriche implementate sono:
+#
+# 1. **Accuracy**: Percentuale di film raccomandati che soddisfano **tutti** i vincoli dell'utente.
+# 2. **Partial Accuracy**: Percentuale media di vincoli soddisfatti dai film raccomandati.
+# 3. **Diversity**: Misura quanto i film consigliati siano diversi tra loro.
+# 4. **Serendipity**: Indica quanto le raccomandazioni siano sorprendenti ma potenzialmente utili.
+#
+# Funzioni principali:
+# - `compute_accuracy(recommendations, user_constraints)`:
+#   - Calcola la precisione basata sul numero di film che soddisfano tutti i criteri selezionati.
+# - `compute_partial_accuracy(recommendations, user_constraints)`:
+#   - Misura la percentuale media di vincoli soddisfatti per ogni film raccomandato.
+# - `compute_diversity(recommendations)`:
+#   - Analizza quanto i film suggeriti siano differenti tra loro, considerando generi, registi, attori e paese di produzione.
+# - `compute_serendipity(recommendations, user_constraints)`:
+#   - Valuta la capacità del sistema di suggerire film inaspettati ma potenzialmente apprezzati.
+#
+# Caratteristiche:
+# - Supporta il confronto tra le raccomandazioni e i vincoli impostati dall'utente.
+# - Gestisce correttamente dati mancanti (None) e formati diversi (stringhe, liste).
+# - Implementa un calcolo di diversità basato su similarità tra i film suggeriti.
+# - Il valore di serendipità premia le raccomandazioni che escono leggermente dai vincoli ma non sono completamente casuali.
+#
+# Questo modulo è utile per valutare e migliorare l'efficacia del sistema di raccomandazione.
+# """
 
 
 def compute_accuracy(recommendations, user_constraints):

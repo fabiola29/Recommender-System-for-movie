@@ -6,34 +6,34 @@ import utils
 import pandas as pd
 import rdflib
 
-"""
-Modulo per il recupero e il filtraggio dei film in base alle preferenze dell'utente.
-
-Gestisce il processo di selezione dei film da un dataset RDF e applica diversi criteri di filtraggio, 
-inclusi genere, regista, attori, paese di produzione, popolarità, durata e anno di uscita. Inoltre, utilizza strategie
-di ranking come epsilon-greedy per la selezione delle migliori raccomandazioni.
-
-Funzioni principali:
-- `execute_query(graph, query, description)`: Esegue una query SPARQL su un grafo RDF.
-- `collect_results_with_scores(results, genres, user_director, user_actors, user_country, views_list, duration_list, user_year)`: 
-  Assegna punteggi ai film in base ai vincoli soddisfatti dall'utente.
-- `epsilon_greedy_recommendation(results_with_scores, top_k, epsilon=0.2)`: Implementa l'algoritmo epsilon-greedy per selezionare 
-  film rilevanti con un elemento di esplorazione casuale.
-- `retrieve_results(number_of_results, genres, director, actors, country, popularity_list, duration_list, year, _progress_bar, use_cache=True)`: 
-  Recupera film basati sui criteri di ricerca specificati ed esegue query SPARQL sul file RDF.
-- `random_recommendation(number_of_results)`: Seleziona casualmente film dal RDF per completare i risultati mancanti.
-- `most_popular_recommendation(k, rdf_file, ratings_file, movies_file)`: Trova i film più popolari combinando dati RDF e MovieLens, 
-  utilizzando una formula basata sui rating per determinare la popolarità.
-
-Caratteristiche:
-- Supporta il filtraggio basato su dati RDF estratti da DBpedia.
-- Implementa un sistema di punteggio per classificare i film in base alle preferenze dell'utente.
-- Integra strategie di esplorazione (epsilon-greedy) per migliorare la varietà delle raccomandazioni.
-- Gestisce i risultati temporanei nella sessione per evitare interrogazioni ripetitive.
-
-Il modulo è ottimizzato per garantire raccomandazioni bilanciate, introducendo sia film altamente compatibili con le preferenze 
-dell'utente sia una componente di scoperta per favorire la diversità nei suggerimenti.
-"""
+# """
+# Modulo per il recupero e il filtraggio dei film in base alle preferenze dell'utente.
+#
+# Gestisce il processo di selezione dei film da un dataset RDF e applica diversi criteri di filtraggio,
+# inclusi genere, regista, attori, paese di produzione, popolarità, durata e anno di uscita. Inoltre, utilizza strategie
+# di ranking come epsilon-greedy per la selezione delle migliori raccomandazioni.
+#
+# Funzioni principali:
+# - `execute_query(graph, query, description)`: Esegue una query SPARQL su un grafo RDF.
+# - `collect_results_with_scores(results, genres, user_director, user_actors, user_country, views_list, duration_list, user_year)`:
+#   Assegna punteggi ai film in base ai vincoli soddisfatti dall'utente.
+# - `epsilon_greedy_recommendation(results_with_scores, top_k, epsilon=0.2)`: Implementa l'algoritmo epsilon-greedy per selezionare
+#   film rilevanti con un elemento di esplorazione casuale.
+# - `retrieve_results(number_of_results, genres, director, actors, country, popularity_list, duration_list, year, _progress_bar, use_cache=True)`:
+#   Recupera film basati sui criteri di ricerca specificati ed esegue query SPARQL sul file RDF.
+# - `random_recommendation(number_of_results)`: Seleziona casualmente film dal RDF per completare i risultati mancanti.
+# - `most_popular_recommendation(k, rdf_file, ratings_file, movies_file)`: Trova i film più popolari combinando dati RDF e MovieLens,
+#   utilizzando una formula basata sui rating per determinare la popolarità.
+#
+# Caratteristiche:
+# - Supporta il filtraggio basato su dati RDF estratti da DBpedia.
+# - Implementa un sistema di punteggio per classificare i film in base alle preferenze dell'utente.
+# - Integra strategie di esplorazione (epsilon-greedy) per migliorare la varietà delle raccomandazioni.
+# - Gestisce i risultati temporanei nella sessione per evitare interrogazioni ripetitive.
+#
+# Il modulo è ottimizzato per garantire raccomandazioni bilanciate, introducendo sia film altamente compatibili con le preferenze
+# dell'utente sia una componente di scoperta per favorire la diversità nei suggerimenti.
+# """
 
 def execute_query(graph, query, description):
     """Esegue una query SPARQL e restituisce i risultati come una lista."""
