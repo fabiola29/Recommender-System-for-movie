@@ -11,12 +11,12 @@ import urllib.parse
 # 2. Creazione e aggiornamento di un grafo RDF con i dati estratti.
 # 3. Lettura dei dataset di film e valutazioni, arricchendo il grafo RDF con dettagli come titolo, anno di uscita, regista, attori, paese di produzione, durata e numero di visualizzazioni.
 # 4. Utilizzo di funzioni per elaborare e ripulire i titoli dei film, formattare query SPARQL e verificare la presenza di un film nel grafo RDF.
-# 5. Salvataggio periodico dell'ontologia RDF in formato Turtle per interrogazioni locali.
+# 5. Salvataggio periodico del file RDF in formato Turtle per interrogazioni locali.
 #
 # Funzioni principali:
 # - `extract_title_and_year(raw_title)`: Estrae il titolo e l'anno da una stringa contenente un titolo di film.
 # - `create_valid_uri(title)`: Genera un URI valido per DBpedia basato sul titolo del film.
-# - `is_title_in_graph(title)`: Verifica se un film è già presente nell'ontologia RDF.
+# - `is_title_in_graph(title)`: Verifica se un film è già presente nel file RDF.
 # - `sanitize_sparql_title(title)`: Modifica il titolo per essere utilizzato nelle query SPARQL.
 # - `filter_genres(genre_str)`: Filtra i generi di un film eliminando valori non validi.
 # - `get_movie_data(title, retries=3)`: Recupera informazioni su un film da DBpedia utilizzando SPARQL.
@@ -36,7 +36,7 @@ g.bind("dbo", "http://dbpedia.org/ontology/")
 g.bind("dbp", "http://dbpedia.org/property/")
 g.bind("dbr", "http://dbpedia.org/resource/")
 
-# Caricare l'ontologia esistente se esiste
+
 rdf_file = "movies_rdf.ttl"
 if os.path.exists(rdf_file):
     g.parse(rdf_file, format="turtle")
@@ -67,7 +67,7 @@ def create_valid_uri(title):
     title = urllib.parse.quote(title, safe="_")  # Codifica caratteri speciali
     return rdflib.URIRef(f"http://dbpedia.org/resource/{title}")
 
-# Funzione per verificare se il titolo è già presente nell'ontologia
+# Funzione per verificare se il titolo è già presente
 def is_title_in_graph(title):
     movie_uri = create_valid_uri(title)
     return (movie_uri, None, None) in g
@@ -93,8 +93,6 @@ def filter_genres(genre_str):
 def get_movie_data(title, retries=3):
     sparql_title = sanitize_sparql_title(title)  # Sanifica il titolo per la query
 
-    # MODIFICA PRINCIPALE: usiamo GROUP_CONCAT per unire tutti gli attori in un'unica stringa
-    # e SAMPLE(...) per le altre proprietà, in modo da avere un'unica riga di risultato per film.
     query = f"""
     PREFIX dbo: <http://dbpedia.org/ontology/>
     PREFIX dbp: <http://dbpedia.org/property/>
@@ -148,7 +146,7 @@ def get_movie_data(title, retries=3):
 # Funzione per salvare periodicamente il grafo
 def save_graph():
     g.serialize(destination=rdf_file, format="turtle")
-    print(f"Ontologia RDF salvata in '{rdf_file}' e interrogabile con query SPARQL in locale!")
+    print(f"File RDF salvato in '{rdf_file}' e interrogabile con query SPARQL in locale!")
 
 # Caricamento delle views dal file ratings.csv ---
 ratings_file = "../../dataset/archive/ratings.csv"

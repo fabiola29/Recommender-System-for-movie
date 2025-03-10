@@ -518,12 +518,12 @@ def random_recommendation(number_of_results):
 def most_popular_recommendation(k, rdf_file="movies_rdf.ttl", ratings_file="../../dataset/archive/ratings.csv",
                                 movies_file="../../dataset/archive/movies.csv"):
     """
-    Trova i k film più popolari leggendo i titoli dall'ontologia RDF,
+    Trova i k film più popolari leggendo i titoli dal file RDF,
     mappandoli a movieId e calcolando la popolarità dai ratings (scegliamo i film con rating più alto).
     Restituisce un dizionario con i film popolari.
     """
 
-    # Step 1: Carica l'ontologia RDF
+    # Step 1: Carica file RDF
     g = rdflib.Graph()
     g.parse(rdf_file, format="turtle")
 
@@ -563,13 +563,13 @@ def most_popular_recommendation(k, rdf_file="movies_rdf.ttl", ratings_file="../.
             "abstract": str(row.abstract) if row.abstract else None
         }
 
-    print(f"🔍 {len(rdf_movies)} film trovati nell'ontologia RDF.")
+    print(f"🔍 {len(rdf_movies)} film trovati")
 
     # Step 3: Carica `movies.csv` per ottenere il mapping movieId → titolo
     movies_df = pd.read_csv(movies_file)
     movies_df["normalized_title"] = movies_df["title"].apply(utils.normalize_title)
 
-    # Step 4: Filtra solo i film che sono presenti sia nell'ontologia RDF che in `movies.csv`
+    # Step 4: Filtra solo i film che sono presenti sia nel file RDF che in `movies.csv`
     merged_movies = movies_df[movies_df["normalized_title"].isin(rdf_movies)]
 
     if merged_movies.empty:
@@ -602,7 +602,7 @@ def most_popular_recommendation(k, rdf_file="movies_rdf.ttl", ratings_file="../.
     list_results_with_scores = {}
 
     for _, row in top_movies.iterrows():
-        rdf_title = rdf_movies[row["normalized_title"]]  # Otteniamo i dettagli dall'ontologia RDF
+        rdf_title = rdf_movies[row["normalized_title"]]
 
         list_results_with_scores[rdf_title["title"]] = {
             "title": rdf_title["title"],

@@ -29,7 +29,7 @@ import rdflib
 #   - `load_data()`: Carica i dataset di MovieLens (movies, tags, ratings).
 #   - `select_informations_from_ttl(movies_dataset)`: Estrae generi, registi, attori, nazionalità e anni disponibili dal file RDF.
 #   - `get_movies_from_ttl()`: Recupera i titoli dei film presenti nel dataset RDF.
-#   - `extract_reference_film_info(reference_title)`: Estrae le informazioni di un film di riferimento dall'ontologia RDF.
+#   - `extract_reference_film_info(reference_title)`: Estrae le informazioni di un film di riferimento dal file RDF.
 #   - `search_similar_movies(reference_film)`: Cerca film simili a un film di riferimento selezionato dall'utente.
 #
 # - **Gestione e normalizzazione dei dati:**
@@ -204,6 +204,9 @@ def select_informations_from_ttl(movies_dataset):
     actors_list = sorted(actors)
     nationalities_list = sorted(nationalities)
     years_list = sorted(years)
+
+    directors_list = [d for d in directors_list if d != "A"]
+    nationalities_list = [c for c in nationalities_list if c != "A"]
 
     return genres_list, directors_list, actors_list, nationalities_list, years_list
 
